@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
@@ -7,22 +8,41 @@ import ProductDetail from './pages/ProductDetail';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import Blog from './pages/Blog';
+import AdminDashboard from './admin/pages/AdminDashboard';
+import AdminProducts from './admin/pages/AdminProducts';
+import AdminOrders from './admin/pages/AdminOrders';
+import AdminUsers from './admin/pages/AdminUsers';
+import AdminSettings from './admin/pages/AdminSettings';
 
 export default function App() {
-  const [page, setPage] = useState('home');
-  window.__navigate = setPage;
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const navigate = setPage;
+  useEffect(() => {
+    window.__navigate = (target) => navigate(target);
+  }, [navigate]);
 
-  const routes = {
-    home:    <Home />,
-    shop:    <Shop />,
-    product: <ProductDetail onNavigate={navigate} />,
-    contact: <Contact />,
-    cart:    <Cart onNavigate={navigate} initialView="cart" />,
-    checkout:<Cart onNavigate={navigate} initialView="checkout" />,
-    blog:    <Blog onNavigate={navigate} />,
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
-  return routes[page] || <Home />;
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/shop" element={<Shop />} />
+      <Route path="/product" element={<ProductDetail onNavigate={navigate} />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/cart" element={<Cart onNavigate={navigate} initialView="cart" />} />
+      <Route path="/checkout" element={<Cart onNavigate={navigate} initialView="checkout" />} />
+      <Route path="/blog" element={<Blog onNavigate={navigate} />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/products" element={<AdminProducts />} />
+      <Route path="/admin/orders" element={<AdminOrders />} />
+      <Route path="/admin/users" element={<AdminUsers />} />
+      <Route path="/admin/settings" element={<AdminSettings />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
+    </Routes>
+  );
 }
