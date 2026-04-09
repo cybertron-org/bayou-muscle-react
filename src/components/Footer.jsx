@@ -1,10 +1,10 @@
 /* Figma asset URLs — node 67:1983 */
-const imgLogo = 'https://www.figma.com/api/mcp/asset/5c735a6f-638e-4457-ba70-35e7216aaed5';
+const imgLogo = '/images/logo.png';
 const imgPhoneIcon = 'https://www.figma.com/api/mcp/asset/602a6364-7cb9-4b89-9f1a-7a6bccdd9005';
 const imgEmailIcon = 'https://www.figma.com/api/mcp/asset/31e1ae19-a60f-4856-89db-7986cd3e02b2';
 const imgChatIcon = 'https://www.figma.com/api/mcp/asset/3c7d4821-76dd-4d20-a5ad-b811371e1ee6';
 /* Figma payment cards — Component variants 11-30 rendered as images */
-const imgVisa = 'https://www.figma.com/api/mcp/asset/76ae851f-6926-47ae-a93d-2e16fa4560dd';
+const imgVisa = '/images/cards.png';
 const imgMC = 'https://www.figma.com/api/mcp/asset/7b5774aa-4a17-43da-947b-c4b84879e4cc';
 const imgAmex = 'https://www.figma.com/api/mcp/asset/6b7a0ee2-5475-4d37-a112-e364ba0b7d8e';
 
@@ -141,10 +141,10 @@ export default function Footer() {
           {/* Figma: payment card images, right=145, 5 cards w=43 h=28 gap=5 */}
           <div className="ftr__payments">
             <img src={imgVisa} alt="Visa" className="ftr__payment-card" />
-            <img src={imgMC} alt="Mastercard" className="ftr__payment-card" />
+            {/* <img src={imgMC} alt="Mastercard" className="ftr__payment-card" />
             <img src={imgAmex} alt="Amex" className="ftr__payment-card" />
             <img src={imgVisa} alt="Discover" className="ftr__payment-card" />
-            <img src={imgMC} alt="Pay" className="ftr__payment-card" />
+            <img src={imgMC} alt="Pay" className="ftr__payment-card" /> */}
           </div>
         </div>
       </div>

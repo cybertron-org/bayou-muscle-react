@@ -1,12 +1,13 @@
+import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Posts from "../components/Posts";
 
 /* ── DATA ── */
-/* Figma: Featured Products — 5 Article cards, each 306×481px */
 const featuredProducts = [
   {
     id: 1,
@@ -15,7 +16,7 @@ const featuredProducts = [
     price: "$9.00",
     stars: 4,
     reviews: 4,
-    img: "/images/p11.png",
+    img: "/images/p14.png",
   },
   {
     id: 2,
@@ -48,7 +49,7 @@ const featuredProducts = [
   },
   {
     id: 5,
-    name: "Mountain Fox - Vector Graphics",
+    name: "Denzour micronised creatine -100 g",
     cat: "Art",
     price: "$9.00",
     stars: 4,
@@ -57,7 +58,6 @@ const featuredProducts = [
   },
 ];
 
-/* Figma: Latest Releases — 4 Article cards, each 385×560px */
 const latestReleases = [
   {
     id: 1,
@@ -65,7 +65,7 @@ const latestReleases = [
     cat: "Home Accessories",
     price: "$11.90",
     stars: 5,
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80",
+    img: "/images/p15.png",
   },
   {
     id: 2,
@@ -73,7 +73,7 @@ const latestReleases = [
     cat: "Art",
     price: "$29.00",
     stars: 4,
-    img: "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=500&q=80",
+    img: "/images/p14.png",
   },
   {
     id: 3,
@@ -83,7 +83,7 @@ const latestReleases = [
     oldPrice: "$11.90",
     badge: "-15%",
     stars: 4,
-    img: "https://images.unsplash.com/photo-1601465873862-4f6614d62e48?w=500&q=80",
+    img: "/images/p14.png",
   },
   {
     id: 4,
@@ -91,11 +91,10 @@ const latestReleases = [
     cat: "Home Accessories",
     price: "$11.90",
     stars: 5,
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80",
+    img: "/images/p13.png",
   },
 ];
 
-/* Figma: Frame 77 — 5 goal banners (Paragraph+Background), 3-col then 2-col grid */
 const goalBanners = [
   {
     title: "WEIGHT",
@@ -134,61 +133,72 @@ const goalBanners = [
   },
 ];
 
-/* Figma: Section y=3219, trust strip — 4 items with icons */
 const trustItems = [
-  { icon: "🚚", title: "FAST DELIVERY", sub: "West & East coast dispatch" },
   {
-    icon: "🎁",
+    icon: "/images/t1.png",
+    title: "FAST DELIVERY",
+    sub: "West & East coast dispatch",
+  },
+  {
+    icon: "/images/t2.png",
     title: "FREE GIFT WITH ORDER $150+",
     sub: "Multiple gift options available",
   },
-  { icon: "📦", title: "CLICK & COLLECT", sub: "Check your local stores now" },
   {
-    icon: "😊",
+    icon: "/images/t3.png",
+    title: "CLICK & COLLECT",
+    sub: "Check your local stores now",
+  },
+  {
+    icon: "/images/t.png",
     title: "2M+ HAPPY CUSTOMERS",
     sub: "Here to support your journey",
   },
 ];
 
-/* Figma: Frame 78 y=5334 — merchandise 6 col grid */
 const merchandiseItems = [
   {
     label: "Lean Muscle",
-    img: "https://images.unsplash.com/photo-1507398941214-572c25a4a232?w=400&q=80",
+    sub: "Build your burn.",
+    img: "/images/m1.png",
   },
   {
     label: "Gain Mass",
-    img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80",
+    sub: "Get cut.",
+    img: "/images/m2.png",
   },
   {
     label: "Lose Weight",
-    img: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&q=80",
+    sub: "Build your strength.",
+    img: "/images/m3.png",
   },
   {
-    label: "Strength & Endurance",
-    img: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&q=80",
+    label: "Strength    ",
+    sub: "Enhance your performance.",
+    img: "/images/m4.png",
   },
   {
     label: "Build Muscle",
-    img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80",
+    sub: "Get powerful.",
+    img: "/images/m5.png",
   },
   {
     label: "Recovery",
-    img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80",
+    sub: "Boost your muscle recovery.",
+    img: "/images/m6.png",
   },
 ];
 
-/* Figma: Frame 78 blog posts — 2 pairs side by side */
 const blogPosts = [
   {
-    img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80",
+    img: "/images/blog1.png",
     cat: "In Sub Category 1",
     title: "Turpis at eleifend leo mi elit Aenean porta ac sed faucibus",
     excerpt:
       "Turpis at eleifend leo mi elit Aenean porta ac sed faucibus. Nunc urna Morbi fringilla vitae orci convallis condimentum auctor sit dui.",
   },
   {
-    img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80",
+    img: "/images/blog2.png",
     cat: "In Sub Category 1",
     title: "Morbi condimentum molestie Nam enim odio sodales",
     excerpt:
@@ -196,30 +206,16 @@ const blogPosts = [
   },
 ];
 
-/* Figma: Instagram section — 5 images 296×296 */
 const instaImgs = [
-  "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80",
-  "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=400&q=80",
-  "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&q=80",
-  "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=400&q=80",
-  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80",
+  "/images/p1.png",
+  "/images/p2.png",
+  "/images/p3.png",
+  "/images/p4.png",
+  "/images/p5.png",
 ];
 
-/* Marquee words — Figma: "Fitness trainings supplements merchandise", font-size 183px */
-const marqueeWords1 = [
-  "Supplements",
-  "Nutrition",
-  "Fitness",
-  "Trainings",
-  "Merchandise",
-];
-const marqueeWords2 = [
-  "Trainings",
-  "Merchandise",
-  "Strength",
-  "Wellness",
-  "Performance",
-];
+const marqueeWords1 = ["Supplements", "", "", "", ""];
+const marqueeWords2 = ["", "Merchandise", "", "", ""];
 
 function Stars({ count }) {
   return (
@@ -239,6 +235,67 @@ function Stars({ count }) {
 }
 
 export default function Home() {
+  // Testimonial Slider Logic
+  useEffect(() => {
+    const testimonials = [
+      {
+        name: "EMERSON ANDERSON",
+        role: "15th batch student",
+        quote:
+          "THE FACILITIES HERE ARE TOP-NOTCH AND THE STAFF IS ALWAYS FRIENDLY AND HELPFUL. I'VE NEVER FELT MORE CONFIDENT",
+        stars: "★★★★★",
+      },
+      {
+        name: "CHRIS EVANS",
+        role: "12th batch student",
+        quote:
+          "THE TRAINING PROGRAM EXCEEDED MY EXPECTATIONS. THE INSTRUCTORS ARE HIGHLY KNOWLEDGEABLE AND SUPPORTIVE.",
+        stars: "★★★★★",
+      },
+    ];
+
+    let currentIndex = 0;
+
+    const nameEl = document.getElementById("testimonial-name");
+    const roleEl = document.getElementById("testimonial-role");
+    const quoteEl = document.getElementById("testimonial-quote");
+    const starsEl = document.getElementById("testimonial-stars");
+    const prevBtn = document.getElementById("prev-testimonial");
+    const nextBtn = document.getElementById("next-testimonial");
+
+    const updateTestimonial = (index) => {
+      if (nameEl && roleEl && quoteEl && starsEl) {
+        nameEl.textContent = testimonials[index].name;
+        roleEl.textContent = testimonials[index].role;
+        quoteEl.textContent = `"${testimonials[index].quote}"`;
+        starsEl.textContent = testimonials[index].stars;
+      }
+    };
+
+    const nextTestimonial = () => {
+      currentIndex = (currentIndex + 1) % testimonials.length;
+      updateTestimonial(currentIndex);
+    };
+
+    const prevTestimonial = () => {
+      currentIndex =
+        (currentIndex - 1 + testimonials.length) % testimonials.length;
+      updateTestimonial(currentIndex);
+    };
+
+    if (prevBtn && nextBtn) {
+      prevBtn.addEventListener("click", prevTestimonial);
+      nextBtn.addEventListener("click", nextTestimonial);
+    }
+
+    return () => {
+      if (prevBtn && nextBtn) {
+        prevBtn.removeEventListener("click", prevTestimonial);
+        nextBtn.removeEventListener("click", nextTestimonial);
+      }
+    };
+  }, []);
+
   const nav = (page, e) => {
     if (e) e.preventDefault();
     window.__navigate && window.__navigate(page);
@@ -248,48 +305,31 @@ export default function Home() {
     <>
       <Header />
 
-      {/* ══ HERO ══ Figma: image 12, x=0 y=149, w=1920 h=675 */}
+      {/* HERO SECTION */}
       <section className="hm-hero">
         <div className="hm-hero__bg" />
         <div className="hm-hero__overlay" />
         <div className="hm-hero__content">
-          {/* Figma: "Smart Fuel sustains IT." small label above title */}
-        
-          {/* Figma: "Hard Work Creates Strength." — large title, vectorized font */}
           <h1 className="hm-hero__title">
             Hard Work
             <br />
             Creates Strength.
           </h1>
-            <p className="hm-hero__label">Smart Fuel Sustains IT.</p>
+          <p className="hm-hero__label">Smart Fuel Sustains IT.</p>
           <a href="#" className="hm-hero__btn" onClick={(e) => nav("shop", e)}>
             Shop Now
-               <img src="/images/arrowdoen.png" alt="" />
-            {/* <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg> */}
+            <img src="/images/arrowdoen.png" alt="" />
           </a>
         </div>
       </section>
 
-      {/* ══ FEATURED PRODUCTS ══ Figma: x=120 y=906, w=1680 h=628 */}
+      {/* FEATURED PRODUCTS */}
       <section className="hm-section hm-featured">
         <div className="hm-section__head">
-          {/* Figma: "FEATURED PRODUCTS" heading + "SMART FULL WELLBEING." subtitle */}
           <div>
             <h2 className="hm-section__heading lato">FEATURED PRODUCTS</h2>
-            {/* <p className="hm-section__subhead">SMART FULL WELLBEING.</p> */}
           </div>
         </div>
-        {/* Figma: Swiper, 5 cards visible, gap=30, each 306×481px */}
         <div className="hm-slider-wrap">
           <Swiper
             modules={[Navigation]}
@@ -309,20 +349,17 @@ export default function Home() {
           >
             {featuredProducts.map((p) => (
               <SwiperSlide key={p.id}>
-                {/* Figma: Article 306×481px, border 1px solid, rounded */}
                 <div
                   className="hm-feat-card"
                   onClick={(e) => nav("product", e)}
                 >
                   {p.badge && <span className="hm-badge">{p.badge}</span>}
-                  
                   <div className="hm-feat-card__body">
-                  
                     <p className="hm-feat-card__name">{p.name}</p>
-                      <p className="hm-feat-card__cat">{p.cat}</p>
+                    <p className="hm-feat-card__cat">{p.cat}</p>
                     <div className="hm-feat-card__img">
-                    <img src={p.img} alt={p.name} loading="lazy" />
-                  </div>
+                      <img src={p.img} alt={p.name} loading="lazy" />
+                    </div>
                     <div className="hm-feat-card__footer">
                       <div className="hm-feat-card__rating">
                         <Stars count={p.stars} />
@@ -347,12 +384,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Figma: Group 4 divider — x=145 y=1614, w=1630, two lines */}
+      {/* DIVIDER */}
       <div className="hm-divider-wrap">
         <div className="hm-divider" />
       </div>
 
-      {/* ══ LATEST RELEASES ══ Figma: Frame 72, x=130 y=1699, w=1660 h=701 */}
+      {/* LATEST RELEASES */}
       <section className="hm-section hm-latest">
         <div className="hm-section__head">
           <h2 className="hm-section__heading">Latest Releases</h2>
@@ -373,7 +410,6 @@ export default function Home() {
             </span>
           </a>
         </div>
-        {/* Figma: Section y=120, 4 Article cards 385×560, x offsets: 15/430/845/1260 */}
         <div className="hm-slider-wrap">
           <Swiper
             modules={[Navigation]}
@@ -394,13 +430,13 @@ export default function Home() {
                   className="hm-latest-card"
                   onClick={(e) => nav("product", e)}
                 >
-                  {p.badge && <span className="hm-badge">{p.badge}</span>}
-                  <div className="hm-latest-card__img">
-                    <img src={p.img} alt={p.name} loading="lazy" />
-                  </div>
+                  {/* {p.badge && <span className="hm-badge">{p.badge}</span>} */}
                   <div className="hm-latest-card__body">
-                    <p className="hm-latest-card__cat">{p.cat}</p>
                     <p className="hm-latest-card__name">{p.name}</p>
+                    <p className="hm-latest-card__cat">{p.cat}</p>
+                    <div className="hm-latest-card__img">
+                      <img src={p.img} alt={p.name} loading="lazy" />
+                    </div>
                     <div className="hm-latest-card__footer">
                       <span className="hm-latest-card__price">{p.price}</span>
                       {p.oldPrice && (
@@ -415,65 +451,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ GOAL BANNERS ══ Figma: Frame 77, x=114 y=2480 — 5 Paragraph+Background panels */}
-      <section className="hm-goals">
-        <div className="hm-goals__row hm-goals__row--top">
-          {goalBanners.slice(0, 3).map((b, i) => (
-            <div
-              key={i}
-              className={`hm-goal-card${b.wide ? " hm-goal-card--wide" : ""}`}
-            >
-              <img
-                src={b.img}
-                alt={b.title}
-                loading="lazy"
-                className="hm-goal-card__bg"
-              />
-              <div className="hm-goal-card__overlay" />
-              <div className="hm-goal-card__content">
-                <h3 className="hm-goal-card__title">
-                  {b.title && (
-                    <span className="hm-goal-card__line1">{b.title}</span>
-                  )}
-                  <span className="hm-goal-card__accent">{b.accent}</span>
-                </h3>
-                <p className="hm-goal-card__sub">{b.sub}</p>
+      {/* GOAL BANNERS */}
+      <div className="container">
+        <section className="hm-goals">
+          <div className="hm-goals__row hm-goals__row--top">
+            <div className="hm-goal-card__overlay" />
+            <div className="row align-items-center">
+              <div className="col-md-5">
+                <img className="w-100" src="/images/w1.png" alt="" />
+              </div>
+              <div className="col-md-4">
+                <img className="" src="/images/w2.png" alt="" />
+              </div>
+              <div className="col-md-3">
+                <img className="w-100" src="/images/w3.png" alt="" />
               </div>
             </div>
-          ))}
-        </div>
-        <div className="hm-goals__row hm-goals__row--bottom">
-          {goalBanners.slice(3).map((b, i) => (
-            <div
-              key={i}
-              className={`hm-goal-card${b.wide ? " hm-goal-card--wide" : ""}`}
-            >
-              <img
-                src={b.img}
-                alt={b.title}
-                loading="lazy"
-                className="hm-goal-card__bg"
-              />
-              <div className="hm-goal-card__overlay" />
-              <div className="hm-goal-card__content">
-                <h3 className="hm-goal-card__title">
-                  {b.title && (
-                    <span className="hm-goal-card__line1">{b.title}</span>
-                  )}
-                  <span className="hm-goal-card__accent">{b.accent}</span>
-                </h3>
-                <p className="hm-goal-card__sub">{b.sub}</p>
-              </div>
+          </div>
+          <div className="row pt-4 align-items-center">
+            <div className="col-md-6">
+              <img className="w-100" src="/images/w4.png" alt="" />
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="col-md-6">
+              <img className="" src="/images/w5.png" alt="" />
+            </div>
+          </div>
+        </section>
+      </div>
 
-      {/* ══ TRUST STRIP ══ Figma: Section x=135 y=3219, w=1650 h=256, 4 VerticalBorder items */}
-      <div className="hm-trust">
+      {/* TRUST STRIP */}
+      <div className="hm-trust pb-100 pt-100">
         {trustItems.map((item, i) => (
           <div key={i} className="hm-trust__item">
-            <span className="hm-trust__icon">{item.icon}</span>
+            <img className="hm-trust__icon" src={item.icon} alt={item.title} />
             <div>
               <p className="hm-trust__title">{item.title}</p>
               <p className="hm-trust__sub">{item.sub}</p>
@@ -482,44 +492,46 @@ export default function Home() {
         ))}
       </div>
 
-      {/* ══ TESTIMONIAL ══ Figma: Section x=0 y=3475, w=1920 h=774 */}
+      {/* TESTIMONIAL SECTION - CORRECTED */}
       <section className="hm-testimonial">
         <div className="hm-testimonial__inner">
-          {/* Figma: Frame 68 — rating block + product image */}
           <div className="hm-testimonial__left">
             <div className="hm-rating-card">
-              {/* Figma: ic:round-star top-right 43×43px */}
-              <span className="hm-rating-card__star-deco">★</span>
-              <span className="hm-rating-card__num">4.9</span>
-              <p className="hm-rating-card__label">Clients Reviews</p>
+              <img src="/images/review.png" alt="" />
             </div>
             <div className="hm-testimonial__product">
-              <img
-                src="https://images.unsplash.com/photo-1609016041736-0d4413fa1b63?w=300&q=80"
-                alt="Product"
-              />
+              <img src="/images/creabeast.png" alt="Product" />
             </div>
           </div>
-          {/* Figma: Frame 73 — stars + quote text + author + nav arrows */}
+
           <div className="hm-testimonial__right">
-            <div className="hm-testimonial__stars">★★★★★</div>
-            {/* Figma: quote text — Sofia Sans Condensed SemiBold uppercase */}
-            <blockquote className="hm-testimonial__quote">
+            <div className="hm-testimonial__stars" id="testimonial-stars">
+              ★★★★★
+            </div>
+            <blockquote
+              className="hm-testimonial__quote"
+              id="testimonial-quote"
+            >
               "THE FACILITIES HERE ARE TOP-NOTCH AND THE STAFF IS ALWAYS
               FRIENDLY AND HELPFUL. I'VE NEVER FELT MORE CONFIDENT"
             </blockquote>
             <div className="hm-testimonial__footer">
               <div className="hm-testimonial__author">
-                {/* Figma: icon-park-outline:quote 79×79 */}
                 <span className="hm-testimonial__quote-icon">❝</span>
                 <div>
-                  <p className="hm-testimonial__name">EMERSON ANDERSON</p>
-                  <p className="hm-testimonial__role">15th batch student</p>
+                  <p className="hm-testimonial__name" id="testimonial-name">
+                    EMERSON ANDERSON
+                  </p>
+                  <p className="hm-testimonial__role" id="testimonial-role">
+                    15th batch student
+                  </p>
                 </div>
               </div>
-              {/* Figma: Frame 76 — 2 arrow buttons stacked, bottom one bg #ddca8a */}
               <div className="hm-testimonial__nav">
-                <button className="hm-testimonial__nav-btn">
+                <button
+                  className="hm-testimonial__nav-btn"
+                  id="prev-testimonial"
+                >
                   <svg
                     width="24"
                     height="24"
@@ -532,7 +544,10 @@ export default function Home() {
                     <polyline points="5 12 12 5 19 12" />
                   </svg>
                 </button>
-                <button className="hm-testimonial__nav-btn hm-testimonial__nav-btn--active">
+                <button
+                  className="hm-testimonial__nav-btn hm-testimonial__nav-btn--active"
+                  id="next-testimonial"
+                >
                   <svg
                     width="24"
                     height="24"
@@ -551,30 +566,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ MARQUEE 1 ══ Figma: Frame 76 x=0 y=4339, w=1920 h=207 */}
+      {/* MARQUEE 1 */}
       <div className="hm-marquee hm-marquee--dark">
         <div className="hm-marquee__track">
-          {[...marqueeWords1, ...marqueeWords1].map((w, i) => (
-            <span
-              key={i}
-              className={
-                i % 2 === 0
-                  ? "hm-marquee__word hm-marquee__word--outline"
-                  : "hm-marquee__word hm-marquee__word--ghost"
-              }
-            >
-              {w}
-            </span>
-          ))}
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
         </div>
       </div>
 
-      {/* ══ MERCHANDISE ══ Figma: Section x=145 y=4636, w=1630 h=617 */}
+      {/* MERCHANDISE */}
       <section className="hm-section hm-merch">
         <div className="hm-section__head">
           <h2 className="hm-section__heading">OUR MERCHANDISE</h2>
         </div>
-        {/* Figma: 6-col grid, each item has image + label + shop link */}
         <div className="hm-merch__grid">
           {merchandiseItems.map((item, i) => (
             <div key={i} className="hm-merch__item">
@@ -582,10 +608,11 @@ export default function Home() {
                 <img src={item.img} alt={item.label} loading="lazy" />
               </div>
               <p className="hm-merch__label">{item.label}</p>
+              <p className="hm-trust__sub">{item.sub}</p>
               <a
                 href="#"
                 className="hm-merch__link"
-                onClick={(e) => nav("shop", e)}
+                onClick={(e) => nav("", e)}
               >
                 shop now
               </a>
@@ -594,27 +621,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ MARQUEE 2 ══ Figma: Frame 81 x=0 y=6004, reverse direction */}
+      {/* MARQUEE 2 */}
+      {/* MARQUEE - SUPPLEMENTS & MERCHANDISE TOGETHER */}
       <div className="hm-marquee hm-marquee--dark">
-        <div className="hm-marquee__track hm-marquee__track--reverse">
-          {[...marqueeWords2, ...marqueeWords2].map((w, i) => (
-            <span
-              key={i}
-              className={
-                i % 3 === 0
-                  ? "hm-marquee__word hm-marquee__word--gold-outline"
-                  : i % 3 === 1
-                    ? "hm-marquee__word hm-marquee__word--outline"
-                    : "hm-marquee__word hm-marquee__word--ghost"
-              }
-            >
-              {w}
-            </span>
-          ))}
+        <div className="hm-marquee__track">
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--supplement">
+            SUPPLEMENTS
+          </span>
+          <span className="hm-marquee__word hm-marquee__word--merchandise">
+            MERCHANDISE
+          </span>
         </div>
       </div>
 
-      {/* ══ BLOG ══ Figma: Frame 78 x=130 y=5334, w=1660 h=580 */}
+      {/* BLOG */}
       <section className="hm-section hm-blog">
         <div className="hm-section__head">
           <h2 className="hm-section__heading">READ THE LATEST</h2>
@@ -635,18 +673,14 @@ export default function Home() {
             </span>
           </a>
         </div>
-        {/* Figma: 2 side-by-side pairs, each pair = 380px image + text column */}
         <div className="hm-blog__grid">
           {blogPosts.map((post, i) => (
             <div key={i} className="hm-blog__pair">
-              {/* Figma: Link image 380×439 */}
               <div className="hm-blog__img">
                 <img src={post.img} alt={post.title} loading="lazy" />
               </div>
               <div className="hm-blog__text">
-                {/* Figma: "Background+Border" category tag */}
                 <span className="hm-blog__cat">{post.cat}</span>
-                {/* Figma: Heading 5 text */}
                 <h3 className="hm-blog__title">{post.title}</h3>
                 <p className="hm-blog__excerpt">{post.excerpt}</p>
                 <a
@@ -662,21 +696,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ INSTAGRAM ══ Figma: Frame 80 x=145 y=6301, w=1630 h=396 */}
-      <section className="hm-section hm-insta">
-        {/* Figma: "Check out our Instagram @nutreko" centered heading */}
-        <p className="hm-insta__label">
-          Check out our Instagram <a href="#">@nutreko</a>
-        </p>
-        {/* Figma: 5 images 296×296, gap ≈25 */}
-        <div className="hm-insta__grid">
-          {instaImgs.map((src, i) => (
-            <div key={i} className="hm-insta__item">
-              <img src={src} alt={`Instagram ${i + 1}`} loading="lazy" />
-            </div>
-          ))}
-        </div>
-      </section>
+     
+      <Posts />
 
       <Footer />
     </>

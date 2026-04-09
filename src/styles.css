@@ -21,6 +21,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Sofia+Sans+Condensed:wght@400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Manrope:wght@200..800&family=Montserrat:ital@0;1&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
 /* ── RESET ── */
 *,
 *::before,
@@ -30,10 +31,15 @@
   padding: 0;
 }
 
+ol,
+ul {
+  padding-left: 0rem !important;
+}
+
 
 .lato {
   font-family: "Lato", sans-serif !important;
- 
+
 }
 
 
@@ -218,6 +224,14 @@ button {
   color: #ddca8a;
 }
 
+/* .hm-testimonial__nav-btn::before {
+    content: "←";  
+}
+
+.hm-testimonial__nav-btn::after {
+    content: "→";
+} */
+
 /* LOGO — Figma: centered x=908 y=19, w=104 h=63 */
 .hdr__logo {
   position: absolute;
@@ -228,6 +242,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  top: 5%;
 }
 
 .hdr__logo-img {
@@ -853,10 +868,10 @@ button {
 }
 
 .ftr__payment-card {
-  width: 43px;
+  /* width: 43px;
   height: 28px;
   object-fit: contain;
-  border-radius: 2px;
+  border-radius: 2px; */
 }
 
 /* ================================================================
@@ -879,13 +894,13 @@ button {
 
 /* Figma: heading "FEATURED PRODUCTS" etc — Sofia Sans Condensed Black 900 uppercase */
 .hm-section__heading {
-   
-    font-weight: 400;
-    font-size: 64px;
-    line-height: 1.0;
-    text-transform: uppercase;
-    color: #000;
-    letter-spacing: -0.01em;
+
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 1.0;
+  text-transform: uppercase;
+  color: #000;
+  letter-spacing: -0.01em;
 }
 
 .hm-section__subhead {
@@ -904,12 +919,12 @@ button {
   align-items: center;
   gap: 8px;
   font-family: 'Instrument Sans', sans-serif;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 18px;
   color: #000;
-  text-transform: lowercase;
+  text-transform: capitalize;
   padding-bottom: 2px;
-  border-bottom: 1px solid #000;
+  /* border-bottom: 1px solid #000; */
   transition: color 0.2s, border-color 0.2s;
 }
 
@@ -918,15 +933,35 @@ button {
   border-color: #ddca8a;
 }
 
+.pb-100 {
+  padding-bottom: 100px !important;
+}
+
+.pt-100 {
+  padding-top: 100px !important;
+}
+
+.container,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+  max-width: 1720px !important;
+}
+
+
 .hm-view-all__box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 33px;
-  height: 33px;
+  width: 35px;
+  height: 35px;
   border: 1px solid #000;
   color: #000;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
+  border-radius: 16.5px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-grey-91, #E9E9E9);
 }
 
 .hm-view-all:hover .hm-view-all__box {
@@ -955,7 +990,7 @@ button {
   position: absolute;
   inset: 0;
   /* background: rgba(0, 0, 0, 0.55); */
-  background: linear-gradient(270deg, #000 -11.35%, rgba(0, 0, 0, 0.00) 69.66%);
+  /* background: linear-gradient(270deg, #000 -11.35%, rgba(0, 0, 0, 0.00) 69.66%); */
 }
 
 .hm-hero__content {
@@ -977,7 +1012,10 @@ button {
   font-size: 26px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #ddca8a;
+  background: var(--l1, linear-gradient(90deg, #C89116 0%, #C89116 3.13%, #C89116 3.91%, #C89117 4.3%, #C89218 4.69%, #C99219 5.08%, #C9931A 5.47%, #C9931B 5.86%, #C9941C 6.25%, #CA941D 6.64%, #CA951E 7.03%, #CA951F 7.42%, #CA9620 7.81%, #CB9621 8.2%, #CB9722 8.59%, #CB9723 8.98%, #CB9824 9.38%, #CC9825 9.77%, #CC9826 10.16%, #CC9927 10.55%, #CC9928 10.94%, #CC9A29 11.33%, #CD9A2A 11.72%, #CD9B2B 12.11%, #CD9B2C 12.5%, #CD9C2D 12.89%, #CE9C2E 13.28%, #CE9D2F 13.67%, #CE9D30 14.06%, #CE9E31 14.45%, #CF9E32 14.84%, #CF9F33 15.23%, #CF9F34 15.63%, #CF9F35 16.02%, #CFA036 16.41%, #D0A037 16.8%, #D0A138 17.19%, #D0A139 17.58%, #D0A23A 17.97%, #D1A23B 18.36%, #D1A33C 18.75%, #D1A33D 19.14%, #D1A43E 19.53%, #D2A43E 19.92%, #D2A53F 20.31%, #D2A540 20.7%, #D2A641 21.09%, #D2A642 21.48%, #D3A643 21.88%, #D3A744 22.27%, #D3A745 22.66%, #D3A846 23.05%, #D4A847 23.44%, #D4A948 23.83%, #D4A949 24.22%, #D4AA4A 24.61%, #D5AA4B 25%, #D5AB4C 25.39%, #D5AB4D 25.78%, #D5AC4E 26.17%, #D6AC4F 26.56%, #D6AC50 26.95%, #D6AD51 27.34%, #D6AD52 27.73%, #D6AE53 28.13%, #D7AE54 28.52%, #D7AF55 28.91%, #D7AF56 29.3%, #D7B057 29.69%, #D8B058 30.08%, #D8B159 30.47%, #D8B15A 30.86%, #D8B25B 31.25%, #D9B25C 31.64%, #D9B35D 32.03%, #D9B35E 32.42%, #D9B35F 32.81%, #D9B460 33.2%, #DAB461 33.59%, #DAB562 33.98%, #DAB563 34.38%, #DAB664 34.77%, #DBB665 35.16%, #DBB766 35.55%, #DBB767 35.94%, #DBB868 36.33%, #DCB869 36.72%, #DCB96A 37.11%, #DCB96B 37.5%, #DCBA6C 37.89%, #DCBA6D 38.28%, #DDBA6E 38.67%, #DDBB6F 39.06%, #DDBB70 39.45%, #DDBC71 39.84%, #DEBC72 40.23%, #DEBD73 40.63%, #DEBD74 41.02%, #DEBE75 41.41%, #DFBE76 41.8%, #DFBF77 42.19%, #DFBF78 42.58%, #DFC079 42.97%, #E0C07A 43.36%, #E0C07B 43.75%, #E0C17C 44.14%, #E0C17D 44.53%, #E0C27E 44.92%, #E1C27F 45.31%, #E1C380 45.7%, #E1C381 46.09%, #E1C481 46.48%, #E2C482 46.88%, #E2C583 47.27%, #E2C584 47.66%, #E2C685 48.05%, #E3C686 48.44%, #E3C787 48.83%, #E3C788 49.22%, #E3C789 49.61%, #E3C88A 50%, #E4C88B 50.39%, #E4C98C 50.78%, #E4C98D 51.17%, #E4CA8E 51.56%, #E5CA8F 51.95%, #E5CB90 52.34%, #E5CB91 52.73%, #E5CC92 53.13%, #E6CC93 53.52%, #E6CD94 53.91%, #E6CD95 54.3%, #E6CE96 54.69%, #E6CE97 55.08%, #E7CE98 55.47%, #E7CF99 55.86%, #E7CF9A 56.25%, #E7D09B 56.64%, #E8D09C 57.03%, #E8D19D 57.42%, #E8D19E 57.81%, #E8D29F 58.2%, #E9D2A0 58.59%, #E9D3A1 58.98%, #E9D3A2 59.38%, #E9D4A3 59.77%, #EAD4A4 60.16%, #EAD4A5 60.55%, #EAD5A6 60.94%, #EAD5A7 61.33%, #EAD6A8 61.72%, #EBD6A9 62.11%, #EBD7AA 62.5%, #EBD7AB 62.89%, #EBD8AC 63.28%, #ECD8AD 63.67%, #ECD9AE 64.06%, #ECD9AF 64.45%, #ECDAB0 64.84%, #EDDAB1 65.23%, #EDDBB2 65.63%, #EDDBB3 66.02%, #EDDBB4 66.41%, #EDDCB5 66.8%, #EEDCB6 67.19%, #EEDDB7 67.58%, #EEDDB8 67.97%, #EEDEB9 68.36%, #EFDEBA 68.75%, #EFDFBB 69.14%, #EFDFBC 69.53%, #EFE0BD 69.92%, #F0E0BE 70.31%, #F0E1BF 70.7%, #F0E1C0 71.09%, #F0E2C1 71.48%, #F0E2C2 71.88%, #F1E2C3 72.27%, #F1E3C4 72.66%, #F1E3C5 73.05%, #F1E4C5 73.44%, #F2E4C6 73.83%, #F2E5C7 74.22%, #F2E5C8 74.61%, #F2E6C9 75%, #F3E6CA 75.39%, #F3E7CB 75.78%, #F3E7CC 76.17%, #F3E8CD 76.56%, #F4E8CE 76.95%, #F4E9CF 77.34%, #F4E9D0 77.73%, #F4E9D1 78.13%, #F4EAD2 78.52%, #F5EAD3 78.91%, #F5EBD4 79.3%, #F5EBD5 79.69%, #F5ECD6 80.08%, #F6ECD7 80.47%, #F6EDD8 80.86%, #F6EDD9 81.25%, #F6EEDA 81.64%, #F7EEDB 82.03%, #F7EFDC 82.42%, #F7EFDD 82.81%, #F7EFDE 83.2%, #F7F0DF 83.59%, #F8F0E0 83.98%, #F8F1E1 84.38%, #F8F1E2 84.77%, #F8F2E3 85.16%, #F9F2E4 85.55%, #F9F3E5 85.94%, #F9F3E6 86.33%, #F9F4E7 86.72%, #FAF4E8 87.11%, #FAF5E9 87.5%, #FAF5EA 87.89%, #FAF6EB 88.28%, #FAF6EC 88.67%, #FBF6ED 89.06%, #FBF7EE 89.45%, #FBF7EF 89.84%, #FBF8F0 90.23%, #FCF8F1 90.63%, #FCF9F2 91.02%, #FCF9F3 91.41%, #FCFAF4 91.8%, #FDFAF5 92.19%, #FDFBF6 92.58%, #FDFBF7 92.97%, #FDFCF8 93.36%, #FEFCF9 93.75%, #FEFDFA 94.14%, #FEFDFB 94.53%, #FEFDFC 94.92%, #FEFEFD 95.31%, #FFFEFE 95.7%, #FFF 96.09%, #FFF 96.88%, #FFF 100%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 12px;
   animation: fadeUpHero 0.8s 0.1s both;
 }
@@ -1016,8 +1054,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  background: #ddca8a;
-  color: #000;
+  /* background: #ddca8a; */
+  color: white;
   font-family: 'Sofia Sans Condensed', sans-serif;
   font-weight: 700;
   font-size: 18px;
@@ -1047,19 +1085,19 @@ button {
 
 /* ── FEATURED PRODUCT CARD — Figma: Article 306×481px ── */
 .hm-feat-card {
-    position: relative;
-    background: #fff;
-    border: 1px solid #e9e9e9;
-    border-radius: 20px;
-    padding: 20px 20px 24px;
-    /* height: 481px; */
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    transition: box-shadow 0.25s, transform 0.25s;
-    overflow: hidden;
-    border-radius: 20px;
-    border: var(--stroke-weight-1, 1px) solid var(--color-grey-91, #E9E9E9);
+  position: relative;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 20px;
+  padding: 20px 20px 24px;
+  /* height: 481px; */
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: box-shadow 0.25s, transform 0.25s;
+  overflow: hidden;
+  border-radius: 20px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-grey-91, #E9E9E9);
 }
 
 .hm-feat-card:hover {
@@ -1096,13 +1134,13 @@ button {
 }
 
 .hm-feat-card__cat {
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #a8a8a8;
-    margin-bottom: 4px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a8a8a8;
+  margin-bottom: 4px;
 }
 
 /* Figma: product name — Sofia Sans Condensed Bold 22px */
@@ -1139,7 +1177,7 @@ button {
 }
 
 .hm-star--on {
-      color: rgba(255, 197, 50, 1);
+  color: rgba(255, 197, 50, 1);
 }
 
 .hm-star--off {
@@ -1186,6 +1224,11 @@ button {
   border-radius: 2px;
   background: #fff;
   z-index: 2;
+  position: absolute;
+  top: 22rem;
+  border-radius: 20px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-red-49, #EE440E);
+  color: var(--demo-82-leotheme-com-pomegranate, var(--color-red-49, #EE440E));
 }
 
 /* ── DIVIDER — Figma: Group 4 x=145 y=1614, two lines ── */
@@ -1206,12 +1249,14 @@ button {
   border: 1px solid #e9e9e9;
   border-radius: 4px;
   padding: 24px 24px 28px;
-  height: 560px;
+  /* height: 560px; */
   display: flex;
   flex-direction: column;
   cursor: pointer;
   transition: box-shadow 0.25s, transform 0.25s;
   overflow: hidden;
+  border-radius: 20px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-grey-91, #E9E9E9);
 }
 
 .hm-latest-card:hover {
@@ -1241,7 +1286,7 @@ button {
 }
 
 .hm-latest-card__body {
-  flex: 1;
+  /* flex: 1; */
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -1253,6 +1298,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 6px;
+  padding-top: 10px;
 }
 
 .hm-latest-card__name {
@@ -1262,7 +1308,7 @@ button {
   line-height: 1.3;
   color: #000;
   margin-bottom: 12px;
-  flex: 1;
+  /* flex: 1; */
 }
 
 .hm-latest-card__footer {
@@ -1325,7 +1371,7 @@ button {
 .hm-goal-card__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.2) 100%);
+  /* background: linear-gradient(135deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.2) 100%); */
 }
 
 .hm-goal-card__content {
@@ -1378,9 +1424,11 @@ button {
   padding: 0 135px;
 }
 
+
+
 .hm-trust__item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   padding: 30px 24px;
   border-right: 1px solid #e9e9e9;
@@ -1398,8 +1446,8 @@ button {
 /* Figma: Heading 3 — Sofia Sans Condensed Bold uppercase */
 .hm-trust__title {
   font-family: 'Sofia Sans Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 17px;
+  font-weight: 900;
+  font-size: 24px;
   text-transform: uppercase;
   color: #000;
   letter-spacing: 0.03em;
@@ -1409,7 +1457,7 @@ button {
 
 .hm-trust__sub {
   font-family: 'Instrument Sans', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   color: #a8a8a8;
 }
 
@@ -1432,16 +1480,17 @@ button {
   display: flex;
   align-items: flex-end;
   flex-shrink: 0;
+  gap: 20px;
 }
 
 /* Figma: Frame 54 — gold/green bg with 4.9 number */
 .hm-rating-card {
   background: #ddca8a;
   border-radius: 10px;
-  padding: 40px 28px;
+  /* padding: 40px 28px; */
   text-align: center;
   position: relative;
-  min-width: 170px;
+  /* min-width: 170px; */
   overflow: hidden;
 }
 
@@ -1476,8 +1525,8 @@ button {
 
 /* Figma: Rectangle 17 — product image 411×480 */
 .hm-testimonial__product {
-  width: 200px;
-  height: 230px;
+  width: 410px;
+  height: 480px;
   overflow: hidden;
   border-radius: 4px;
   margin-left: -8px;
@@ -1497,17 +1546,17 @@ button {
 
 /* Figma: 5 stars ~56×56 each */
 .hm-testimonial__stars {
-  font-size: 28px;
-  color: #ddca8a;
+  font-size: 40px;
+  color: rgba(255, 197, 50, 1);
   letter-spacing: 4px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* Figma: quote — Sofia Sans Condensed SemiBold 38px uppercase */
 .hm-testimonial__quote {
   font-family: 'Sofia Sans Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 26px;
+  font-weight: 900;
+  font-size: 44px;
   text-transform: uppercase;
   color: #000;
   line-height: 1.25;
@@ -1530,7 +1579,7 @@ button {
 /* Figma: icon-park-outline:quote 79×79 */
 .hm-testimonial__quote-icon {
   font-size: 64px;
-  color: #ddca8a;
+  color: rgba(36, 36, 36, 1);
   line-height: 0.8;
   flex-shrink: 0;
 }
@@ -1539,10 +1588,10 @@ button {
 .hm-testimonial__name {
   font-family: 'Sofia Sans Condensed', sans-serif;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 25px;
   text-transform: uppercase;
   color: #000;
-  margin-bottom: 4px;
+  margin-bottom: 0px;
 }
 
 .hm-testimonial__role {
@@ -1560,7 +1609,7 @@ button {
 .hm-testimonial__nav-btn {
   width: 44px;
   height: 44px;
-  border: 1px solid #e9e9e9;
+  transform: rotate(90deg);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1569,12 +1618,16 @@ button {
   background: #fff;
   cursor: pointer;
   transition: all 0.2s;
+  border-radius: 14.867px;
+  border: 1.062px solid #F2F2F2;
 }
 
 /* Figma: active (bottom) button has bg #ddca8a */
 .hm-testimonial__nav-btn--active {
   background: #ddca8a;
   border-color: #ddca8a;
+  border-radius: 14.867px;
+
 }
 
 .hm-testimonial__nav-btn:hover {
@@ -1588,7 +1641,9 @@ button {
 }
 
 .hm-marquee--dark {
-  background: #000;
+  /* background: #000; */
+      padding-top: 50px;
+
 }
 
 /* Figma: "Fitness trainings supplements merchandise" ~183px font */
@@ -1614,13 +1669,83 @@ button {
   white-space: nowrap;
 }
 
-.hm-marquee__word--outline {
+/* .hm-marquee__word--outline {
+  color: #DDCA8A;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #DDCA8A;
+  font-family: "Sofia Sans Condensed";
+  font-size: 183.14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 112.982%;
+  
+  text-transform: uppercase;
+} */
+
+.hm-marquee__word--supplement {
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #DDCA8A;
+  font-family: "Sofia Sans Condensed", sans-serif;
+  font-size: 183.14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 112.982%;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+/* ========== MERCHANDISE - SOLID GOLD ========== */
+.hm-marquee__word--merchandise {
+ color: rgba(221, 202, 138, 1);
+
+-webkit-text-stroke-width: 2px;
+-webkit-text-stroke-color: #DDCA8A;
+  font-family: "Sofia Sans Condensed", sans-serif;
+  font-size: 183.14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 112.982%;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+/* 
+.hm-marquee__word {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 130px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  padding: 12px 28px;
+  line-height: 1;
+  white-space: nowrap;
+} */
+
+.hm-marquee__word--gold-outline {
+  color: #DDCA8A;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #DDCA8A;
+  font-family: "Sofia Sans Condensed";
+  font-size: 183.14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 112.982%;
+  /* 206.915px */
+  text-transform: uppercase;
 }
 
 .hm-marquee__word--ghost {
-  color: rgba(255, 255, 255, 0.06);
+  /* color: rgba(255, 255, 255, 0.06); */
+  color: #DDCA8A;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #DDCA8A;
+  font-family: "Sofia Sans Condensed";
+  font-size: 183.14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 112.982%;
+  text-transform: uppercase;
 }
 
 .hm-marquee__word--gold-outline {
@@ -1655,10 +1780,10 @@ button {
 
 .hm-merch__img {
   width: 100%;
-  aspect-ratio: 1;
+  /* aspect-ratio: 1;
   overflow: hidden;
   border-radius: 4px;
-  background: #f0ede7;
+  background: #f0ede7; */
 }
 
 .hm-merch__img img {
@@ -1672,25 +1797,36 @@ button {
   transform: scale(1.06);
 }
 
+button.hm-insta__label {
+  border-radius: 25px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-black-solid, #000);
+  background: var(--color-white-solid, #FFF);
+  padding: 16px 23.14px 16px 23px;
+}
+
 .hm-merch__label {
   font-family: 'Instrument Sans', sans-serif;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 900;
+  font-size: 24px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  /* letter-spacing: 0.06em; */
   color: #000;
   text-align: center;
 }
 
 .hm-merch__link {
+  padding: 10px 30px;
   font-family: 'Instrument Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  color: #ddca8a;
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
   text-transform: lowercase;
   border-bottom: 1px solid #ddca8a;
   padding-bottom: 1px;
   transition: opacity 0.2s;
+  border-radius: 25px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-grey-91, #E9E9E9);
+  height: 50px;
 }
 
 .hm-merch__link:hover {
@@ -1737,18 +1873,22 @@ button {
   display: inline-block;
   border: 1px solid #e9e9e9;
   font-family: 'Instrument Sans', sans-serif;
-  font-size: 13px;
-  color: #a8a8a8;
+  font-size: 14px;
+  color: black;
   padding: 6px 12px;
   border-radius: 2px;
   margin-bottom: 14px;
+  font-weight: 600;
+  border-radius: 20px;
+  border: var(--stroke-weight-1, 1px) solid var(--color-black-solid, #000);
+  background: var(--color-white-solid, #FFF);
 }
 
 /* Figma: Heading 5 — Sofia Sans Condensed Bold */
 .hm-blog__title {
   font-family: 'Sofia Sans Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 28px;
+  font-weight: 900;
+  font-size: 44px;
   text-transform: uppercase;
   color: #000;
   line-height: 1.15;
@@ -1757,16 +1897,17 @@ button {
 
 .hm-blog__excerpt {
   font-family: 'Instrument Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #636363;
   line-height: 1.7;
   margin-bottom: 16px;
+  font-weight: 400;
 }
 
 .hm-blog__more {
   font-family: 'Instrument Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: #000;
   border-bottom: 1px solid #000;
   padding-bottom: 2px;
