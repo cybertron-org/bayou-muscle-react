@@ -1,4 +1,4 @@
-import { useNavigate,NavLink} from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 export default function AdminSidebar() {
   const navItems = [
@@ -7,10 +7,10 @@ export default function AdminSidebar() {
     ['Orders', '19'],
     ['Users', '12'],
     ['Settings', '04'],
+    ['Categories', '02'],
+    ['Discounts', '06'],
   ];
     
-  const navigate = useNavigate();
-
   return (
     <aside className="admin-sidebar">
       <div className="admin-brand">

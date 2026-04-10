@@ -1,12 +1,69 @@
+import { useState } from 'react';
 import AdminLayout from '../layouts/AdminLayout';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminProducts() {
+  const navigate = useNavigate();
   const products = [
-    ['Hydro Whey', 'Protein', 'In stock', '$42.00', '128'],
-    ['Focus Pre-Workout', 'Supplements', 'Low stock', '$36.00', '24'],
-    ['Training Tee', 'Apparel', 'In stock', '$28.00', '84'],
-    ['Lifting Belt', 'Gear', 'Draft', '$58.00', '12'],
+    {
+      name: 'Hydro Whey',
+      category: 'Supplements',
+      status: 'In stock',
+      price: '$42.00',
+      stock: '128',
+      summary: 'A high-protein recovery formula designed for clean post-workout nutrition.',
+      subcategories: ['Protein', 'Recovery', 'Whey'],
+      sku: 'BM-SUP-001',
+      note: 'Top seller with stable repeat orders.',
+    },
+    {
+      name: 'Focus Pre-Workout',
+      category: 'Supplements',
+      status: 'Low stock',
+      price: '$36.00',
+      stock: '24',
+      summary: 'Fast energy support with a sharp focus profile for training sessions.',
+      subcategories: ['Pre-Workout', 'Energy', 'Pump'],
+      sku: 'BM-SUP-014',
+      note: 'Low stock warning should be visible in future inventory flow.',
+    },
+    {
+      name: 'Training Tee',
+      category: 'Merchandise',
+      status: 'In stock',
+      price: '$28.00',
+      stock: '84',
+      summary: 'Lightweight training tee built for everyday gym wear and brand visibility.',
+      subcategories: ['Apparel', 'T-Shirts', 'Gym Wear'],
+      sku: 'BM-MER-004',
+      note: 'Good candidate for upsell blocks and bundle offers.',
+    },
+    {
+      name: 'Lifting Belt',
+      category: 'Merchandise',
+      status: 'Draft',
+      price: '$58.00',
+      stock: '12',
+      summary: 'Support accessory for heavy lifting and progression-focused training.',
+      subcategories: ['Gear', 'Accessories', 'Support'],
+      sku: 'BM-MER-019',
+      note: 'Still in draft state pending content completion.',
+    },
   ];
+
+  const [selectedProduct, setSelectedProduct] = useState(products[0]);
+
+  const getStatusClass = (status) => {
+    if (status === 'In stock') {
+      return 'admin-status--success';
+    }
+
+    if (status === 'Low stock') {
+      return 'admin-status--warning';
+    }
+
+    return 'admin-status--neutral';
+  };
 
   return (
     <AdminLayout title="Products" subtitle="Product catalog overview and management template.">
@@ -17,53 +74,68 @@ export default function AdminProducts() {
             <div className="admin-card-title">Products workspace</div>
             <div className="admin-card-subtitle">Use this route for product cards, filters, pricing, and inventory views.</div>
           </div>
-          <div className="admin-chip">4 products shown</div>
+          <div className="admin-actions-row" style={{ marginLeft: 'auto' }}>
+            <button className="admin-action-btn" onClick={() => navigate('/admin/products/add')} type="button">
+              + Add Product
+            </button>
+            <button className="admin-action-btn admin-action-btn--ghost" onClick={() => navigate('/admin/categories')} type="button">
+              Manage Categories
+            </button>
+            <div className="admin-chip">4 products shown</div>
+          </div>
         </div>
 
         <div className="admin-grid admin-grid--two">
           <div className="admin-list">
-            {products.map(([name, category, status, price, stock]) => (
-              <div className="admin-list-item" key={name}>
+            {products.map((product) => (
+              <button
+                className={`admin-list-item admin-list-item--button ${selectedProduct.name === product.name ? 'is-active' : ''}`}
+                key={product.name}
+                onClick={() => setSelectedProduct(product)}
+                type="button"
+              >
                 <div className="admin-list-copy">
-                  <div className="admin-list-title">{name}</div>
+                  <div className="admin-list-title">{product.name}</div>
                   <div className="admin-list-subtitle">
-                    {category} · {price} · {stock} units
+                    {product.category} · {product.price} · {product.stock} units
                   </div>
                 </div>
-                <span
-                  className={`admin-status ${
-                    status === 'In stock'
-                      ? 'admin-status--success'
-                      : status === 'Low stock'
-                        ? 'admin-status--warning'
-                        : 'admin-status--neutral'
-                  }`}
-                >
-                  {status}
+                <span className={`admin-status ${getStatusClass(product.status)}`}>
+                  {product.status}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
 
           <div className="admin-card" style={{ padding: '18px' }}>
-            <div className="admin-card-kicker">Quick edit</div>
-            <div className="admin-card-title">Add new product</div>
-            <div className="admin-card-subtitle">Static template form for later use.</div>
+            <div className="admin-card-kicker">Product summary</div>
+            <div className="admin-card-title">{selectedProduct.name}</div>
+            <div className="admin-card-subtitle">Click any product to view its dummy summary on the right.</div>
 
-            <div className="admin-form-grid">
-              <input className="admin-search" type="text" placeholder="Product name" />
-              <input className="admin-search" type="text" placeholder="Category" />
-              <input className="admin-search" type="text" placeholder="Price" />
-              <input className="admin-search" type="text" placeholder="Stock" />
-            </div>
-
-            <div className="admin-placeholder" style={{ minHeight: '120px', marginTop: '16px' }}>
+            <div className="admin-placeholder admin-placeholder--compact" style={{ marginTop: '16px' }}>
               <div>
-                <strong>Product preview</strong>
-                <div>Images, variants, and tags can live here later.</div>
+                <strong>{selectedProduct.name}</strong>
+                <div>{selectedProduct.category}</div>
+                <div>Price: {selectedProduct.price}</div>
+                <div>Stock: {selectedProduct.stock}</div>
+                <div>SKU: {selectedProduct.sku}</div>
+                <div>Status: {selectedProduct.status}</div>
+                <div style={{ marginTop: '10px' }}>{selectedProduct.summary}</div>
+                <div style={{ marginTop: '10px' }}>{selectedProduct.note}</div>
               </div>
             </div>
+
+            <div className="admin-tags-wrap admin-tags-wrap--space">
+              {selectedProduct.subcategories.map((item) => (
+                <span className="admin-tag" key={item}>
+                  {item}
+                </span>
+              ))}
+            </div>
+
           </div>
+
+
         </div>
       </section>
     </AdminLayout>
