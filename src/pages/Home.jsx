@@ -6,6 +6,7 @@ import "swiper/css/navigation";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Posts from "../components/Posts";
+import Marquee from "../components/Marquee";
 
 /* ── DATA ── */
 const featuredProducts = [
@@ -296,9 +297,11 @@ export default function Home() {
     };
   }, []);
 
-  const nav = (page, e) => {
+  const nav = (page, productId, e) => {
     if (e) e.preventDefault();
-    window.__navigate && window.__navigate(page);
+    // Agar productId na de (jaise shop, blog ke liye), tu e = productId hoga
+    const actualProductId = typeof productId === "object" ? null : productId;
+    window.__navigate && window.__navigate(page, actualProductId);
   };
 
   return (
@@ -307,7 +310,11 @@ export default function Home() {
 
       {/* HERO SECTION */}
       <section className="hm-hero">
-        <div className="hm-hero__bg" />
+        <div className="hm-hero__bg">
+          <video autoPlay loop muted playsInline>
+            <source src="/supplements/boxing.mp4" type="video/mp4" />
+          </video>
+        </div>
         <div className="hm-hero__overlay" />
         <div className="hm-hero__content">
           <h1 className="hm-hero__title">
@@ -316,7 +323,11 @@ export default function Home() {
             Creates Strength.
           </h1>
           <p className="hm-hero__label">Smart Fuel Sustains IT.</p>
-          <a href="#" className="hm-hero__btn" onClick={(e) => nav("shop", e)}>
+          <a
+            href="#"
+            className="hm-hero__btn"
+            onClick={(e) => nav("shop", null, e)}
+          >
             Shop Now
             <img src="/images/arrowdoen.png" alt="" />
           </a>
@@ -351,7 +362,7 @@ export default function Home() {
               <SwiperSlide key={p.id}>
                 <div
                   className="hm-feat-card"
-                  onClick={(e) => nav("product", e)}
+                  onClick={(e) => nav("productdetail", p.id, e)}
                 >
                   {p.badge && <span className="hm-badge">{p.badge}</span>}
                   <div className="hm-feat-card__body">
@@ -393,7 +404,11 @@ export default function Home() {
       <section className="hm-section hm-latest">
         <div className="hm-section__head">
           <h2 className="hm-section__heading">Latest Releases</h2>
-          <a href="#" className="hm-view-all" onClick={(e) => nav("shop", e)}>
+          <a
+            href="#"
+            className="hm-view-all"
+            onClick={(e) => nav("shop", null, e)}
+          >
             <span>view all products</span>
             <span className="hm-view-all__box">
               <svg
@@ -428,7 +443,7 @@ export default function Home() {
               <SwiperSlide key={p.id}>
                 <div
                   className="hm-latest-card"
-                  onClick={(e) => nav("product", e)}
+                  onClick={(e) => nav("product", p.id, e)}
                 >
                   {/* {p.badge && <span className="hm-badge">{p.badge}</span>} */}
                   <div className="hm-latest-card__body">
@@ -566,35 +581,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MARQUEE 1 */}
-      <div className="hm-marquee hm-marquee--dark">
-        <div className="hm-marquee__track">
-          <span className="hm-marquee__word hm-marquee__word--supplement">
-            SUPPLEMENTS
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--merchandise">
-            MERCHANDISE
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--supplement">
-            SUPPLEMENTS
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--merchandise">
-            MERCHANDISE
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--supplement">
-            SUPPLEMENTS
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--merchandise">
-            MERCHANDISE
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--supplement">
-            SUPPLEMENTS
-          </span>
-          <span className="hm-marquee__word hm-marquee__word--merchandise">
-            MERCHANDISE
-          </span>
-        </div>
-      </div>
+      <Marquee />
 
       {/* MERCHANDISE */}
       <section className="hm-section hm-merch">
@@ -612,7 +599,7 @@ export default function Home() {
               <a
                 href="#"
                 className="hm-merch__link"
-                onClick={(e) => nav("", e)}
+                onClick={(e) => nav("shop", null, e)}
               >
                 shop now
               </a>
@@ -656,7 +643,11 @@ export default function Home() {
       <section className="hm-section hm-blog">
         <div className="hm-section__head">
           <h2 className="hm-section__heading">READ THE LATEST</h2>
-          <a href="#" className="hm-view-all" onClick={(e) => nav("blog", e)}>
+          <a
+            href="#"
+            className="hm-view-all"
+            onClick={(e) => nav("blog", null, e)}
+          >
             <span>view all posts</span>
             <span className="hm-view-all__box">
               <svg
@@ -686,7 +677,7 @@ export default function Home() {
                 <a
                   href="#"
                   className="hm-blog__more"
-                  onClick={(e) => nav("blog", e)}
+                  onClick={(e) => nav("blog", null, e)}
                 >
                   Read more
                 </a>
@@ -696,7 +687,6 @@ export default function Home() {
         </div>
       </section>
 
-     
       <Posts />
 
       <Footer />
