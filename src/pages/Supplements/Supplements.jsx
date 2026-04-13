@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Supplements.css";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -12,8 +13,7 @@ const imgProduct6 = "/supplements/p7.png";
 const imgProduct7 = "/supplements/p8.png";
 const imgProductIso =
   "https://www.figma.com/api/mcp/asset/6251020d-3f48-4774-af7d-f4f598fbddda";
-const imgStarFull =
-  "/supplements/star.png";
+const imgStarFull = "/supplements/star.png";
 const imgStarHalf =
   "https://www.figma.com/api/mcp/asset/05b8ed64-2375-4fb2-b5ac-cc10075097e1";
 const imgStarFull2 =
@@ -29,7 +29,7 @@ const filterTabs = [
   "Clearance",
 ];
 
-const products = [
+const allProducts = [
   {
     id: 1,
     name: "ATOM Creatine Monohydrate",
@@ -106,6 +106,69 @@ const products = [
     badgeColor: "#61d7ba",
     img: imgProduct2,
   },
+  {
+    id: 9,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct3,
+  },
+  {
+    id: 10,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct4,
+  },
+  {
+    id: 11,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct1,
+  },
+  {
+    id: 12,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct2,
+  },
+  {
+    id: 13,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct3,
+  },
+  {
+    id: 14,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct4,
+  },
+  {
+    id: 15,
+    name: "ATOM Creatine Monohydrate",
+    cat: "Digestion",
+    price: "$723.15",
+    badge: "Best Seller",
+    badgeColor: "#61d7ba",
+    img: imgProduct1,
+  },
 ];
 
 const instaImgs = [
@@ -115,6 +178,9 @@ const instaImgs = [
   imgProduct4,
   imgProductIso,
 ];
+
+// Pagination settings
+const PRODUCTS_PER_PAGE = 8;
 
 function StarRating() {
   return (
@@ -145,7 +211,9 @@ function ProductCard({ product }) {
         </div>
 
         <div
-          className={`supp-card__img-wrap${product.isofit ? " supp-card__img-wrap--grey" : ""}`}
+          className={`supp-card__img-wrap${
+            product.isofit ? " supp-card__img-wrap--grey" : ""
+          }`}
         >
           <img
             src={product.img}
@@ -196,6 +264,65 @@ function ProductCard({ product }) {
 }
 
 export default function Supplements() {
+  // State for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilter, setActiveFilter] = useState("New Arrivals");
+  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
+
+  // Calculate pagination
+  const totalProducts = allProducts.length;
+  const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const currentProducts = allProducts.slice(startIndex, endIndex);
+
+  // Handle page change
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  // Handle next/previous
+  const nextPage = () => goToPage(currentPage + 1);
+  const prevPage = () => goToPage(currentPage - 1);
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push("...");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push("...");
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push("...");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push("...");
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
+  // Handle filter change
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    setCurrentPage(1);
+    // Yahan aap API call ya filter logic laga sakte hain
+    console.log("Filter changed to:", filter);
+  };
+
   return (
     <>
       <Header />
@@ -230,7 +357,13 @@ export default function Supplements() {
 
           <div className="supp-hero__filters">
             {filterTabs.map((tab) => (
-              <button key={tab} className="supp-filter-btn">
+              <button
+                key={tab}
+                className={`supp-filter-btn ${
+                  activeFilter === tab ? "supp-filter-btn--active" : ""
+                }`}
+                onClick={() => handleFilterChange(tab)}
+              >
                 {tab}
               </button>
             ))}
@@ -241,7 +374,10 @@ export default function Supplements() {
           <div className="supp-toolbar">
             <div className="supp-toolbar__view">
               <button
-                className="supp-view-btn supp-view-btn--active"
+                className={`supp-view-btn ${
+                  viewMode === "grid" ? "supp-view-btn--active" : ""
+                }`}
+                onClick={() => setViewMode("grid")}
                 aria-label="Grid view"
               >
                 <svg
@@ -256,7 +392,13 @@ export default function Supplements() {
                   <rect x="9" y="9" width="7" height="7" rx="1" />
                 </svg>
               </button>
-              <button className="supp-view-btn" aria-label="List view">
+              <button
+                className={`supp-view-btn ${
+                  viewMode === "list" ? "supp-view-btn--active" : ""
+                }`}
+                onClick={() => setViewMode("list")}
+                aria-label="List view"
+              >
                 <svg
                   width="16"
                   height="16"
@@ -270,7 +412,9 @@ export default function Supplements() {
               </button>
             </div>
 
-            <p className="supp-toolbar__count">Showing 1–12 of 28 results</p>
+            <p className="supp-toolbar__count">
+              Showing {startIndex + 1}–{Math.min(endIndex, totalProducts)} of {totalProducts} results
+            </p>
 
             <div className="supp-toolbar__right">
               <div className="supp-select-wrap">
@@ -289,7 +433,7 @@ export default function Supplements() {
                 <span className="supp-select-label supp-select-label--muted">
                   Show
                 </span>
-                <span className="supp-select-val">12</span>
+                <span className="supp-select-val">{PRODUCTS_PER_PAGE}</span>
                 <svg
                   className="supp-select-arrow"
                   width="6"
@@ -303,34 +447,63 @@ export default function Supplements() {
             </div>
           </div>
 
-          <div className="supp-grid">
-            {products.map((p) => (
+          <div className={`supp-grid ${viewMode === "list" ? "supp-grid--list" : ""}`}>
+            {currentProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
 
-          <nav className="supp-pagination">
-            <button className="supp-page-btn supp-page-btn--active">1</button>
-            <button className="supp-page-btn">2</button>
-            <button className="supp-page-btn">3</button>
-            <button
-              className="supp-page-btn supp-page-btn--next"
-              aria-label="Next"
-            >
-              <svg
-                width="15"
-                height="10"
-                viewBox="0 0 15 10"
-                fill="currentColor"
+          {/* Working Pagination */}
+          {totalPages > 1 && (
+            <nav className="supp-pagination">
+              {/* Previous Button */}
+              <button
+                className="supp-page-btn supp-page-btn--prev"
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                aria-label="Previous page"
               >
-                <path d="M0 5h13M9 1l4 4-4 4" />
-              </svg>
-            </button>
-          </nav>
+                <svg
+                  width="15"
+                  height="10"
+                  viewBox="0 0 15 10"
+                  fill="currentColor"
+                  style={{ transform: "rotate(180deg)" }}
+                >
+                  <path d="M0 5h13M9 1l4 4-4 4" />
+                </svg>
+              </button>
+
+              {/* Page Numbers */}
+              {getPageNumbers().map((page, index) => (
+                <button
+                  key={index}
+                  className={`supp-page-btn ${
+                    page === currentPage ? "supp-page-btn--active" : ""
+                  } ${page === "..." ? "supp-page-btn--dots" : ""}`}
+                  onClick={() => typeof page === "number" && goToPage(page)}
+                  disabled={page === "..."}
+                >
+                  {page}
+                </button>
+              ))}
+
+              {/* Next Button */}
+              <button
+                className="supp-page-btn supp-page-btn--next"
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                aria-label="Next page"
+              >
+                <svg width="15" height="10" viewBox="0 0 15 10" fill="currentColor">
+                  <path d="M0 5h13M9 1l4 4-4 4" />
+                </svg>
+              </button>
+            </nav>
+          )}
         </section>
 
         <Marquee />
-
         <Posts />
       </div>
 

@@ -1,0 +1,771 @@
+.about-page {
+  font-family: 'Instrument Sans', sans-serif;
+  background: #ffffff;
+  color: #000000;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.about-hero {
+  position: relative;
+  width: 100%;
+  height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.about-hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+}
+
+.about-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  opacity: 0.4;
+}
+
+.about-hero__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.about-hero__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 100px;
+  line-height: 90px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+
+.about-hero__sub {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ── SUPPORTING ATHLETES ── */
+.about-athletes {
+  padding: 90px 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+.about-athletes__wrap {
+  width: 1144px;
+  max-width: calc(100% - 270px);
+  display: flex;
+  flex-direction: column;
+}
+
+.about-ath-heading {
+  padding-bottom: 20px;
+}
+
+.about-ath-h1 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  font-size: 90px;
+  line-height: 78px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+
+.about-ath-h2 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  font-size: 90px;
+  line-height: 78px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #a8a8a8;
+  margin: 0;
+}
+
+.about-ath-body {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding-bottom: 40px;
+}
+
+.about-ath-p1 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 29.25px;
+  color: #000000;
+  margin: 0;
+}
+
+.about-ath-p2 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0;
+}
+
+/* STATS */
+.about-stats {
+  border-top: 1px solid #e9e9e9;
+  display: flex;
+  min-height: 226px;
+  margin-bottom: 35px;
+}
+
+.about-stats__left {
+  flex: 1;
+  border-right: 1px solid #e9e9e9;
+  padding: 50px 86px 50px 0;
+}
+
+.about-stats__right {
+  flex: 1;
+  padding: 50px 0 50px 85px;
+}
+
+.about-stats__num {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 90px;
+  line-height: 78px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #c99422;
+  margin: 0 0 1px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.about-stats__num span {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 90px;
+  line-height: 78px;
+  color: #c99422;
+}
+
+.about-stats__lbl {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 47.5px;
+  color: #000000;
+  margin: 0;
+}
+
+/* MISSION */
+.about-mission {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 32px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #000000;
+  margin: 0;
+}
+
+/* ── VIDEO SECTION ── */
+.about-video {
+  padding: 90px 135px 0;
+}
+
+.about-video__inner {
+  position: relative;
+  width: 100%;
+  height: 720px;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-video__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.about-video__overlay {
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  opacity: 0.5;
+}
+
+.about-video__center {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-video__ring-wrap {
+  position: relative;
+  width: 141.5px;
+  height: 141.5px;
+  border: 1px solid #ffffff;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-video__ring-spin {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: aboutRingSpin 8s linear infinite;
+}
+
+.about-video__ring-spin img {
+  width: 100px;
+  height: 100px;
+  display: block;
+}
+
+@keyframes aboutRingSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.about-video__play {
+  position: relative;
+  z-index: 4;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.about-video__play:hover {
+  transform: scale(1.08);
+}
+
+.about-video__play img {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* ── COMMITMENT TO QUALITY ── */
+.about-quality {
+  padding: 90px 135px 0;
+}
+
+.about-quality__wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-q-heading {
+  width: 1144px;
+  max-width: 100%;
+  padding-bottom: 20px;
+}
+
+.about-q-h1 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  font-size: 90px;
+  line-height: 78px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #a8a8a8;
+  margin: 0;
+}
+
+.about-q-h2 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  font-size: 90px;
+  line-height: 78px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+
+.about-quality__desc {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 29.25px;
+  color: #000000;
+  width: 1144px;
+  max-width: 100%;
+  /* margin: 0 0 40px; */
+}
+
+/* Quality layout: relative container, athlete left, cards center, bottle right */
+.about-quality__layout {
+  position: relative;
+  width: 1144px;
+  max-width: 100%;
+  min-height: 900px;
+}
+
+/* Athlete image — 479×625px, absolute left -356px */
+.about-quality__athlete {
+  position: absolute;
+  left: -356px;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.about-quality__athlete img {
+  width: 479px;
+  height: 625px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Supplement bottle — 358×360px, absolute right -346px */
+.about-quality__bottle {
+  position: absolute;
+  right: -346px;
+  top: -70px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.about-quality__bottle img {
+  width: 358px;
+  height: 360px;
+  object-fit: contain;
+  display: block;
+}
+
+/* 2x2 cards — positioned from top 274.56px */
+.about-quality__cards {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 30px;
+}
+
+/* Feature card — bg white, border #e9e9e9 1px, rounded 20px, p=41px */
+.about-card {
+  background: #ffffff;
+  border: 1px solid #e9e9e9;
+  border-radius: 20px;
+  padding: 41px;
+  display: flex;
+  flex-direction: column;
+  gap: 95px;
+  transition: box-shadow 0.25s;
+}
+
+.about-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.about-card__icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.about-card__icon img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+}
+
+.about-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.about-card__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 24px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+
+.about-card__desc {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0;
+}
+
+/* ── MARQUEE ── */
+.about-marquee {
+  margin-top: 90px;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.about-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: aboutMarquee 22s linear infinite;
+}
+
+@keyframes aboutMarquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.about-marquee__word {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 183px;
+  line-height: 1.13;
+  text-transform: uppercase;
+  color: #ddca8a;
+  padding: 0 32px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* ── INSTAGRAM ── */
+.about-insta {
+  padding: 90px 145px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 49px;
+}
+
+.about-insta__btn {
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 25px;
+  height: 50px;
+  padding: 0 32px;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 18px;
+  color: #000000;
+  text-transform: capitalize;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.about-insta__btn:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.about-insta__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 296px);
+  gap: 25px;
+}
+
+.about-insta__item {
+  width: 296px;
+  height: 296px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.about-insta__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.about-insta__item:hover img {
+  transform: scale(1.06);
+}
+
+/* ── TABLET ── max-width: 991px */
+@media (max-width: 991px) {
+  .about-hero {
+    height: 480px;
+  }
+
+  .about-hero__title {
+    font-size: 64px;
+    line-height: 64px;
+  }
+
+  .about-athletes {
+    padding: 60px 0 0;
+  }
+
+  .about-athletes__wrap {
+    max-width: calc(100% - 80px);
+  }
+
+  .about-ath-h1,
+  .about-ath-h2 {
+    font-size: 58px;
+    line-height: 56px;
+  }
+
+  .about-stats {
+    min-height: auto;
+  }
+
+  .about-stats__left {
+    padding: 30px 40px 30px 0;
+  }
+
+  .about-stats__right {
+    padding: 30px 0 30px 40px;
+  }
+
+  .about-stats__num,
+  .about-stats__num span {
+    font-size: 60px;
+    line-height: 58px;
+  }
+
+  .about-video {
+    padding: 60px 40px 0;
+  }
+
+  .about-video__inner {
+    height: 460px;
+  }
+
+  .about-quality {
+    padding: 60px 40px 0;
+  }
+
+  .about-q-h1,
+  .about-q-h2 {
+    font-size: 58px;
+    line-height: 56px;
+  }
+
+  .about-quality__layout {
+    min-height: auto;
+    padding-bottom: 40px;
+  }
+
+  .about-quality__athlete {
+    position: static;
+    margin-bottom: 30px;
+  }
+
+  .about-quality__athlete img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+  }
+
+  .about-quality__bottle {
+    position: static;
+    margin-top: 30px;
+  }
+
+  .about-quality__bottle img {
+    width: 220px;
+    height: auto;
+  }
+
+  .about-quality__cards {
+    position: static;
+    margin-top: 30px;
+  }
+
+  .about-marquee__word {
+    font-size: 100px;
+    padding: 0 20px;
+  }
+
+  .about-insta {
+    padding: 60px 40px;
+    gap: 32px;
+  }
+
+  .about-insta__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .about-insta__item {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+/* ── MOBILE ── max-width: 767px */
+@media (max-width: 767px) {
+  .about-hero {
+    height: 340px;
+  }
+
+  .about-hero__title {
+    font-size: 40px;
+    line-height: 44px;
+  }
+
+  .about-hero__sub {
+    font-size: 14px;
+  }
+
+  .about-athletes {
+    padding: 48px 0 0;
+  }
+
+  .about-athletes__wrap {
+    max-width: calc(100% - 40px);
+  }
+
+  .about-ath-h1,
+  .about-ath-h2 {
+    font-size: 36px;
+    line-height: 38px;
+  }
+
+  .about-ath-p1 {
+    font-size: 15px;
+    line-height: 24px;
+  }
+
+  .about-stats {
+    flex-direction: column;
+  }
+
+  .about-stats__left {
+    border-right: none;
+    border-bottom: 1px solid #e9e9e9;
+    padding: 24px 0;
+  }
+
+  .about-stats__right {
+    padding: 24px 0;
+  }
+
+  .about-stats__num,
+  .about-stats__num span {
+    font-size: 48px;
+    line-height: 48px;
+  }
+
+  .about-stats__lbl {
+    font-size: 16px;
+    line-height: 28px;
+  }
+
+  .about-mission {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .about-video {
+    padding: 48px 20px 0;
+  }
+
+  .about-video__inner {
+    height: 260px;
+    border-radius: 12px;
+  }
+
+  .about-quality {
+    padding: 48px 20px 0;
+  }
+
+  .about-q-h1,
+  .about-q-h2 {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  .about-quality__desc {
+    font-size: 15px;
+    line-height: 24px;
+  }
+
+  .about-quality__cards {
+    grid-template-columns: 1fr;
+  }
+
+  .about-card {
+    gap: 32px;
+    padding: 24px;
+  }
+
+  .about-marquee__word {
+    font-size: 56px;
+    padding: 0 16px;
+  }
+
+  .about-insta {
+    padding: 48px 20px;
+    gap: 24px;
+  }
+
+  .about-insta__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .about-insta__btn {
+    font-size: 13px;
+    padding: 0 18px;
+  }
+}

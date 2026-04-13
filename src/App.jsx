@@ -5,10 +5,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home        from './pages/Home';
 import Supplements from './pages/Supplements/Supplements';
 import Shop        from './pages/Shop';
-import ProductDetail from './pages/ProductDetail';
+import ProductDetail from './pages/ProductDetail/ProductDetail';
 import Contact     from './pages/Contact';
 import Cart        from './pages/Cart';
 import Blog        from './pages/Blog';
+import About        from './pages/About/About';
 import Merchandise from './pages/Merchandise/Merchandise';
 
 /* ─────────────────────────────────────────────
@@ -16,9 +17,10 @@ import Merchandise from './pages/Merchandise/Merchandise';
 ───────────────────────────────────────────── */
 const ROUTES = {
   home:          (nav) => <Home />,
+  about:         (nav) => <About />,
   supplements:   (nav) => <Supplements />,
   shop:          (nav) => <Shop />,
-  Merchandise:   (nav) => <Merchandise />,
+  merchandise:   (nav) => <Merchandise />,
   product:       (nav) => <ProductDetail onNavigate={nav} productId={window.__productId} />,
   productdetail: (nav) => <ProductDetail onNavigate={nav} productId={window.__productId} />,
   contact:       (nav) => <Contact />,
