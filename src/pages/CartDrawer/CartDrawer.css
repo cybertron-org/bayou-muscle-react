@@ -1,0 +1,253 @@
+.cd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1199;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.cd-overlay--open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.cd-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 330px;
+  background: #ffffff;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+}
+
+.cd-drawer--open {
+  transform: translateX(0);
+}
+
+/* ── HEADER ── border-bottom #e9e9e9 1px, px 15px, py 14-16px */
+.cd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 15px 16px;
+  border-bottom: 1px solid #e9e9e9;
+  flex-shrink: 0;
+}
+
+/* "Shopping Cart" — Instrument Sans Bold 18px #000, capitalize, lh 29.25px */
+.cd-header__title {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 29.25px;
+  color: #000000;
+  text-transform: capitalize;
+}
+
+.cd-header__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.cd-header__close:hover {
+  opacity: 0.6;
+}
+
+/* ── BODY ── flex 1, scrollable */
+.cd-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px 15px 0;
+}
+
+.cd-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── CART ITEM ── */
+.cd-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+}
+
+/* Product image wrapper — 70×70px */
+.cd-item__img-wrap {
+  width: 70px;
+  height: 70px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f4f4f4;
+}
+
+.cd-item__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.cd-item__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Product name — Instrument Sans Medium 14px #000 lh 20px */
+.cd-item__name {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Price line — qty in #bfbfbf, amount in bold */
+.cd-item__price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  margin: 0;
+}
+
+.cd-item__qty {
+  color: #bfbfbf;
+}
+
+.cd-item__amount {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #000000;
+}
+
+/* Remove item × button */
+.cd-item__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.cd-item__remove:hover {
+  opacity: 0.5;
+}
+
+/* ── FOOTER ── border-top #e9e9e9 1px, px 10px, pt 11px, pb 10px, gap 20px */
+.cd-footer {
+  flex-shrink: 0;
+  border-top: 1px solid #e9e9e9;
+  padding: 11px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Subtotal row */
+.cd-subtotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+/* "Subtotal:" — Instrument Sans Regular 16px #000 lh 30px */
+.cd-subtotal__label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 30px;
+  color: #000000;
+}
+
+/* "$809.75" — Sofia Sans Condensed Bold 24px #000 lh 30px */
+.cd-subtotal__value {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000000;
+}
+
+/* Shared button base */
+.cd-btn {
+  width: 100%;
+  border-radius: 30px;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 24.89px;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  padding: 11.06px 20px 12.94px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+/* VIEW CART — bg #000, text #fff */
+.cd-btn--view {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+}
+
+.cd-btn--view:hover {
+  background: #ddca8a;
+  color: #000000;
+}
+
+/* CHECKOUT — border #000 1px, text #000, bg transparent */
+.cd-btn--checkout {
+  background: transparent;
+  color: #000000;
+  border: 1px solid #000000;
+  padding: 10px 31px 15px;
+}
+
+.cd-btn--checkout:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* ── RESPONSIVE ── Tablet max-width: 991px */
+@media (max-width: 991px) {
+  .cd-drawer {
+    width: 340px;
+  }
+}
+
+/* ── RESPONSIVE ── Mobile max-width: 767px */
+@media (max-width: 767px) {
+  .cd-drawer {
+    width: 100%;
+  }
+}
