@@ -324,7 +324,7 @@ export default function Home() {
           <a
             href="#"
             className="hm-hero__btn"
-            onClick={(e) => nav("", null, e)}
+            onClick={(e) => nav("supplements", null, e)}
           >
             
             <img src="/blogs/shop.png" alt="" />
