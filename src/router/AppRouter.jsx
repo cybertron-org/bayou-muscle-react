@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Shop from '../pages/Shop';
-import ProductDetail from '../pages/ProductDetail';
+import ProductDetail from '../pages/ProductDetail/ProductDetail';
 import Contact from '../pages/Contact';
 import Cart from '../pages/Cart';
 import Blog from '../pages/Blog';

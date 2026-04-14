@@ -2,13 +2,13 @@ import { NavLink } from 'react-router-dom';
 
 export default function AdminSidebar({ isDrawerOpen, onClose }) {
   const navItems = [
-    ['Dashboard', '08'],
-    ['Products', '24'],
-    ['Orders', '19'],
-    ['Users', '12'],
-    ['Settings', '04'],
-    ['Categories', '02'],
-    ['Discounts', '06'],
+    ['Dashboard'],
+    ['Products'],
+    ['Orders'],
+    ['Users'],
+    ['Settings'],
+    ['Categories'],
+    ['Discounts'],
   ];
     
   return (
@@ -36,7 +36,7 @@ export default function AdminSidebar({ isDrawerOpen, onClose }) {
           }
         >
           <span>{label}</span>
-          <span className="admin-nav-pill">{count}</span>
+          
         </NavLink>
       ))}
     </nav>

@@ -658,10 +658,195 @@
   letter-spacing: 0.08em;
 }
 
+.admin-category-card-meta {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.admin-category-card-actions,
+.admin-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-category-card-actions {
+  justify-content: flex-end;
+}
+
+.admin-action-menu-wrap {
+  position: relative;
+}
+
+.admin-action-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 130px;
+  border-radius: 12px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-white);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.admin-action-menu-item {
+  width: 100%;
+  min-height: 38px;
+  border: none;
+  background: transparent;
+  color: var(--admin-black);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  padding: 0 12px;
+}
+
+.admin-action-menu-item:hover {
+  background: rgba(221, 202, 138, 0.16);
+}
+
+.admin-action-menu-item--danger {
+  color: #c83d0b;
+}
+
 .admin-category-card-copy {
   color: var(--admin-soft);
   line-height: 1.6;
   font-size: 14px;
+}
+
+.admin-subcategory-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.admin-subcategory-item {
+  align-items: center;
+}
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(20, 20, 20, 0.58);
+  backdrop-filter: blur(6px);
+}
+
+.admin-modal {
+  width: min(720px, 100%);
+  border: 1px solid rgba(233, 233, 233, 0.95);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 245, 238, 0.98));
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.18);
+  padding: 22px;
+}
+
+.admin-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-modal-close {
+  flex-shrink: 0;
+}
+
+.admin-modal-body {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.admin-icon-btn--compact {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.admin-icon-btn--ghost {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-soft);
+}
+
+.admin-icon-btn--ghost:hover {
+  border-color: rgba(221, 202, 138, 0.9);
+  color: var(--admin-black);
+}
+
+.admin-kebab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.admin-kebab-dots {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.admin-kebab-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.admin-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-toggle-btn {
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--admin-soft);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 14px;
+}
+
+.admin-toggle-btn.is-active {
+  border-color: var(--admin-gold);
+  background: rgba(221, 202, 138, 0.18);
+  color: var(--admin-black);
+}
+
+.admin-modal-error {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(238, 68, 14, 0.1);
+  color: #c83d0b;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .admin-discount-switcher {
@@ -1297,6 +1482,45 @@
 
   .admin-card-head {
     margin-bottom: 14px;
+  }
+
+  .admin-category-card-top {
+    flex-direction: column;
+  }
+
+  .admin-category-card-meta {
+    justify-items: start;
+  }
+
+  .admin-list-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .admin-action-menu {
+    left: 0;
+    right: auto;
+  }
+
+  .admin-modal-backdrop {
+    padding: 12px;
+  }
+
+  .admin-modal {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .admin-modal-head {
+    flex-direction: column;
+  }
+
+  .admin-toggle-group {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-modal-actions {
+    flex-direction: column;
   }
 
   .admin-action-btn,
