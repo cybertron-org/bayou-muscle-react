@@ -10,15 +10,6 @@ const emptyCategoryForm = {
 	parentId: '',
 };
 
-const createSlug = (value) =>
-	value
-		.toLowerCase()
-		.trim()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
-
-const createId = (prefix, value) => `${prefix}-${createSlug(value)}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-
 const formatDate = (value) => {
 	if (!value) {
 		return '--';
@@ -34,7 +25,7 @@ const formatDate = (value) => {
 
 export default function AdminCategories() {
 	const [selectedCategoryId, setSelectedCategoryId] = useState('');
-	const { categories, setCategories, isLoading, error, refetch } = useCategories();
+	const { categories, isLoading, error, addCategory, updateExistingCategory, deleteExistingCategory, refetch } = useCategories();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [modalMode, setModalMode] = useState('add');
 	const [editingTarget, setEditingTarget] = useState(null);
@@ -43,6 +34,7 @@ export default function AdminCategories() {
 	const [formError, setFormError] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const pageSize = 8;
 
 	const selectedCategory = categories.find((item) => item.id === selectedCategoryId) || categories[0] || null;
@@ -245,9 +237,8 @@ export default function AdminCategories() {
 		setIsModalOpen(true);
 	};
 
-	const handleSubmitCategory = (event) => {
+	const handleSubmitCategory = async (event) => {
 		event.preventDefault();
-		const nowIso = new Date().toISOString();
 
 		const title = categoryForm.title.trim();
 		if (!title) {
@@ -256,295 +247,240 @@ export default function AdminCategories() {
 		}
 
 		if (modalMode === 'add') {
-			if (categoryForm.type === 'parent') {
-				const duplicateParent = categories.some((item) => item.title.toLowerCase() === title.toLowerCase());
-				if (duplicateParent) {
-					showFormError('A parent category with that title already exists.');
-					return;
-				}
+			if (isSubmitting) return;
+			setIsSubmitting(true);
 
-				const newParentId = createId('parent', title);
-				setCategories((previous) => [
-					...previous,
-					{
-						id: String(newParentId),
-						parentId: null,
+			try {
+				if (categoryForm.type === 'parent') {
+					const duplicateParent = categories.some((item) => item.title.toLowerCase() === title.toLowerCase());
+					if (duplicateParent) {
+						showFormError('A parent category with that title already exists.');
+						setIsSubmitting(false);
+						return;
+					}
+
+					const result = await addCategory({
 						title,
 						status: categoryForm.status,
-						slug: createSlug(title),
-						createdAt: nowIso,
-						updatedAt: nowIso,
-						subcategories: [],
-					},
-				]);
-				setSelectedCategoryId(newParentId);
-				resetModalState();
-				toast.success('Parent category added successfully.');
-				return;
-			}
+						parentId: null,
+					});
 
-			const parentId = categoryForm.parentId || selectedCategory?.id;
-			const parent = categories.find((item) => item.id === parentId);
-			if (!parent) {
-				showFormError('Choose a valid parent category.');
-				return;
-			}
-
-			const duplicateSubcategory = parent.subcategories.some((item) => item.title.toLowerCase() === title.toLowerCase());
-			if (duplicateSubcategory) {
-				showFormError('That subcategory already exists under the selected parent.');
-				return;
-			}
-
-			setCategories((previous) =>
-				previous.map((item) =>
-					item.id === parentId
-						? {
-							...item,
-							updatedAt: nowIso,
-							subcategories: [
-								...item.subcategories,
-								{
-									id: createId(parentId, title),
-									parentId,
-									title,
-									status: categoryForm.status,
-									createdAt: nowIso,
-									updatedAt: nowIso,
-								},
-							],
-						}
-						: item,
-				),
-			);
-			setSelectedCategoryId(parentId);
-			resetModalState();
-			toast.success('Subcategory added successfully.');
-			return;
-		}
-
-		if (editingTarget?.type === 'parent') {
-			const currentParent = categories.find((item) => item.id === editingTarget.id);
-			if (!currentParent) {
-				showFormError('That category is no longer available.');
-				return;
-			}
-
-			if (categoryForm.type === 'parent') {
-				const duplicateParent = categories.some(
-					(item) => item.id !== currentParent.id && item.title.toLowerCase() === title.toLowerCase(),
-				);
-				if (duplicateParent) {
-					showFormError('A parent category with that title already exists.');
+					setSelectedCategoryId(result.item.id);
+					resetModalState();
+					toast.success('Parent category added successfully.');
+					setIsSubmitting(false);
 					return;
 				}
 
-				setCategories((previous) =>
-					previous.map((item) =>
-						item.id === currentParent.id
-							? {
-								...item,
-								title,
-								status: categoryForm.status,
-								updatedAt: nowIso,
-							}
-							: item,
-					),
-				);
-				setSelectedCategoryId(currentParent.id);
-				resetModalState();
-				toast.success('Parent category updated successfully.');
-				return;
-			}
-
-			const targetParentId = categoryForm.parentId || selectedCategory?.id;
-			if (!targetParentId || targetParentId === currentParent.id) {
-				showFormError('Choose a different parent category.');
-				return;
-			}
-
-			const targetParent = categories.find((item) => item.id === targetParentId);
-			if (!targetParent) {
-				showFormError('The selected parent category is no longer available.');
-				return;
-			}
-
-			const duplicateSubcategory = targetParent.subcategories.some((item) => item.title.toLowerCase() === title.toLowerCase());
-			if (duplicateSubcategory) {
-				showFormError('That subcategory already exists under the selected parent.');
-				return;
-			}
-
-			const movedSubcategory = {
-				id: createId(targetParentId, title),
-				parentId: targetParentId,
-				title,
-				status: categoryForm.status,
-				createdAt: nowIso,
-				updatedAt: nowIso,
-			};
-
-			setCategories((previous) =>
-				previous.reduce((accumulator, item) => {
-					if (item.id === currentParent.id) {
-						return accumulator;
-					}
-
-					if (item.id === targetParentId) {
-						accumulator.push({
-							...item,
-							updatedAt: nowIso,
-							subcategories: [...item.subcategories, movedSubcategory],
-						});
-						return accumulator;
-					}
-
-					accumulator.push(item);
-					return accumulator;
-				}, []),
-			);
-			setSelectedCategoryId(targetParentId);
-			resetModalState();
-			toast.success('Parent category converted and subcategory moved successfully.');
-			return;
-		}
-
-		const currentParent = categories.find((item) => item.id === editingTarget?.parentId);
-		const currentSubcategory = currentParent?.subcategories.find((item) => item.id === editingTarget?.id);
-		if (!currentParent || !currentSubcategory) {
-			showFormError('That subcategory is no longer available.');
-			return;
-		}
-
-		if (categoryForm.type === 'subcategory') {
-			const targetParentId = categoryForm.parentId || currentParent.id;
-			const targetParent = categories.find((item) => item.id === targetParentId);
-			if (!targetParent) {
-				showFormError('The selected parent category is no longer available.');
-				return;
-			}
-
-			const duplicateSubcategory = targetParent.subcategories.some(
-				(item) => item.id !== currentSubcategory.id && item.title.toLowerCase() === title.toLowerCase(),
-			);
-			if (duplicateSubcategory) {
-				showFormError('That subcategory already exists under the selected parent.');
-				return;
-			}
-
-			setCategories((previous) =>
-				previous.map((item) => {
-					if (item.id === currentParent.id && currentParent.id === targetParentId) {
-						return {
-							...item,
-							updatedAt: nowIso,
-							subcategories: item.subcategories.map((subcategory) =>
-								subcategory.id === currentSubcategory.id
-									? { ...subcategory, title, status: categoryForm.status, updatedAt: nowIso }
-									: subcategory,
-							),
-						};
-					}
-
-					if (item.id === currentParent.id) {
-						return {
-							...item,
-							subcategories: item.subcategories.filter((subcategory) => subcategory.id !== currentSubcategory.id),
-						};
-					}
-
-					if (item.id === targetParentId) {
-						return {
-							...item,
-							updatedAt: nowIso,
-							subcategories: [
-								...item.subcategories,
-								{
-									id: currentSubcategory.id,
-									parentId: targetParentId,
-									title,
-									status: categoryForm.status,
-									createdAt: currentSubcategory.createdAt || nowIso,
-									updatedAt: nowIso,
-								},
-							],
-						};
-					}
-
-					return item;
-				}),
-			);
-			setSelectedCategoryId(targetParentId);
-			resetModalState();
-			toast.success('Subcategory updated successfully.');
-			return;
-		}
-
-		const duplicateParent = categories.some((item) => item.id !== currentParent.id && item.title.toLowerCase() === title.toLowerCase());
-		if (duplicateParent) {
-			showFormError('A parent category with that title already exists.');
-			return;
-		}
-
-		const newParentId = createId('parent', title);
-		setCategories((previous) =>
-			previous
-				.map((item) => {
-					if (item.id === currentParent.id) {
-						return {
-							...item,
-							subcategories: item.subcategories.filter((subcategory) => subcategory.id !== currentSubcategory.id),
-						};
-					}
-
-					return item;
-				})
-				.concat({
-					id: String(newParentId),
-					parentId: null,
-					title,
-					status: categoryForm.status,
-					slug: createSlug(title),
-					createdAt: nowIso,
-					updatedAt: nowIso,
-					subcategories: [],
-				}),
-		);
-		setSelectedCategoryId(newParentId);
-		resetModalState();
-		toast.success('Category structure updated successfully.');
-	};
-
-	const handleRemoveSubcategory = (parentId, subcategoryId) => {
-		setOpenActionMenu(null);
-		const parent = categories.find((item) => item.id === parentId);
-		const removedSubcategory = parent?.subcategories.find((subcategory) => subcategory.id === subcategoryId);
-		setCategories((previous) =>
-			previous.map((item) => {
-				if (item.id !== parentId) {
-					return item;
+				const parentId = categoryForm.parentId || selectedCategory?.id;
+				const parent = categories.find((item) => item.id === parentId);
+				if (!parent) {
+					showFormError('Choose a valid parent category.');
+					setIsSubmitting(false);
+					return;
 				}
 
-				return {
-					...item,
-					updatedAt: new Date().toISOString(),
-					subcategories: item.subcategories.filter((subcategory) => subcategory.id !== subcategoryId),
-				};
-			}),
-		);
-		toast.success(`${removedSubcategory?.title || 'Subcategory'} deleted successfully.`);
+				const duplicateSubcategory = parent.subcategories.some((item) => item.title.toLowerCase() === title.toLowerCase());
+				if (duplicateSubcategory) {
+					showFormError('That subcategory already exists under the selected parent.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				await addCategory({
+					title,
+					status: categoryForm.status,
+					parentId,
+				});
+
+				setSelectedCategoryId(parentId);
+				resetModalState();
+				toast.success('Subcategory added successfully.');
+				setIsSubmitting(false);
+				return;
+			} catch (err) {
+				const errorMessage = err?.message || 'Failed to create category.';
+				showFormError(errorMessage);
+				setIsSubmitting(false);
+				return;
+			}
+
+			setIsSubmitting(false);
+			return;
+		}
+
+		if (!editingTarget) {
+			showFormError('No category selected for editing.');
+			return;
+		}
+
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+
+		try {
+			if (editingTarget.type === 'parent') {
+				const currentParent = categories.find((item) => item.id === editingTarget.id);
+				if (!currentParent) {
+					showFormError('That category is no longer available.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				if (categoryForm.type === 'parent') {
+					const duplicateParent = categories.some(
+						(item) => item.id !== currentParent.id && item.title.toLowerCase() === title.toLowerCase(),
+					);
+					if (duplicateParent) {
+						showFormError('A parent category with that title already exists.');
+						setIsSubmitting(false);
+						return;
+					}
+
+					await updateExistingCategory(currentParent.id, {
+						title,
+						status: categoryForm.status,
+						parentId: null,
+					});
+					setSelectedCategoryId(currentParent.id);
+					resetModalState();
+					toast.success('Parent category updated successfully.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				const targetParentId = categoryForm.parentId || selectedCategory?.id;
+				if (!targetParentId || targetParentId === currentParent.id) {
+					showFormError('Choose a different parent category.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				const targetParent = categories.find((item) => item.id === targetParentId);
+				if (!targetParent) {
+					showFormError('The selected parent category is no longer available.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				const duplicateSubcategory = targetParent.subcategories.some((item) => item.title.toLowerCase() === title.toLowerCase());
+				if (duplicateSubcategory) {
+					showFormError('That subcategory already exists under the selected parent.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				await updateExistingCategory(currentParent.id, {
+					title,
+					status: categoryForm.status,
+					parentId: targetParentId,
+				});
+				setSelectedCategoryId(targetParentId);
+				resetModalState();
+				toast.success('Parent category converted and moved successfully.');
+				setIsSubmitting(false);
+				return;
+			}
+
+			const currentParent = categories.find((item) => item.id === editingTarget.parentId);
+			const currentSubcategory = currentParent?.subcategories.find((item) => item.id === editingTarget.id);
+			if (!currentParent || !currentSubcategory) {
+				showFormError('That subcategory is no longer available.');
+				setIsSubmitting(false);
+				return;
+			}
+
+			if (categoryForm.type === 'subcategory') {
+				const targetParentId = categoryForm.parentId || currentParent.id;
+				const targetParent = categories.find((item) => item.id === targetParentId);
+				if (!targetParent) {
+					showFormError('The selected parent category is no longer available.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				const duplicateSubcategory = targetParent.subcategories.some(
+					(item) => item.id !== currentSubcategory.id && item.title.toLowerCase() === title.toLowerCase(),
+				);
+				if (duplicateSubcategory) {
+					showFormError('That subcategory already exists under the selected parent.');
+					setIsSubmitting(false);
+					return;
+				}
+
+				await updateExistingCategory(currentSubcategory.id, {
+					title,
+					status: categoryForm.status,
+					parentId: targetParentId,
+				});
+				setSelectedCategoryId(targetParentId);
+				resetModalState();
+				toast.success('Subcategory updated successfully.');
+				setIsSubmitting(false);
+				return;
+			}
+
+			const duplicateParent = categories.some((item) => item.title.toLowerCase() === title.toLowerCase());
+			if (duplicateParent) {
+				showFormError('A parent category with that title already exists.');
+				setIsSubmitting(false);
+				return;
+			}
+
+			const result = await updateExistingCategory(currentSubcategory.id, {
+				title,
+				status: categoryForm.status,
+				parentId: null,
+			});
+			setSelectedCategoryId(result.item.id);
+			resetModalState();
+			toast.success('Category structure updated successfully.');
+			setIsSubmitting(false);
+			return;
+		} catch (err) {
+			const errorMessage = err?.message || 'Failed to update category.';
+			showFormError(errorMessage);
+			setIsSubmitting(false);
+			return;
+		}
 	};
 
-	const handleRemoveParentCategory = (parentId) => {
+	const handleRemoveSubcategory = async (parentId, subcategoryId) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
 		setOpenActionMenu(null);
-		const removedParent = categories.find((item) => item.id === parentId);
-		const wasSelected = selectedCategoryId === parentId;
-		setCategories((previous) => previous.filter((item) => item.id !== parentId));
-		if (wasSelected) {
-			const fallbackCategory = categories.find((item) => item.id !== parentId);
-			setSelectedCategoryId(fallbackCategory?.id || '');
+
+		try {
+			const parent = categories.find((item) => item.id === parentId);
+			const removedSubcategory = parent?.subcategories.find((subcategory) => subcategory.id === subcategoryId);
+			await deleteExistingCategory(subcategoryId);
+			toast.success(`${removedSubcategory?.title || 'Subcategory'} deleted successfully.`);
+		} catch (err) {
+			const errorMessage = err?.message || 'Failed to delete subcategory.';
+			showFormError(errorMessage);
+		} finally {
+			setIsSubmitting(false);
 		}
-		toast.success(`${removedParent?.title || 'Category'} deleted successfully.`);
+	};
+
+	const handleRemoveParentCategory = async (parentId) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		setOpenActionMenu(null);
+
+		try {
+			const removedParent = categories.find((item) => item.id === parentId);
+			const wasSelected = selectedCategoryId === parentId;
+			await deleteExistingCategory(parentId);
+			if (wasSelected) {
+				setSelectedCategoryId('');
+			}
+			toast.success(`${removedParent?.title || 'Category'} deleted successfully.`);
+		} catch (err) {
+			const errorMessage = err?.message || 'Failed to delete category.';
+			showFormError(errorMessage);
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	const toggleActionMenu = (event, payload) => {
@@ -595,7 +531,7 @@ export default function AdminCategories() {
 			<section className="admin-card">
 				<div className="admin-card-head admin-card-head--categories">
 					<div>
-						<div className="admin-card-kicker">Catalog structure</div>
+						<div className="admin-card-kicker"></div>
 						<div className="admin-card-title">Category table</div>
 						<div className="admin-card-subtitle">
 							All parent categories and subcategories are listed together with searchable, paginated rows.
@@ -620,40 +556,40 @@ export default function AdminCategories() {
 					</div>
 				</div>
 
-				<div className="">
+				<div className="admin-table-wrap">
 					<table className="admin-table">
 						<thead>
-							<tr>
-								<th>Title</th>
-								<th>Parent</th>
-								<th>Status</th>
-								<th>Created At</th>
-								<th>Updated At</th>
-								<th>Actions</th>
+							<tr >
+								<th ><strong>Title</strong></th>
+								<th><strong>Parent</strong></th>
+								<th><strong>Status</strong></th>
+								<th><strong>Created At</strong></th>
+								<th><strong>Updated At</strong></th>
+								<th><strong>Actions</strong></th>
 							</tr>
 						</thead>
 						<tbody>
 							{paginatedRows.length ? (
 								paginatedRows.map((row) => (
 									<tr key={row.rowKey}>
-										<td>
-											<strong>{row.title}</strong>
+										<td data-label="Title">
+											{row.title}
 										</td>
-										<td>
+										<td data-label="Parent">
 											{row.parentTitle === '--' ? (
-												<span className="admin-status admin-status--neutral">Parent</span>
+												<span className="">-</span>
 											) : (
 												row.parentTitle
 											)}
 										</td>
-										<td>
+										<td data-label="Status">
 											<span className={`admin-status admin-status--${row.status === 'active' ? 'success' : 'warning'}`}>
 												{row.status}
 											</span>
 										</td>
-										<td>{formatDate(row.createdAt)}</td>
-										<td>{formatDate(row.updatedAt)}</td>
-										<td>
+										<td data-label="Created At">{formatDate(row.createdAt)}</td>
+										<td data-label="Updated At">{formatDate(row.updatedAt)}</td>
+										<td data-label="Actions">
 											<div className="admin-action-menu-wrap">
 												<button
 													className="admin-icon-btn admin-icon-btn--compact admin-icon-btn--ghost admin-kebab-btn"
@@ -838,8 +774,8 @@ export default function AdminCategories() {
 								<button className="admin-action-btn admin-action-btn--ghost" onClick={resetModalState} type="button">
 									Cancel
 								</button>
-								<button className="admin-action-btn" type="submit">
-									{modalMode === 'edit' ? 'Update category' : 'Save category'}
+								<button className="admin-action-btn" type="submit" disabled={isSubmitting}>
+									{isSubmitting ? 'Saving...' : modalMode === 'edit' ? 'Update category' : 'Save category'}
 								</button>
 							</div>
 						</form>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetchCategories } from '../services/CategoriesService';
+import { createCategory, deleteCategory, fetchCategories, updateCategory } from '../services/CategoriesService';
 
 const normalizeCategoryTree = (apiData = []) =>
 	apiData.map((parent) => ({
@@ -42,6 +42,109 @@ export default function useCategories() {
 		}
 	}, []);
 
+	const addCategory = useCallback(async ({ title, status, parentId = null }) => {
+		const response = await createCategory({
+			title,
+			status,
+			parent_id: parentId ? String(parentId) : null,
+		});
+
+		const created = response?.data;
+		if (!created?.id) {
+			throw new Error('Invalid create category response.');
+		}
+
+		const mappedCategory = {
+			id: String(created.id),
+			parentId: created.parent_id ? String(created.parent_id) : null,
+			title: created.title || 'Untitled',
+			status: created.status || 'inactive',
+			slug: created.slug || '',
+			createdAt: created.created_at || null,
+			updatedAt: created.updated_at || null,
+		};
+
+		if (!mappedCategory.parentId) {
+			setCategories((previous) => [
+				...previous,
+				{
+					...mappedCategory,
+					subcategories: [],
+				},
+			]);
+			return { type: 'parent', item: mappedCategory };
+		}
+
+		setCategories((previous) =>
+			previous.map((item) =>
+				item.id === mappedCategory.parentId
+					? {
+						...item,
+						updatedAt: mappedCategory.updatedAt || item.updatedAt,
+						subcategories: [
+							...(item.subcategories || []),
+							{
+								id: mappedCategory.id,
+								parentId: mappedCategory.parentId,
+								title: mappedCategory.title,
+								status: mappedCategory.status,
+								createdAt: mappedCategory.createdAt,
+								updatedAt: mappedCategory.updatedAt,
+							},
+						],
+					}
+					: item,
+			),
+		);
+
+		return {
+			type: 'subcategory',
+			item: {
+				id: mappedCategory.id,
+				parentId: mappedCategory.parentId,
+				title: mappedCategory.title,
+				status: mappedCategory.status,
+				createdAt: mappedCategory.createdAt,
+				updatedAt: mappedCategory.updatedAt,
+			},
+		};
+	}, []);
+
+	const updateExistingCategory = useCallback(async (categoryId, { title, status, parentId = null }) => {
+		const response = await updateCategory(categoryId, {
+			title,
+			status,
+			parent_id: parentId ? String(parentId) : null,
+		});
+
+		const updated = response?.data;
+		if (!updated?.id) {
+			throw new Error('Invalid update category response.');
+		}
+
+		const mappedCategory = {
+			id: String(updated.id),
+			parentId: updated.parent_id ? String(updated.parent_id) : null,
+			title: updated.title || 'Untitled',
+			status: updated.status || 'inactive',
+			slug: updated.slug || '',
+			createdAt: updated.created_at || null,
+			updatedAt: updated.updated_at || null,
+		};
+
+		await loadCategories();
+		return {
+			type: mappedCategory.parentId ? 'subcategory' : 'parent',
+			item: mappedCategory,
+		};
+	}, [loadCategories]);
+
+	const deleteExistingCategory = useCallback(async (categoryId) => {
+		await deleteCategory(categoryId);
+		await loadCategories();
+	}, [loadCategories]);
+
+
 	useEffect(() => {
 		loadCategories();
 	}, [loadCategories]);
@@ -51,6 +154,9 @@ export default function useCategories() {
 		setCategories,
 		isLoading,
 		error,
+		addCategory,
+		updateExistingCategory,
+		deleteExistingCategory,
 		refetch: loadCategories,
 	};
 }

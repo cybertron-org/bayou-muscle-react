@@ -15,4 +15,20 @@ export const createCategory = async (categoryData) => {
   return response;
 };
 
+export const updateCategory = async (categoryId, categoryData) => {
+  const response = await apiRequest(`/admin/product-categories/update/${categoryId}`, {
+    method: 'POST',
+    data: categoryData,
+  });
+  return response;
+};
+
+export const deleteCategory = async (categoryId) => {
+  const response = await apiRequest(`/admin/product-categories/delete/${categoryId}`, {
+    method: 'DELETE',
+  });
+  return response;
+};
+
+
 
