@@ -35,7 +35,6 @@ export default function AdminSidebar({ isDrawerOpen, onClose }) {
         <div className="admin-brand-mark">B</div>
         <div className="admin-brand-copy">
           <div className="admin-brand-title">Bayou Admin</div>
-          <div className="admin-brand-subtitle">UI only</div>
         </div>
         <button aria-label="Close sidebar" className="admin-sidebar-close" onClick={onClose} type="button">
           ×

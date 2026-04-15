@@ -1,7 +1,7 @@
 import apiRequest from './api';
 
 export const fetchCategories = async () => {
-  const response = await apiRequest('/admin/product-categories', {
+  const response = await apiRequest('/product-categories', {
     method: 'GET',
   });
   return response;

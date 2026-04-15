@@ -43,6 +43,7 @@ export default function AppRouter() {
 			<Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
 			<Route path="/admin/products" element={<ProtectedRoute><AdminProducts /></ProtectedRoute>} />
 			<Route path="/admin/products/add" element={<ProtectedRoute><AdminAddProduct /></ProtectedRoute>} />
+			<Route path="/admin/products/:productId/edit" element={<ProtectedRoute><AdminAddProduct /></ProtectedRoute>} />
 			<Route path="/admin/orders" element={<ProtectedRoute><AdminOrders /></ProtectedRoute>} />
 			<Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
 			<Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />

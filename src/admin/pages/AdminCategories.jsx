@@ -35,7 +35,7 @@ export default function AdminCategories() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const pageSize = 8;
+	const pageSize = 10;
 
 	const selectedCategory = categories.find((item) => item.id === selectedCategoryId) || categories[0] || null;
 	const availableParentCategories =
