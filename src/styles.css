@@ -888,7 +888,7 @@ button {
   height: 30px;
   object-fit: contain;
   /* Figma: -scale-y-100 */
-  transform: scaleY(-1);
+  /* transform: scaleY(-1); */
   flex-shrink: 0;
 }
 
@@ -5583,6 +5583,44 @@ button.hm-insta__label {
     height: 40px;
   }
 
+  .hm-feat-card__name {
+    
+    font-size: 20px;
+   
+}
+
+.hm-view-all
+
+ {
+    font-size: 10px;
+}
+
+  .hm-testimonial__product {
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-left: -20px;
+    flex-shrink: 0;
+}
+.prb-10{
+  padding-bottom: 10px;
+}
+
+.hdr__logo-vec--main {
+    top: 0.06%;
+    max-width: 85%;
+   
+}
+
+  .hm-testimonial__inner {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    margin: 0 auto;
+}
+
   .hdr__topbar-item {
     padding: 0 16px;
   }
@@ -5610,16 +5648,71 @@ button.hm-insta__label {
   }
 
   .hm-hero__label {
-    font-size: 13px;
+    /* font-size: 13px; */
+     width: 90%;
   }
 
   .hm-section {
     padding: 36px 20px 48px;
   }
 
+  .pb-100 {
+    padding-bottom: 50px !important;
+} 
+
+.hm-marquee--dark {
+    padding-top: 10px;
+}
+.ftr__copyright {
+  
+    font-size: 14px;    
+}
+
+.ftr__body {
+    background: #202020;
+    padding: 30px 0;
+}
+
+.hm-trust__title {
+    font-size: 21px;
+}
+
+.ftr__contact-bar {
+   
+    height: auto;
+    
+}
+
+.hm-insta__label {
+    font-size: 10px;   
+}
+
+.hm-blog__title {
+    
+    font-weight: 600;
+    font-size: 30px;
+  
+}
+
+.hm-trust__sub {
+    
+    font-size: 12px;
+   
+}
+
+
+.hm-merch__label {
+    
+    font-size: 20px;
+   
+}
   .hm-section__heading {
-    font-size: 32px;
+    font-size: 22px;
   }
+
+  .pt-100 {
+    padding-top: 50px !important;
+}
 
   .hm-divider-wrap {
     padding: 0 20px;

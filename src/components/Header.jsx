@@ -28,8 +28,8 @@ const MOBILE_LINKS = [
   { label: 'Home',        page: 'home'        },
   { label: 'Supplements', page: 'supplements' },
   { label: 'Blog',        page: 'blog'        },
-  { label: 'Contact',     page: 'contact'     },
-  { label: 'Cart',        page: 'cart'        },
+  { label: 'About',     page: 'about'     },
+  { label: 'Contact',   page: 'contact'        },
 ];
 
 export default function Header() {

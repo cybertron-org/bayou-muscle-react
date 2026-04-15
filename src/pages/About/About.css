@@ -702,7 +702,7 @@
 
   .about-stats__num,
   .about-stats__num span {
-    font-size: 48px;
+    font-size: 36px;
     line-height: 48px;
   }
 
@@ -729,9 +729,16 @@
     padding: 48px 20px 0;
   }
 
+  .about-card__icon img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    display: block;
+}
+
   .about-q-h1,
   .about-q-h2 {
-    font-size: 32px;
+    font-size: 25px;
     line-height: 36px;
   }
 

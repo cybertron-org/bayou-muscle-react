@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './CartDrawer.css';
 
-const imgProduct = 'https://www.figma.com/api/mcp/asset/916e25ad-e298-490d-a8b0-1d34ce90e747';
+const imgProduct = '/images/cartp.png';
 
 const cartItems = [
   { id: 1, name: 'ATOM Creatine Monohydrate', qty: 1, price: 809.75, img: imgProduct },
@@ -46,7 +46,7 @@ export default function CartDrawer({ isOpen, onClose }) {
             {cartItems.map((item) => (
               <div className="cd-item" key={item.id}>
                 <div className="cd-item__img-wrap">
-                  <img src={item.img} alt={item.name} className="cd-item__img" />
+                  <img src={item.img} alt={item.name} className="" />
                 </div>
                 <div className="cd-item__info">
                   <p className="cd-item__name">{item.name}</p>

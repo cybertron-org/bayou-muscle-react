@@ -470,19 +470,19 @@ export default function Home() {
           <div className="hm-goals__row hm-goals__row--top">
             <div className="hm-goal-card__overlay" />
             <div className="row align-items-center">
-              <div className="col-md-5">
+              <div className="col-md-5 prb-10">
                 <img className="w-100" src="/images/w1.png" alt="" />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-4 prb-10">
                 <img className="" src="/images/w2.png" alt="" />
               </div>
-              <div className="col-md-3">
+              <div className="col-md-3 ">
                 <img className="w-100" src="/images/w3.png" alt="" />
               </div>
             </div>
           </div>
           <div className="row pt-4 align-items-center">
-            <div className="col-md-6">
+            <div className="col-md-6 prb-10">
               <img className="w-100" src="/images/w4.png" alt="" />
             </div>
             <div className="col-md-6">
