@@ -1,0 +1,693 @@
+/* ================================================================
+   Supplements.css
+   Fonts: Instrument Sans (Font 1), Sofia Sans Condensed (Font 2)
+   Colors from Figma:
+     #000000  — Black
+     #ffffff  — White
+     #f4f4f4  — Whisper (hero bg)
+     #e9e9e9  — Mercury (borders)
+     #a8a8a8  — Silver Chalice (muted)
+     #5b5b5b  — Scorpion (body text)
+     #202020  — rating score
+     #908f8f  — Gray (review count)
+     #61d7ba  — Best Seller badge
+     #ee440e  — Sale badge
+     #8aa9d8  — New badge
+     #c99422  — Add to cart btn
+================================================================ */
+
+.supp-page {
+  font-family: 'Instrument Sans', sans-serif;
+  color: #000;
+  background: #fff;
+}
+
+/* ── HERO ── */
+.supp-hero {
+  border-bottom: 5px solid #f4f4f4;
+  padding-bottom: 85px;
+}
+
+.supp-hero__bg {
+  background: #f4f4f4;
+  padding: 80px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+}
+
+.supp-hero__title-wrap {
+  text-align: center;
+}
+
+.supp-hero__title {
+  font-family: 'Lato', 'Instrument Sans', sans-serif;
+  font-weight: 900;
+  font-size: 100px;
+  line-height: 90px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0 0 20px;
+}
+
+.supp-hero__breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.supp-hero__breadcrumb-link {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+  cursor: pointer;
+}
+
+.supp-hero__breadcrumb-sep {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #a8a8a8;
+  border-radius: 2.5px;
+}
+
+.supp-hero__breadcrumb-current {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+}
+
+.supp-hero__desc-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 35px 0;
+}
+
+.supp-hero__desc {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  text-align: center;
+  max-width: 810px;
+}
+
+.supp-hero__filters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  height: 52px;
+}
+
+.supp-filter-btn {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color: #000;
+  background: transparent;
+  border: 1px solid #000;
+  border-radius: 25px;
+  padding: 16px 41px;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.supp-filter-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ── MAIN SECTION ── */
+.supp-main {
+  padding: 35px 135px 60px;
+}
+
+/* ── TOOLBAR ── */
+.supp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 40px;
+  margin-bottom: 35px;
+  padding: 0 15px;
+  position: relative;
+}
+
+.supp-toolbar__view {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-right: 20px;
+}
+
+.supp-view-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px #e9e9e9;
+  color: #5b5b5b;
+  cursor: pointer;
+  transition: box-shadow 0.2s, color 0.2s;
+}
+
+.supp-view-btn--active {
+  color: #000;
+  box-shadow: inset 0 0 0 1px #000;
+}
+
+.supp-view-btn:hover {
+  color: #000;
+}
+
+.supp-toolbar__count {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.supp-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.supp-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e9e9e9;
+  border-radius: 20px;
+  padding: 8px 21px;
+  cursor: pointer;
+}
+
+.supp-select-label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #5b5b5b;
+}
+
+.supp-select-label--muted {
+  color: #a8a8a8;
+}
+
+.supp-select-val {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #5b5b5b;
+}
+
+.supp-select-arrow {
+  color: #5b5b5b;
+  flex-shrink: 0;
+}
+
+/* ── PRODUCT GRID ── */
+.supp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* ── PRODUCT CARD ── */
+.supp-card {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px #e9e9e9;
+  background: #fff;
+  transition: box-shadow 0.25s;
+  cursor: pointer;
+}
+
+.supp-card:hover {
+  box-shadow: inset 0 0 0 1px #000, 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.supp-card__inner {
+  position: relative;
+  height: 682px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.supp-card__header {
+  padding: 19px 30px 38px;
+  flex-shrink: 0;
+  min-height: 113px;
+}
+
+.supp-card__name {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000;
+  margin: 0 0 2px;
+}
+
+.supp-card__cat {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22.75px;
+  color: #a8a8a8;
+  margin: 0 0 2px;
+}
+
+.supp-card__rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.supp-stars {
+  display: flex;
+  align-items: center;
+}
+
+.supp-star-img {
+  width: 19px;
+  height: 19px;
+  display: block;
+}
+
+.supp-card__rating-text {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.supp-card__rating-num {
+  color: #202020;
+}
+
+.supp-card__rating-count {
+  color: #908f8f;
+}
+
+.supp-card__img-wrap {
+  flex: 1;
+  margin: 0 15px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.supp-card__img-wrap--grey {
+  background: #f4f4f4;
+}
+
+.supp-card__img {
+  width: 65.81%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+  transition: transform 0.35s;
+}
+
+.supp-card:hover .supp-card__img {
+  transform: scale(1.05);
+}
+
+.supp-card__img-wrap--grey .supp-card__img {
+  width: 100%;
+}
+
+.supp-card__footer {
+  padding: 17px 30px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  min-height: 60px;
+}
+
+.supp-card__price-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.supp-card__price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.supp-card__old-price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: #a8a8a8;
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+.supp-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.supp-badge {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 4px 15px;
+  border-radius: 20px;
+  border: 1px solid;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.supp-card__add-btn {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  right: -1px;
+  padding: 15px 31px;
+  background: #c99422;
+  border: 1px solid #c99422;
+  color: #fff;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.supp-card__add-btn:hover {
+  background: #a87b1a;
+}
+
+.supp-card:hover .supp-card__add-btn {
+  display: block;
+}
+
+/* ── PAGINATION ── */
+.supp-pagination {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-wrap: wrap;
+  padding: 0 15px;
+}
+
+.supp-page-btn {
+  width: 43px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 44px;
+  color: #000;
+  background: transparent;
+  border: none;
+  box-shadow: 0 0 0 1px #e9e9e9;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.supp-page-btn:hover {
+  box-shadow: 0 0 0 1px #000;
+}
+
+.supp-page-btn--active {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 0 1px #000;
+}
+
+.supp-page-btn--next {
+  width: 43px;
+}
+
+/* ── MARQUEE ── */
+.supp-marquee-wrap {
+  background: #000;
+  overflow: hidden;
+  padding: 0;
+}
+
+.supp-marquee-track {
+  display: flex;
+  animation: suppMarquee 22s linear infinite;
+  width: max-content;
+}
+
+@keyframes suppMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.supp-mword {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 130px;
+  line-height: 207px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  padding: 0 28px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.supp-mword--outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
+}
+
+.supp-mword--ghost {
+  color: rgba(255, 255, 255, 0.06);
+}
+
+/* ── INSTAGRAM ── */
+.supp-insta {
+  padding: 0 145px 0;
+}
+
+.supp-insta__label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #636363;
+  text-align: center;
+  padding: 24px 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.supp-insta__label a {
+  color: #ddca8a;
+  text-decoration: none;
+}
+
+.supp-insta__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 296px);
+  gap: 25px;
+  padding-bottom: 0;
+}
+
+.supp-insta__item {
+  width: 296px;
+  height: 296px;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.supp-insta__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+  display: block;
+}
+
+.supp-insta__item:hover img {
+  transform: scale(1.06);
+}
+
+/* ================================================================
+   RESPONSIVE — Tablet max-width: 991px
+================================================================ */
+@media (max-width: 991px) {
+  .supp-hero__title {
+    font-size: 64px;
+    line-height: 68px;
+  }
+
+  .supp-main {
+    padding: 30px 40px 48px;
+  }
+
+  .supp-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .supp-card__inner {
+    height: auto;
+    min-height: 580px;
+  }
+
+  .supp-toolbar__count {
+    position: static;
+    transform: none;
+    order: 1;
+    flex: 1;
+    text-align: center;
+  }
+
+  .supp-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .supp-insta {
+    padding: 0 40px;
+  }
+
+  .supp-insta__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .supp-insta__item {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — Mobile max-width: 767px
+================================================================ */
+@media (max-width: 767px) {
+  .supp-hero__title {
+    font-size: 40px;
+    line-height: 44px;
+  }
+
+  .supp-hero__bg {
+    padding: 48px 24px;
+    min-height: 180px;
+  }
+
+  .supp-hero__desc {
+    font-size: 14px;
+    padding: 0 20px;
+  }
+
+  .supp-hero__desc-wrap {
+    padding: 24px 20px;
+  }
+
+  .supp-hero__filters {
+    height: auto;
+    gap: 8px;
+    padding: 0 20px 20px;
+  }
+
+  .supp-filter-btn {
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+
+  .supp-main {
+    padding: 24px 16px 40px;
+  }
+
+  .supp-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .supp-card__inner {
+    min-height: 520px;
+  }
+
+  .supp-toolbar__count {
+    display: none;
+  }
+
+  .supp-mword {
+    font-size: 72px;
+    line-height: 120px;
+    padding: 0 16px;
+  }
+
+  .supp-insta {
+    padding: 0 16px;
+  }
+
+  .supp-insta__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .supp-pagination {
+    gap: 8px;
+  }
+
+  .supp-page-btn {
+    width: 36px;
+    height: 36px;
+  }
+}

@@ -1,8 +1,8 @@
 /* Figma asset URLs — node 67:1983 */
 const imgLogo = '/images/logo.png';
-const imgPhoneIcon = 'https://www.figma.com/api/mcp/asset/602a6364-7cb9-4b89-9f1a-7a6bccdd9005';
-const imgEmailIcon = 'https://www.figma.com/api/mcp/asset/31e1ae19-a60f-4856-89db-7986cd3e02b2';
-const imgChatIcon = 'https://www.figma.com/api/mcp/asset/3c7d4821-76dd-4d20-a5ad-b811371e1ee6';
+    const imgPhoneIcon = '/images/number.png';
+    const imgEmailIcon = '/images/mail.png';
+const imgChatIcon = '/images/livechat.png';
 /* Figma payment cards — Component variants 11-30 rendered as images */
 const imgVisa = '/images/cards.png';
 const imgMC = 'https://www.figma.com/api/mcp/asset/7b5774aa-4a17-43da-947b-c4b84879e4cc';
@@ -16,7 +16,7 @@ export default function Footer() {
 
       {/* ── CONTACT BAR ── Figma: Section y=30 h=144, bg #202020 */}
       <div className="ftr__contact-bar">
-        <div className="ftr__contact-inner">
+        <div className="ftr__contact-inner ">
           {/* Logo — Figma: Clip path group x=145 y=30, w=130 h=79 */}
           <div className="ftr__logo">
             <img src={imgLogo} alt="Bayou Muscle" className="ftr__logo-img" />

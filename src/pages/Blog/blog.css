@@ -1,0 +1,875 @@
+/* ================================================================
+   blog.css — Blog Listing + Blog Details
+   Fonts: Instrument Sans (Font 1), Sofia Sans Condensed (Font 2), Lato
+   Colors:
+     #000000  — Black
+     #ffffff  — White
+     #f4f4f4  — Whisper (hero bg, breadcrumb bg)
+     #e9e9e9  — Mercury (borders)
+     #a8a8a8  — Silver Chalice (muted)
+     #5b5b5b  — Scorpion (body text)
+     #c99422  — Primary gold (active tab)
+     #ddca8a  — Gold (marquee)
+================================================================ */
+
+.blog-page {
+  font-family: 'Instrument Sans', sans-serif;
+  background: #ffffff;
+  color: #000000;
+  overflow-x: hidden;
+}
+
+/* ── HERO / BREADCRUMB ── */
+.blog-hero {
+  background: #f4f4f4;
+  padding: 80px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* height: 70px; */
+
+  
+}
+
+.blog-hero--detail {
+  padding: 20px 0;
+}
+
+.blog-hero__inner {
+  width: 1650px;
+  max-width: calc(100% - 270px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* BLOG title — Lato Black 100px, tracking -1px, uppercase */
+.blog-hero__title {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  font-size: 100px;
+  line-height: 90px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+  text-align: center;
+}
+
+/* Breadcrumb — Instrument Sans SemiBold 14px #a8a8a8 */
+.blog-hero__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.blog-bc-link {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.blog-bc-link:hover {
+  color: #ddca8a;
+}
+
+.blog-bc-sep {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #a8a8a8;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.blog-bc-current {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+}
+
+/* ── FEATURED POST ── */
+.blog-featured {
+  padding: 60px 135px 0;
+}
+
+.blog-featured__inner {
+  display: flex;
+  gap: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 600px;
+  /* background: #f4f4f4; */
+}
+
+.blog-featured__img-wrap {
+  flex: 0 0 49%;
+  position: relative;
+  overflow: hidden;
+}
+
+.blog-featured__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.blog-featured__img-wrap:hover .blog-featured__img {
+  transform: scale(1.04);
+}
+
+/* Category badge — bg white, border #000, Instrument Sans SemiBold 14px */
+.blog-featured__cat {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    background: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 4px 15px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000000;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.blog-featured__content {
+    flex: 1;
+    padding: 48px 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    align-content: center;
+}
+
+/* Featured title — Sofia Sans Condensed Black 64px, uppercase */
+.blog-featured__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 64px;
+  line-height: 57.6px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+
+/* Featured description */
+.blog-featured__desc {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0;
+}
+
+/* Read More link — Sofia Sans Condensed Bold 18px, underline */
+.blog-read-more {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color: #000000;
+  background: none;
+  border: none;
+  padding: 4px 0 2px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+  text-decoration: underline;
+}
+
+.blog-read-more::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* height: 1px;
+  background: #000000; */
+}
+
+.blog-read-more:hover {
+  color: #c99422;
+}
+
+.blog-read-more:hover::after {
+  background: #c99422;
+}
+
+/* ── TABS ── */
+.blog-tabs-section {
+  padding: 50px 135px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.blog-tabs-wrap {
+  width: 100%;
+}
+
+.blog-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Tab button — Sofia Sans Condensed Bold 18px, px 36 py 16, rounded 25px */
+.blog-tab {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  padding: 16px 36px;
+  border-radius: 25px;
+  border: 1px solid #e9e9e9;
+  background: transparent;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.blog-tab:hover {
+  border-color: #c99422;
+  color: #c99422;
+}
+
+/* Active tab — bg #c99422, border #c99422, white text */
+.blog-tab--active {
+  background: #c99422;
+  border-color: #c99422;
+  color: #ffffff;
+}
+
+.blog-tab--active:hover {
+  color: #ffffff;
+}
+
+/* ── BLOG GRID ── 3-col, gap 30px */
+.blog-grid-section {
+  padding: 50px 135px 60px;
+}
+
+.blog-grid-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* ── BLOG CARD ── */
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 33px;
+  cursor: pointer;
+  border: 0px solid #e9e9e9 !important;
+  overflow: visible;
+}
+
+/* Card image — h=300px, rounded 20px */
+.blog-card__img-wrap {
+  height: 300px;
+  position: relative;
+  border-radius: 20px;
+  overflow: visible !important;
+  flex-shrink: 0;
+}
+
+.blog-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s;
+}
+
+.blog-card:hover {
+    box-shadow: none !important;
+    
+}
+
+.blog-card:hover .blog-card__img {
+  transform: scale(1.05);
+  
+}
+
+/* Card category badge */
+.blog-card__cat {
+  position: absolute;
+  bottom: -15px;
+  left: 15px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  padding: 4px 15px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.blog-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 25px;
+}
+
+/* Card title — Sofia Sans Condensed Black 32px, uppercase */
+.blog-card__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 32px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+
+/* Card description */
+.blog-card__desc {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0;
+}
+
+/* ── PAGINATION ── */
+.blog-pagination {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+/* Pagination button — 43×44px, rounded 8px */
+.blog-pg-btn {
+  width: 43px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #000000;
+  background: transparent;
+  border: none;
+  box-shadow: 0 0 0 1px #e9e9e9;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.blog-pg-btn:hover {
+  box-shadow: 0 0 0 1px #000000;
+}
+
+/* Active page — bg #000, white text */
+.blog-pg-btn--active {
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 0 0 1px #000000;
+}
+
+.blog-pg-btn--next {
+  width: 43px;
+}
+
+/* ── MARQUEE ── */
+.blog-marquee {
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.blog-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: blogMarquee 22s linear infinite;
+}
+
+@keyframes blogMarquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Sofia Sans Condensed Bold 183px #ddca8a */
+.blog-mword {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 183px;
+  line-height: 1.13;
+  text-transform: uppercase;
+  padding: 0 28px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.blog-mword--solid {
+  color: #ddca8a;
+}
+
+.blog-mword--outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(221, 202, 138, 0.5);
+}
+
+
+/* ================================================================
+   BLOG DETAILS PAGE
+================================================================ */
+
+.bd-container {
+  padding: 0 135px 60px;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+/* ── ARTICLE HEADER — 2-col: sidebar 250px + main ── */
+.bd-header {
+  display: flex;
+  gap: 30px;
+  padding: 40px 0 60px;
+  align-items: flex-start;
+}
+
+.bd-header__sidebar {
+  flex: 0 0 250px;
+  padding-top: 5px;
+}
+
+/* Category badge in header — bg white border #000, SemiBold 14px */
+.bd-cat-badge {
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  padding: 4px 15px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.bd-header__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Detail title — Sofia Sans Condensed Black 64px, tracking -1px, uppercase */
+.bd-title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 64px;
+  line-height: 58px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+
+/* Meta — date + by — Instrument Sans SemiBold 14px #a8a8a8 */
+.bd-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bd-meta__date {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+}
+
+.bd-meta__divider {
+  display: inline-block;
+  width: 1px;
+  height: 9px;
+  background: #e9e9e9;
+}
+
+.bd-meta__by {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+}
+
+.bd-meta__by strong {
+  color: #000000;
+  font-weight: 600;
+}
+
+/* ── BANNER ── aspect-ratio 1650/600, rounded 20px */
+.bd-banner {
+  width: 100%;
+  aspect-ratio: 1650 / 600;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 60px;
+}
+
+.bd-banner__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── CONTENT AREA — max-width 1090px, centered with 280px offset ── */
+.bd-content {
+  max-width: 1090px;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Body text — Instrument Sans Regular 16px #5b5b5b lh 26px */
+.bd-text {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0 0 30px;
+}
+
+/* Section headings — Sofia Sans Condensed Black 32px uppercase */
+.bd-h2 {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 32px;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0 0 15px;
+}
+
+/* 2-image pair — side by side, rounded 20px */
+.bd-img-pair {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 30px;
+}
+
+.bd-img-pair__item {
+  flex: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  max-height: 500px;
+}
+
+.bd-img-pair__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 20px;
+}
+
+/* Full-width image — rounded 20px */
+.bd-img-full {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  max-height: 586px;
+}
+
+.bd-img-full img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Tags row — Instrument Sans Regular 16px */
+.bd-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 0;
+  border-top: 1px solid #e9e9e9;
+  margin-top: 10px;
+}
+
+.bd-tags__icon {
+  flex-shrink: 0;
+}
+
+.bd-tags__list {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  text-transform: capitalize;
+}
+
+/* Post navigation */
+.bd-post-nav {
+  border-top: 1px solid #e9e9e9;
+  border-bottom: 1px solid #e9e9e9;
+  padding: 20px 0;
+  margin-top: 10px;
+}
+
+.bd-post-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+}
+
+.bd-post-nav__img {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.bd-post-nav__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* "Previous Post" — Instrument Sans Bold 12px #a8a8a8, tracking 2px, uppercase */
+.bd-post-nav__label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #a8a8a8;
+}
+
+/* Post title — Instrument Sans SemiBold 18px #000 */
+.bd-post-nav__title {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  color: #000000;
+  text-transform: capitalize;
+}
+
+
+/* ================================================================
+   RESPONSIVE — Tablet max-width: 991px
+================================================================ */
+@media (max-width: 991px) {
+  .blog-hero {
+    padding: 56px 0;
+  }
+
+  .blog-hero__title {
+    font-size: 64px;
+    line-height: 64px;
+  }
+
+  .blog-hero__inner {
+    max-width: calc(100% - 80px);
+  }
+
+  .blog-featured {
+    padding: 40px 40px 0;
+  }
+
+  .blog-featured__inner {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .blog-featured__img-wrap {
+    flex: none;
+    height: 360px;
+  }
+
+  .blog-featured__content {
+    padding: 30px 40px;
+  }
+
+  .blog-featured__title {
+    font-size: 44px;
+    line-height: 44px;
+  }
+
+  .blog-tabs-section {
+    padding: 40px 40px 0;
+  }
+
+  .blog-grid-section {
+    padding: 40px 40px 48px;
+  }
+
+  .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .bd-container {
+    padding: 0 40px 48px;
+  }
+
+  .bd-title {
+    font-size: 44px;
+    line-height: 44px;
+  }
+
+  .bd-content {
+    max-width: 100%;
+  }
+
+  .blog-mword {
+    font-size: 100px;
+    padding: 0 20px;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — Mobile max-width: 767px
+================================================================ */
+@media (max-width: 767px) {
+  .blog-hero {
+    padding: 40px 0;
+  }
+
+  .blog-hero__title {
+    font-size: 40px;
+    line-height: 44px;
+  }
+
+  .blog-hero__inner {
+    max-width: calc(100% - 40px);
+  }
+
+  .blog-featured {
+    padding: 30px 20px 0;
+  }
+
+  .blog-featured__img-wrap {
+    height: 240px;
+  }
+
+  .blog-featured__content {
+    padding: 24px 20px;
+    gap: 16px;
+  }
+
+  .blog-featured__title {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  .blog-tabs-section {
+    padding: 30px 20px 0;
+  }
+
+  .blog-tabs {
+    gap: 8px;
+  }
+
+  .blog-tab {
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+
+  .blog-grid-section {
+    padding: 30px 20px 40px;
+  }
+
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .blog-card__title {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .bd-container {
+    padding: 0 20px 40px;
+  }
+
+  .bd-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .bd-header__sidebar {
+    flex: none;
+  }
+
+  .bd-title {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  .bd-banner {
+    aspect-ratio: 4/3;
+  }
+
+  .bd-img-pair {
+    flex-direction: column;
+  }
+
+  .bd-content {
+    padding: 0;
+  }
+
+  .blog-mword {
+    font-size: 56px;
+    padding: 0 14px;
+  }
+}

@@ -1,0 +1,1224 @@
+/* ================================================================
+   Product-Detail.css
+   Figma node: 203-8670
+   Fonts: Instrument Sans (Font 1), Sofia Sans Condensed (Font 2)
+   Colors:
+     #000000  — Black
+     #ffffff  — White
+     #f4f4f4  — Whisper (breadcrumb bg)
+     #e9e9e9  — Mercury (borders)
+     #a8a8a8  — Silver Chalice (muted)
+     #5b5b5b  — Scorpion (body text)
+     #2e2617  — Related title color
+     #ee440e  — Pomegranate (sale badge)
+     #ddca8a  — Gold (primary)
+     #39b54a  — In stock green
+     #908f8f  — Gray (product cat)
+================================================================ */
+
+.pd-page {
+  font-family: 'Instrument Sans', sans-serif;
+  background: #ffffff;
+  color: #000;
+}
+
+/* ── BREADCRUMB ── bg #f4f4f4, px 30 py 20, Instrument Sans SemiBold 14px #a8a8a8 */
+.pd-breadcrumb {
+  background: #f4f4f4;
+  padding: 20px 30px;
+}
+
+.pd-breadcrumb__inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.pd-bc-link {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.pd-bc-link:hover {
+  color: #ddca8a;
+}
+
+.pd-bc-sep {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #a8a8a8;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pd-bc-current {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+}
+
+/* ── MAIN PRODUCT AREA ── 2-col grid, left gap boundary at pl-108.25px */
+.pd-main {
+  display: grid;
+  grid-template-columns: 699.5px 1fr;
+  gap: 0;
+  padding: 40px 135px 40px;
+  max-width: 1920px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* GALLERY — thumbs 80×80px + main 699.5×699.5 */
+.pd-gallery {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Thumbnails — ordered list 80×350px total, gap 10px, rounded 10px */
+.pd-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pd-thumb {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #e9e9e9;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  transition: border-color 0.2s;
+  opacity: 0.9;
+}
+
+.pd-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pd-thumb--active {
+  border-color: #000;
+  opacity: 1;
+}
+
+.pd-thumb:hover {
+  border-color: #ddca8a;
+  opacity: 1;
+}
+
+/* Main product image — container w=699.5, rounded 20px */
+.pd-main-img {
+  flex: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: #f4f4f4;
+}
+
+.pd-main-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.pd-main-img:hover img {
+  transform: scale(1.03);
+}
+
+/* INFO PANEL — border-left #e9e9e9 1px, pl 108.25px pr 107.25px */
+.pd-info {
+  border-left: 1px solid #e9e9e9;
+  padding: 15px 107px 15px 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Sale badge — border #ee440e 1px, Instrument Sans SemiBold 14px #ee440e, rounded 20px */
+.pd-sale-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ee440e;
+  border-radius: 20px;
+  padding: 4px 15px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ee440e;
+  width: fit-content;
+}
+
+/* Title — Sofia Sans Condensed Black 64px, tracking -1px, uppercase, line-height 58px */
+.pd-title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 64px;
+  line-height: 58px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0;
+}
+
+/* Meta row */
+.pd-meta {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding-top: 3px;
+  flex-wrap: wrap;
+}
+
+.pd-brands {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.pd-brands__label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: #a8a8a8;
+}
+
+.pd-brands__link {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: #000;
+  text-transform: capitalize;
+  margin-left: 5px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.pd-brands__link:hover {
+  color: #ddca8a;
+}
+
+.pd-brands__link+.pd-brands__link::before {
+  content: ', ';
+  color: #a8a8a8;
+}
+
+.pd-stock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pd-stock__dot {
+  width: 8px;
+  height: 8px;
+  background: #39b54a;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pd-stock__text {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #39b54a;
+}
+
+/* Price — Instrument Sans SemiBold 24px + 16px */
+.pd-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  border-bottom: 1px solid #e9e9e9;
+  padding-bottom: 26px;
+  padding-top: 2px;
+}
+
+.pd-price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 26px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.pd-price-old {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #a8a8a8;
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+/* Short description — Instrument Sans Regular 16px #5b5b5b lh 26px */
+.pd-short-desc {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0;
+}
+
+/* Option groups (flavor/size) */
+.pd-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-option-label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a8a8a8;
+  margin: 0;
+}
+
+.pd-option-label strong {
+  color: #000;
+}
+
+.pd-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pd-pill {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 7px 14px;
+  border: 1.5px solid #e9e9e9;
+  border-radius: 20px;
+  background: transparent;
+  color: #636363;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.pd-pill:hover {
+  border-color: #000;
+  color: #000;
+}
+
+.pd-pill--active {
+  border-color: #000;
+  background: #000;
+  color: #fff;
+}
+
+/* Cart row — h 64px */
+.pd-cart-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding-top: 15px;
+}
+
+/* Qty stepper — bg white border #e9e9e9, h 51px rounded 24.5px */
+.pd-qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e9e9e9;
+  border-radius: 24.5px;
+  height: 51px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.pd-qty__btn {
+  width: 42px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-family: 'Instrument Sans', sans-serif;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #000;
+  transition: background 0.2s;
+}
+
+.pd-qty__btn:hover {
+  background: #f5f5f5;
+}
+
+.pd-qty__val {
+  width: 42px;
+  text-align: center;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #e9e9e9;
+}
+
+/* Add to cart — bg #000, Sofia Sans Condensed Black 16px white uppercase, rounded 30px */
+.pd-add-btn {
+  flex: 1;
+  height: 51px;
+  background: #000;
+  color: #fff;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 24.89px;
+  text-transform: uppercase;
+  text-align: center;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  padding: 0 20px;
+}
+
+.pd-add-btn:hover {
+  background: #ddca8a;
+  color: #000;
+}
+
+/* Wishlist / compare icon buttons — bg white border #e9e9e9 h=51 w=49 rounded 24.5px */
+.pd-icon-btn {
+  width: 49px;
+  height: 51px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9e9e9;
+  border-radius: 24.5px;
+  background: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.pd-icon-btn:hover {
+  border-color: #000;
+  background: #f5f5f5;
+}
+
+.pd-icon-btn svg {
+  flex-shrink: 0;
+}
+
+/* Buy It Now — border #000 1px, Sofia Sans Condensed Black 16px uppercase, rounded 30px */
+.pd-buy-btn {
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 30px;
+  background: transparent;
+  color: #000;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 20px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 15px 31px 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pd-buy-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Benefits — Instrument Sans SemiBold 14px */
+.pd-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pd-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  height: 19.25px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19.25px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.pd-benefit-item svg {
+  flex-shrink: 0;
+}
+
+.pd-benefit-item .pd-muted {
+  color: #a8a8a8;
+}
+
+.pd-benefit-item .pd-muted strong {
+  color: #000;
+}
+
+/* Guarantee section — border-top #e9e9e9 1px, pt 26px */
+.pd-guarantee {
+  border-top: 1px solid #e9e9e9;
+  padding-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.pd-guarantee__label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 14px;
+  color: #000;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.pd-pay-img img {
+  width: 350px;
+  height: 35px;
+  object-fit: contain;
+  display: block;
+}
+
+/* SKU / Category — border-top #e9e9e9 1px, pt 21px, Instrument Sans Medium 14px */
+.pd-meta-footer {
+  border-top: 1px solid #e9e9e9;
+  padding-top: 21px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pd-meta-line {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24.6px;
+  color: #a8a8a8;
+  margin: 0;
+}
+
+.pd-meta-line strong {
+  color: #000;
+}
+
+.pd-muted-label {
+  color: #a8a8a8;
+}
+
+.pd-tag {
+  color: #000;
+  font-weight: 500;
+  text-decoration: none;
+  margin-left: 3px;
+  transition: color 0.2s;
+}
+
+.pd-tag:hover {
+  color: #ddca8a;
+}
+
+/* ── LOWER: Tabs + Popular Products ── */
+.pd-lower {
+  display: grid;
+  grid-template-columns: 811.5px 1fr;
+  gap: 0;
+  padding: 0 135px 60px;
+  max-width: 1920px;
+  margin: 0 auto;
+  min-height: 601px;
+  align-items: flex-start;
+}
+
+/* TABS — Instrument Sans Bold 18px, tab bar border-bottom #e9e9e9 1px, active has black 2px underline */
+.pd-tabs-area {
+  display: flex;
+  flex-direction: column;
+  gap: 43px;
+}
+
+.pd-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  border-bottom: 1px solid #e9e9e9;
+  padding-bottom: 21px;
+  flex-wrap: wrap;
+}
+
+.pd-tab-btn {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  color: #a8a8a8;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-transform: capitalize;
+  position: relative;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.pd-tab-btn:hover {
+  color: #000;
+}
+
+.pd-tab-btn--active {
+  color: #000;
+}
+
+.pd-tab-btn--active::after {
+  content: '';
+  position: absolute;
+  bottom: -21px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #000;
+}
+
+/* Tab content */
+.pd-tab-content {
+  width: 90%;
+}
+
+.pd-tab-h3 {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 32px;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0 0 15px;
+}
+
+.pd-tab-p {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #5b5b5b;
+  margin: 0 0 20px;
+}
+
+.pd-key-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pd-key-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 26px;
+  color: #000;
+}
+
+.pd-key-benefits li span {
+  color: #000;
+}
+
+.pd-key-benefits li strong {
+  color: #000;
+}
+
+.pd-muted-text {
+  color: #5b5b5b !important;
+  font-weight: 400 !important;
+}
+
+.pd-muted-text strong {
+  color: #000 !important;
+  font-weight: 600 !important;
+}
+
+.pd-dot-bullet {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #ddca8a;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 11px;
+}
+
+/* Additional Info table */
+.pd-tab-additional {
+  padding-top: 10px;
+}
+
+.pd-info-table {
+  width: 100%;
+  max-width: 560px;
+  border-collapse: collapse;
+}
+
+.pd-info-table td {
+  padding: 12px 16px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  border-bottom: 1px solid #e9e9e9;
+  color: #000;
+}
+
+.pd-info-label {
+  font-weight: 700;
+  color: #000;
+  width: 160px;
+}
+
+/* POPULAR PRODUCTS sidebar — border-left #e9e9e9 1px, pl 107.25px */
+.pd-popular {
+  /* border-left: 1px solid #e9e9e9; */
+  /* padding-left: 107px; */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pd-popular__head {
+  border-bottom: 1px solid #e9e9e9;
+  width: 100%;
+  padding-bottom: 11px;
+  margin-bottom: 30px;
+}
+
+.pd-popular__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 32px;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0;
+}
+
+.pd-popular__title--muted {
+  color: #a8a8a8;
+}
+
+.pd-popular__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+/* Popular product item — bg white border #e9e9e9 1px rounded 10px, p 11px, gap 20px */
+.pd-popular-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 11px;
+  border: 1px solid #e9e9e9;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: box-shadow 0.2s;
+}
+
+.pd-popular-item:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pd-popular-item__img {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f4f4f4;
+}
+
+.pd-popular-item__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pd-popular-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Popular name — Sofia Sans Condensed SemiBold 20px, capitalize */
+.pd-popular-item__name {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  color: #000;
+  text-transform: capitalize;
+  margin: 0 0 2px;
+  white-space: nowrap;
+}
+
+.pd-popular-item__cat {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  color: #a8a8a8;
+  margin: 0;
+}
+
+/* Popular price — Instrument Sans SemiBold 18px */
+.pd-popular-item__price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+  color: #000;
+  min-width: 90px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Popular add to cart btn */
+.pd-popular__add-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  background: #ddca8a;
+  border: none;
+  border-radius: 30px;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pd-popular__add-btn:hover {
+  background: #c8a84b;
+}
+
+/* ── RELATED PRODUCTS ── */
+.pd-related {
+  padding: 0 135px 60px;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+/* Title — Lato Regular 64px #2e2617 tracking -2px uppercase */
+.pd-related__title {
+  font-family: 'Lato', 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 90px;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  color: #2e2617;
+  margin: 0 0 20px;
+}
+
+.pd-related__slider-wrap {
+  overflow: hidden;
+}
+
+.pd-related-swiper {
+  overflow: visible !important;
+}
+
+/* Related product card — border #e9e9e9 1px, rounded 20px, h 560px */
+.pd-rel-card {
+  border: 1px solid #e9e9e9;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 560px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: box-shadow 0.25s, transform 0.2s;
+}
+
+.pd-rel-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.pd-rel-card__img {
+  flex: 1;
+  overflow: hidden;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pd-rel-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.35s;
+}
+
+.pd-rel-card:hover .pd-rel-card__img img {
+  transform: scale(1.05);
+}
+
+.pd-rel-card__body {
+  padding: 20px 20px 24px;
+  flex-shrink: 0;
+}
+
+/* Card category — Instrument Sans SemiBold 14px #908f8f */
+.pd-rel-card__cat {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #908f8f;
+  margin: 0 0 4px;
+}
+
+/* Card name — Sofia Sans Condensed Bold 24px #000 */
+.pd-rel-card__name {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000;
+  margin: 0 0 8px;
+}
+
+/* Card price — Instrument Sans SemiBold 18px */
+.pd-rel-card__price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+  color: #000;
+  margin: 0;
+}
+
+/* ── MARQUEE ── #ddca8a, opacity 0.5, Sofia Sans Condensed Bold 183px */
+.pd-marquee-wrap {
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.pd-marquee-track {
+  display: flex;
+  animation: pdMarquee 24s linear infinite;
+  width: max-content;
+}
+
+@keyframes pdMarquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.pd-mword {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 183px;
+  line-height: 1.13;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #ddca8a;
+  padding: 0 32px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* ── INSTAGRAM ── */
+.pd-insta {
+  padding: 0 145px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 49px;
+  align-items: center;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.pd-insta__head {
+  display: flex;
+  justify-content: center;
+}
+
+/* Instagram label button — border #000 1px, h 50px, rounded 25px, Sofia Sans Condensed Bold 18px */
+.pd-insta__btn {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 25px;
+  height: 50px;
+  padding: 0 32px;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 18px;
+  color: #000;
+  text-transform: capitalize;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pd-insta__btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Instagram grid — 5 images 296×296 rounded 16px */
+.pd-insta__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 296px);
+  gap: 25px;
+  width: 100%;
+}
+
+.pd-insta__item {
+  width: 296px;
+  height: 297px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.pd-insta__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.pd-insta__item:hover img {
+  transform: scale(1.06);
+}
+
+/* ================================================================
+   RESPONSIVE — Tablet max-width: 991px
+================================================================ */
+@media (max-width: 991px) {
+  .pd-main {
+    grid-template-columns: 1fr;
+    padding: 30px 40px;
+    gap: 40px;
+  }
+
+  .pd-gallery {
+    max-width: 100%;
+  }
+
+  .pd-main-img {
+    max-width: 560px;
+  }
+
+  .pd-info {
+    border-left: none;
+    border-top: 1px solid #e9e9e9;
+    padding: 30px 0 0;
+  }
+
+  .pd-lower {
+    grid-template-columns: 1fr;
+    padding: 0 40px 60px;
+    gap: 40px;
+  }
+
+  .pd-popular {
+    border-left: none;
+    border-top: 1px solid #e9e9e9;
+    padding-left: 0;
+    padding-top: 30px;
+  }
+
+  .pd-related {
+    padding: 0 40px 60px;
+  }
+
+  .pd-related__title {
+    font-size: 48px;
+    line-height: 60px;
+  }
+
+  .pd-insta {
+    padding: 0 40px 60px;
+    gap: 32px;
+  }
+
+  .pd-insta__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .pd-insta__item {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .pd-mword {
+    font-size: 100px;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — Mobile max-width: 767px
+================================================================ */
+@media (max-width: 767px) {
+  .pd-breadcrumb {
+    padding: 16px 20px;
+  }
+
+  .pd-tabs-area {
+    display: flex;
+    flex-direction: column;
+    gap: 43px;
+    width: 100%;
+  }
+
+  .pd-main {
+    padding: 24px 20px;
+  }
+
+  .pd-gallery {
+    flex-direction: column;
+  }
+
+  .pd-thumbs {
+    flex-direction: row;
+  }
+
+  .pd-thumb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .pd-title {
+    font-size: 40px;
+    line-height: 40px;
+  }
+
+  .pd-info {
+    padding: 20px 0 0;
+  }
+
+  .pd-lower {
+    padding: 0 20px 48px;
+  }
+
+  .pd-tabs-bar {
+    gap: 16px;
+  }
+
+  .pd-tab-btn {
+    font-size: 14px;
+  }
+
+  .pd-related {
+    padding: 0 20px 48px;
+  }
+
+  .pd-related__title {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .pd-insta {
+    padding: 0 20px 48px;
+    gap: 20px;
+  }
+
+  .pd-insta__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .pd-insta__btn {
+    font-size: 14px;
+    padding: 0 20px;
+  }
+
+  .pd-mword {
+    font-size: 56px;
+    padding: 0 16px;
+  }
+  .pd-breadcrumb__inner
+
+ {
+    display: block;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    max-width: 1920px;
+    margin: 0 auto;
+}
+
+  .pd-popular {
+    padding: 20px 0 0;
+    display: none;
+  }
+
+  .pd-pay-img img {
+    width: 100%;
+    height: auto;
+  }
+
+  .pd-cart-row {
+    flex-wrap: wrap;
+  }
+
+  .pd-add-btn {
+    min-width: 140px;
+  }
+}
