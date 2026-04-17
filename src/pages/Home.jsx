@@ -597,7 +597,7 @@ export default function Home() {
               <a
                 href="#"
                 className="hm-merch__link"
-                onClick={(e) => nav("shop", null, e)}
+                onClick={(e) => nav("#", null, e)}
               >
                 shop now
               </a>
