@@ -478,6 +478,7 @@ button {
 
 /* Figma: each Item→Link 157×36px, padding 21px 4px, rounded 30px */
 .hdr__nav-link {
+  text-decoration: none !important;   
   display: flex;
   align-items: center;
   justify-content: center;

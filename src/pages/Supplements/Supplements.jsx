@@ -15,11 +15,11 @@ const imgProductIso =
   "https://www.figma.com/api/mcp/asset/6251020d-3f48-4774-af7d-f4f598fbddda";
 const imgStarFull = "/supplements/star.png";
 const imgStarHalf =
-  "https://www.figma.com/api/mcp/asset/05b8ed64-2375-4fb2-b5ac-cc10075097e1";
+  "/supplements/star.png";
 const imgStarFull2 =
-  "https://www.figma.com/api/mcp/asset/4985bb64-dba4-414a-9b69-196a7a450280";
+  "/supplements/star.png";
 const imgStarEmpty =
-  "https://www.figma.com/api/mcp/asset/a56683f2-936a-4bd1-8919-99f20531318c";
+  "/supplements/star.png";
 
 const filterTabs = [
   "New Arrivals",
