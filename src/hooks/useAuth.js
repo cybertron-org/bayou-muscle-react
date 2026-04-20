@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { loginUser, logoutUser } from '../services/authService';
+import { loginUser, logoutUser, registerUser, forgotPassword as forgotPasswordRequest } from '../services/authService';
 
 const TOKEN_KEY = 'access_token';
 const USER_KEY = 'auth_user';
@@ -18,6 +18,24 @@ const getStoredUser = () => {
 		return null;
 	}
 };
+
+const getUserRoles = (user) => {
+	if (!user) {
+		return [];
+	}
+
+	if (Array.isArray(user.roles)) {
+		return user.roles.filter(Boolean).map((role) => String(role).toLowerCase());
+	}
+
+	if (typeof user.role === 'string' && user.role.trim()) {
+		return [user.role.trim().toLowerCase()];
+	}
+
+	return [];
+};
+
+const getPrimaryRole = (user) => getUserRoles(user)[0] || 'user';
 
 const persistAuth = ({ token, user, rememberMe }) => {
 	const primary = rememberMe ? localStorage : sessionStorage;
@@ -43,6 +61,8 @@ export default function useAuth() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
+	const roles = useMemo(() => getUserRoles(user), [user]);
+	const role = useMemo(() => getPrimaryRole(user), [user]);
 	const isAuthenticated = useMemo(() => Boolean(token), [token]);
 
 	const login = async ({ email, password, rememberMe = true }) => {
@@ -81,13 +101,61 @@ export default function useAuth() {
 		}
 	};
 
+	const register = async ({ full_name, email, phone, password, password_confirmation }) => {
+		setIsLoading(true);
+		setError('');
+
+		try {
+			const response = await registerUser({ full_name, email, phone, password, password_confirmation });
+			const payload = response?.data || response || {};
+			const nextToken = payload?.access_token || payload?.token || '';
+			const nextUser = payload?.user || null;
+
+			if (nextToken && nextUser) {
+				persistAuth({ token: nextToken, user: nextUser, rememberMe: true });
+				setToken(nextToken);
+				setUser(nextUser);
+			}
+
+			return response;
+		} catch (err) {
+			const message = err?.message || 'Unable to register. Please try again.';
+			setError(message);
+			throw err;
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const forgotPassword = async ({ email }) => {
+		setIsLoading(true);
+		setError('');
+		
+		try {
+			const response = await forgotPasswordRequest({ email });
+			return response;
+		}
+		catch (err) {
+			const message = err?.message || 'Unable to process request. Please try again.';
+			setError(message);
+			throw err;
+		}
+		finally {
+			setIsLoading(false);
+		}
+	};
+
 	return {
 		user,
+		role,
+		roles,
 		token,
 		isAuthenticated,
 		isLoading,
 		error,
 		login,
 		logout,
+		register,
+		forgotPassword,
 	};
 }

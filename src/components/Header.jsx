@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CartDrawer from '../pages/CartDrawer/CartDrawer';
+import useAuth from '../hooks/useAuth';
 
 const imgLogoVector  = '/images/logo.png';
 const imgSearchIcon  = '/blogs/search.png';
@@ -33,6 +35,8 @@ const MOBILE_LINKS = [
 ];
 
 export default function Header() {
+  const navigate = useNavigate();
+  const { isAuthenticated, role } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartCount]  = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
@@ -123,7 +127,10 @@ export default function Header() {
             <button
               className="hdr__icon-btn"
               aria-label="Account"
-              onClick={e => go('contact', e)}
+              onClick={() => {
+                const target = !isAuthenticated ? '/login' : String(role || '').toLowerCase() === 'admin' ? '/admin/dashboard' : '/profile';
+                navigate(target);
+              }}
             >
               <img src={imgAccountIcon} alt="" className="hdr__icon-img" />
             </button>
