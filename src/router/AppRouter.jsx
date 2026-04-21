@@ -59,8 +59,8 @@ export default function AppRouter() {
 			<Route path="/supplements" element={<Supplements />} />
 			<Route path="/shop"        element={<Shop />} />
 			<Route path="/merchandise" element={<Merchandise />} />
-			<Route path="/product"     element={<ProductDetail onNavigate={navigate} />} />
-			<Route path="/product/:id" element={<ProductDetail onNavigate={navigate} />} />
+			<Route path="/product"      element={<ProductDetail onNavigate={navigate} />} />
+			<Route path="/product/:slug" element={<ProductDetail onNavigate={navigate} />} />
 			<Route path="/contact"     element={<Contact />} />
 			<Route path="/register"    element={<Register />} />
 			<Route path="/cart"        element={<Cart onNavigate={navigate} initialView="cart" />} />

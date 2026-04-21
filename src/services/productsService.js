@@ -38,3 +38,24 @@ export const deleteProduct = async (productId) => {
   return response;
 };
 
+export const getFeaturedProducts = async () => {
+  const response = await apiRequest('/website/feature-products', {
+    method: 'GET',
+  });
+  return response;
+}
+
+export const getLatestProducts = async () => {
+  const response = await apiRequest('/website/latest-releases', {
+    method: 'GET',
+  });
+  return response;
+}
+
+export const getProductDetails = async (productslug) => {
+  const response = await apiRequest(`/products/${productslug}`, {
+    method: 'GET',
+  });
+  return response;
+}
+
