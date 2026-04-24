@@ -18,6 +18,7 @@ import Blog          from '../pages/Blog/Blog';
 import BlogDetails   from '../pages/BlogDetails/BlogDetails'; 
 import Profile 	 from '../pages/Profile/Profile';
 import MyCart from '../pages/MyCart/MyCart';
+import MyWishlist from '../pages/MyWishlist/MyWishlist';
 
 import AdminDashboard  from '../admin/pages/AdminDashboard';
 import AdminAddProduct from '../admin/pages/AdminAddProduct';
@@ -61,7 +62,7 @@ export default function AppRouter() {
 			<Route path="/about"       element={<About />} />
 			<Route path="/supplements" element={<Supplements />} />
 			<Route path="/category/:categorySlug" element={<CategoryProducts />} />
-			<Route path="/shop"        element={<Shop />} />
+			{/* <Route path="/shop"        element={<Shop />} /> */}
 			<Route path="/merchandise" element={<Merchandise />} />
 			<Route path="/product"      element={<ProductDetail onNavigate={navigate} />} />
 			<Route path="/product/:slug" element={<ProductDetail onNavigate={navigate} />} />
@@ -73,6 +74,7 @@ export default function AppRouter() {
 			<Route path="/blogdetails" element={<BlogDetails />} />
 			<Route path="/blogdetails/:slug" element={<BlogDetails />} />
 			<Route path="/my-cart"     element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyCart /></ProtectedRoute>} />
+			<Route path="/my-wishlist" element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyWishlist /></ProtectedRoute>} />
 			<Route
 				path="/profile"
 				element={

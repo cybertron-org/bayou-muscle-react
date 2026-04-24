@@ -1,19 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import useCart from '../../hooks/useCart';
-
-const promoOptions = ['FIRST10', 'SAVE15', 'BAYOU20'];
 
 function formatMoney(value) {
 	return `$${value.toFixed(2)}`;
 }
 
 export default function MyCart() {
-	const { cartItems, isLoading, error, loadCartItems } = useCart({ autoLoad: false });
+	const { cartItems, cartSummary, isLoading, error, loadCartItems, updateItemQuantity, removeItemFromCart, clearCart, applyCoupon } = useCart({ autoLoad: false });
 	const [items, setItems] = useState([]);
+	const [updatingItemId, setUpdatingItemId] = useState('');
+	const [removingItemId, setRemovingItemId] = useState('');
+	const [isClearingCart, setIsClearingCart] = useState(false);
+	const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 	const [promo, setPromo] = useState('');
-	const [promoApplied, setPromoApplied] = useState(false);
 	const [promoError, setPromoError] = useState('');
 
 	useEffect(() => {
@@ -26,43 +28,94 @@ export default function MyCart() {
 				id: item.id,
 				name: item.productName,
 				variant: item.productSlug ? `Product · ${item.productSlug}` : 'Product',
-				price: Number(item.unitPrice || 0),
+				unitPrice: Number(item.unitPrice || 0),
+				discountedPrice: Number(item.discountedPrice || item.unitPrice || 0),
 				qty: Number(item.quantity || 0),
 				img: item.image || '/supplements/p1.png',
 				total: Number(item.total || 0),
+				hasDiscount: Number(item.discountedPrice || item.unitPrice || 0) < Number(item.unitPrice || 0),
 			})),
 		);
 	}, [cartItems]);
 
-	const updateQty = (id, delta) => {
-		setItems((previous) =>
-			previous.map((item) =>
-				item.id === id ? { ...item, qty: Math.max(1, item.qty + delta) } : item,
-			),
-		);
-	};
-
-	const removeItem = (id) => {
-		setItems((previous) => previous.filter((item) => item.id !== id));
-	};
-
-	const subtotal = useMemo(
-		() => items.reduce((sum, item) => sum + (Number(item.total) || item.price * item.qty), 0),
-		[items],
-	);
-	const discount = promoApplied ? subtotal * 0.1 : 0;
-	const shipping = subtotal > 100 ? 0 : 5.99;
-	const total = subtotal - discount + shipping;
-
-	const applyPromo = () => {
-		if (promoOptions.includes(promo.trim().toUpperCase())) {
-			setPromoApplied(true);
-			setPromoError('');
+	const updateQty = async (id, delta) => {
+		const target = items.find((item) => item.id === id);
+		if (!target) {
 			return;
 		}
 
-		setPromoApplied(false);
-		setPromoError('Invalid promo code. Try FIRST10');
+		const nextQuantity = Math.max(1, Number(target.qty || 1) + delta);
+		if (nextQuantity === Number(target.qty || 1)) {
+			return;
+		}
+
+		setUpdatingItemId(String(id));
+		try {
+			await updateItemQuantity(id, nextQuantity);
+		} catch (err) {
+			toast.error(err?.message || 'Unable to update item quantity.');
+		} finally {
+			setUpdatingItemId('');
+		}
+	};
+
+	const removeItem = async (id) => {
+		setRemovingItemId(String(id));
+		try {
+			await removeItemFromCart(id);
+			toast.success('Item removed from cart.');
+		} catch (err) {
+			toast.error(err?.message || 'Unable to remove item from cart.');
+		} finally {
+			setRemovingItemId('');
+		}
+	};
+
+	const handleClearCart = async () => {
+		if (!items.length || isClearingCart) {
+			return;
+		}
+
+		setIsClearingCart(true);
+		try {
+			await clearCart();
+			toast.success('Cart cleared successfully.');
+		} catch (err) {
+			toast.error(err?.message || 'Unable to clear cart.');
+		} finally {
+			setIsClearingCart(false);
+		}
+	};
+
+	const actualAmount = Number(cartSummary?.subtotal ?? 0);
+	const couponDiscount = Number(cartSummary?.couponDiscount ?? 0);
+	const totalAfterDiscount = Number(cartSummary?.total ?? actualAmount - couponDiscount);
+	const hasCouponDiscount = couponDiscount > 0;
+	const hasAppliedCoupon = Boolean(cartSummary?.appliedCoupon);
+	const appliedCouponCode = cartSummary?.appliedCoupon?.coupon_code || '';
+	const appliedCouponTitle = cartSummary?.appliedCoupon?.title || '';
+	const appliedCouponType = cartSummary?.appliedCoupon?.type || '';
+	const appliedCouponPercentage = Number(cartSummary?.appliedCoupon?.percentage ?? 0);
+	const appliedCouponAmount = Number(cartSummary?.appliedCoupon?.amount ?? 0);
+
+	const applyPromo = async () => {
+		const couponCode = promo.trim();
+		if (!couponCode) {
+			setPromoError('Please enter a coupon code.');
+			return;
+		}
+
+		setIsApplyingCoupon(true);
+		setPromoError('');
+		try {
+			await applyCoupon(couponCode);
+			toast.success('Coupon applied successfully.');
+		} catch (err) {
+			setPromoError(err?.message || 'Invalid coupon code.');
+			toast.error(err?.message || 'Unable to apply coupon.');
+		} finally {
+			setIsApplyingCoupon(false);
+		}
 	};
 
 	return (
@@ -113,15 +166,34 @@ export default function MyCart() {
 										<div className="cart-item-info">
 											<p className="cart-item-name">{item.name}</p>
 											<p className="cart-item-variant">{item.variant}</p>
-											  <p className="cart-item-unit-price">{formatMoney(item.price)} each</p>
+											<p className="cart-item-unit-price">
+												{item.hasDiscount ? (
+													<>
+														<span className="cart-item-unit-price--old">{formatMoney(item.unitPrice)}</span>
+														<span className="cart-item-unit-price--new">{formatMoney(item.discountedPrice)} each</span>
+														<span className="cart-item-discount-pill">sale</span>
+													</>
+												) : (
+													`${formatMoney(item.unitPrice)} each`
+												)}
+											</p>
 										</div>
 										<div className="cart-qty-ctrl">
-											<button className="cart-qty-btn" onClick={() => updateQty(item.id, -1)}>−</button>
+											<button className="cart-qty-btn" onClick={() => updateQty(item.id, -1)} disabled={updatingItemId === String(item.id)}>−</button>
 											<span className="cart-qty-val">{item.qty}</span>
-											<button className="cart-qty-btn" onClick={() => updateQty(item.id, 1)}>+</button>
+											<button className="cart-qty-btn" onClick={() => updateQty(item.id, 1)} disabled={updatingItemId === String(item.id)}>+</button>
 										</div>
-										<div className="cart-item-total">{formatMoney(item.price * item.qty)}</div>
-										<button className="cart-remove-btn" onClick={() => removeItem(item.id)} aria-label="Remove">
+										<div className="cart-item-total">
+											{item.hasDiscount ? (
+												<>
+													<span className="cart-item-total--old">{formatMoney(item.unitPrice * item.qty)}</span>
+													<span className="cart-item-total--new">{formatMoney(item.total || item.discountedPrice * item.qty)}</span>
+												</>
+											) : (
+												formatMoney(item.total || item.unitPrice * item.qty)
+											)}
+										</div>
+										<button className="cart-remove-btn" onClick={() => removeItem(item.id)} disabled={removingItemId === String(item.id)} aria-label="Remove">
 											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
 												<line x1="18" y1="6" x2="6" y2="18" />
 												<line x1="6" y1="6" x2="18" y2="18" />
@@ -140,11 +212,13 @@ export default function MyCart() {
 									placeholder="Enter code (e.g. FIRST10)"
 									value={promo}
 									onChange={(event) => setPromo(event.target.value)}
-									className={`cart-promo-input${promoApplied ? ' success' : promoError ? ' error' : ''}`}
+									className={`cart-promo-input${hasAppliedCoupon ? ' success' : promoError ? ' error' : ''}`}
 								/>
-								<button className="cart-promo-btn" onClick={applyPromo}>Apply</button>
+								<button className="cart-promo-btn" onClick={applyPromo} disabled={isApplyingCoupon}>
+									{isApplyingCoupon ? 'Applying...' : 'Apply'}
+								</button>
 							</div>
-							{promoApplied ? <p className="cart-promo-success">✓ 10% discount applied!</p> : null}
+							{hasAppliedCoupon ? <p className="cart-promo-success">✓ Coupon applied: {appliedCouponCode || 'Discount active'}</p> : null}
 							{promoError ? <p className="cart-promo-error">{promoError}</p> : null}
 						</div>
 
@@ -152,6 +226,11 @@ export default function MyCart() {
 							<button className="cart-back-btn" onClick={() => window.__navigate && window.__navigate('shop')}>
 								← Continue Shopping
 							</button>
+							{items.length ? (
+								<button className="cart-clear-btn" onClick={handleClearCart} disabled={isClearingCart}>
+									{isClearingCart ? 'Clearing...' : 'Clear Cart'}
+								</button>
+							) : null}
 						</div>
 					</div>
 
@@ -159,29 +238,39 @@ export default function MyCart() {
 						<div className="cart-summary">
 							<h2 className="cart-summary-title">Order Summary</h2>
 
+							{hasAppliedCoupon ? (
+								<div className="cart-coupon-card">
+									<div className="cart-coupon-card__top">
+										<span className="cart-coupon-card__label">Applied Coupon</span>
+										<span className="cart-coupon-card__code">{appliedCouponCode}</span>
+									</div>
+									<p className="cart-coupon-card__title">{appliedCouponTitle || 'Coupon discount active'}</p>
+									<p className="cart-coupon-card__meta">
+										{appliedCouponType === 'percentage' && appliedCouponPercentage > 0
+											? `${appliedCouponPercentage}% off`
+											: appliedCouponType === 'absolute' && appliedCouponAmount > 0
+												? `${formatMoney(appliedCouponAmount)} off`
+												: 'Discount applied'}
+									</p>
+								</div>
+							) : null}
+
 							<div className="cart-summary-lines">
 								<div className="summary-line">
-									<span>Subtotal ({items.reduce((sum, item) => sum + item.qty, 0)} items)</span>
-									<span>{formatMoney(subtotal)}</span>
+									<span>Actual Amount ({items.reduce((sum, item) => sum + item.qty, 0)} items)</span>
+									<span>{formatMoney(actualAmount)}</span>
 								</div>
-								{promoApplied ? (
+								{hasAppliedCoupon ? (
 									<div className="summary-line discount">
-										<span>Promo discount (10%)</span>
-										<span>−{formatMoney(discount)}</span>
+										<span>Coupon Discount{appliedCouponCode ? ` (${appliedCouponCode})` : ''}</span>
+										<span>−{formatMoney(couponDiscount)}</span>
 									</div>
-								) : null}
-								<div className="summary-line">
-									<span>Shipping</span>
-									<span>{shipping === 0 ? <span className="free-ship">FREE</span> : formatMoney(shipping)}</span>
-								</div>
-								{shipping > 0 ? (
-									<p className="free-ship-nudge">Add {formatMoney(100 - subtotal)} more for free shipping!</p>
 								) : null}
 							</div>
 
 							<div className="cart-summary-total">
-								<span>Total</span>
-								<span>{formatMoney(total)}</span>
+								<span>Total After Discount</span>
+								<span>{formatMoney(totalAfterDiscount)}</span>
 							</div>
 
 							<button className="cart-checkout-btn" onClick={() => window.__navigate && window.__navigate('checkout')}>

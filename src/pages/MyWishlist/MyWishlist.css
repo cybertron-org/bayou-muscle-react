@@ -1,0 +1,542 @@
+/* ================================================================
+   MyWishlist.css
+   Design tokens inherited from site:
+     Fonts: Instrument Sans (body), Sofia Sans Condensed (headings)
+     #000000 — Black
+     #ffffff — White
+     #f4f4f4 — Whisper (bg)
+     #e9e9e9 — Mercury (borders)
+     #a8a8a8 — Silver Chalice (muted)
+     #5b5b5b — Scorpion (body text)
+     #ddca8a — Gold (primary accent)
+     #ee440e — Pomegranate (sale badge)
+     #39b54a — In-stock green
+     #d0021b — Out-of-stock red
+================================================================ */
+
+.wl-page {
+  font-family: 'Instrument Sans', sans-serif;
+  background: #fff;
+  color: #000;
+}
+
+/* ── Container ── */
+.wl-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 56px 135px 80px;
+}
+
+/* ── Page header ── */
+.wl-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.wl-header__eyebrow {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ddca8a;
+  margin: 0 0 8px;
+}
+
+.wl-header__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 64px;
+  line-height: 58px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0 0 12px;
+}
+
+.wl-header__title--muted {
+  color: #a8a8a8;
+}
+
+.wl-header__sub {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #5b5b5b;
+  margin: 0;
+}
+
+.wl-header__actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* ── Shared buttons ── */
+.wl-btn {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 30px;
+  padding: 0 28px;
+  height: 48px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.wl-btn--solid {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+}
+
+.wl-btn--solid:hover {
+  background: #ddca8a;
+  border-color: #ddca8a;
+  color: #000;
+}
+
+.wl-btn--outline {
+  background: transparent;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.wl-btn--outline:hover {
+  background: #000;
+  color: #fff;
+}
+
+.wl-btn--ghost {
+  background: transparent;
+  color: #a8a8a8;
+  border: 1px solid #e9e9e9;
+}
+
+.wl-btn--ghost:hover {
+  border-color: #ee440e;
+  color: #ee440e;
+}
+
+/* ── Empty state ── */
+.wl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.wl-empty__icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wl-empty__title {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0;
+}
+
+.wl-empty__text {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 16px;
+  color: #5b5b5b;
+  max-width: 380px;
+  margin: 0;
+  line-height: 26px;
+}
+
+/* ── Product grid ── */
+.wl-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* ── Product card ── */
+.wl-card {
+  position: relative;
+  border: 1px solid #e9e9e9;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s, transform 0.2s, opacity 0.3s;
+}
+
+.wl-card:hover {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.09);
+  transform: translateY(-3px);
+}
+
+.wl-card--removing {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+/* Sale badge */
+.wl-card__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  background: #ee440e;
+  color: #fff;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  line-height: 1.4;
+}
+
+/* Remove (×) button */
+.wl-card__remove {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #a8a8a8;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.wl-card__remove:hover {
+  background: #ee440e;
+  border-color: #ee440e;
+  color: #fff;
+}
+
+/* Image area */
+.wl-card__img {
+  position: relative;
+  background: #f4f4f4;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.wl-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.35s;
+}
+
+.wl-card:hover .wl-card__img img {
+  transform: scale(1.05);
+}
+
+/* Out-of-stock overlay */
+.wl-card__oos-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #a8a8a8;
+  letter-spacing: 0.05em;
+}
+
+/* Card body */
+.wl-card__body {
+  padding: 16px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.wl-card__cat {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a8a8a8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.wl-card__name {
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  color: #000;
+  margin: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wl-card__name:hover {
+  color: #ddca8a;
+}
+
+/* Stars */
+.wl-stars {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.wl-star {
+  font-size: 13px;
+  color: #e9e9e9;
+  line-height: 1;
+}
+
+.wl-star--on {
+  color: #ddca8a;
+}
+
+.wl-star--half {
+  background: linear-gradient(90deg, #ddca8a 50%, #e9e9e9 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wl-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wl-card__rating-val {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000;
+}
+
+.wl-card__rating-count {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #a8a8a8;
+}
+
+/* Price */
+.wl-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.wl-card__price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+}
+
+.wl-card__old-price {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a8a8a8;
+  text-decoration: line-through;
+}
+
+/* Stock indicator */
+.wl-card__stock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wl-card__stock-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #39b54a;
+  flex-shrink: 0;
+}
+
+.wl-card__stock-dot--oos {
+  background: #d0021b;
+}
+
+.wl-card__stock-text {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #39b54a;
+}
+
+.wl-card__stock-text--oos {
+  color: #d0021b;
+}
+
+/* Card footer */
+.wl-card__footer {
+  padding: 0 18px 18px;
+  display: flex;
+  gap: 10px;
+}
+
+.wl-card__cart-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 22px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-family: 'Sofia Sans Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.wl-card__cart-btn:hover:not(:disabled) {
+  background: #ddca8a;
+  color: #000;
+}
+
+.wl-card__cart-btn:disabled {
+  background: #f4f4f4;
+  color: #a8a8a8;
+  cursor: not-allowed;
+}
+
+.wl-card__view-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #e9e9e9;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #5b5b5b;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.wl-card__view-btn:hover {
+  border-color: #000;
+  background: #000;
+  color: #fff;
+}
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+@media (max-width: 1200px) {
+  .wl-container {
+    padding: 48px 60px 72px;
+  }
+
+  .wl-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .wl-container {
+    padding: 40px 40px 60px;
+  }
+
+  .wl-header__title {
+    font-size: 48px;
+    line-height: 46px;
+  }
+
+  .wl-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .wl-container {
+    padding: 28px 20px 48px;
+  }
+
+  .wl-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .wl-header__title {
+    font-size: 36px;
+    line-height: 36px;
+  }
+
+  .wl-header__actions {
+    width: 100%;
+  }
+
+  .wl-btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 0 16px;
+  }
+
+  .wl-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .wl-card__name {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .wl-card__price {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 400px) {
+  .wl-grid {
+    grid-template-columns: 1fr;
+  }
+}

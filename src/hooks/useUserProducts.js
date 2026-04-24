@@ -3,6 +3,10 @@ import {
     getFeaturedProducts,
     getLatestProducts,
     getProductDetails,
+    addProductReview,
+    fetchProductReviews,
+    addProductToWishlist
+
 } from "../services/productsService";
 
 const formatPrice = (value) => {
@@ -87,8 +91,40 @@ const useUserProducts = () => {
         }
     }, []);
 
+    const addReview = useCallback(async (reviewData) => {
+        try {
+            const response = await addProductReview(reviewData);
+            return response?.data;
+        } catch (error) {
+            console.error('Error adding product review:', error);
+            throw error;
+        }
+    }, []);
 
-    return { fetchUserProducts, fetchLatestProducts, getProduct };
+    const fetchReviews = useCallback(async (productId) => {
+        try {
+            const response = await fetchProductReviews(productId);
+            return Array.isArray(response?.data) ? response.data : [];
+        } catch (error) {
+            console.error('Error fetching product reviews:', error);
+            throw error;
+        }
+    }, []);
+
+    const addToWishlist = useCallback(async (productId) => {
+        try {
+            const response = await addProductToWishlist(productId);
+            return response?.data;
+        } catch (error) {
+            console.error('Error adding product to wishlist:', error);
+            throw error;
+        }
+    }, []);
+
+
+
+
+    return { fetchUserProducts, fetchLatestProducts, getProduct, addReview, fetchReviews, addToWishlist };
 };
 
 export default useUserProducts;

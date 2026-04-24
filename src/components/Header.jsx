@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import CartDrawer from '../pages/CartDrawer/CartDrawer';
 import useAuth from '../hooks/useAuth';
 import useCategories from '../hooks/useCategories';
+import useCart from '../hooks/useCart';
 
 const imgLogoVector  = '/images/logo.png';
 const imgSearchIcon  = '/blogs/search.png';
@@ -23,9 +24,9 @@ const marqueeItems = [...topbarItems, ...topbarItems, ...topbarItems];
 export default function Header() {
   const navigate = useNavigate();
   const { isAuthenticated, role } = useAuth();
+  const { cartCount } = useCart();
   const { categories, isLoading } = useCategories();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [cartCount]  = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
 
@@ -147,7 +148,7 @@ export default function Header() {
             </div>
 
             <div className="hdr__lang">
-              <img src={imgLangFlag} alt="Language" className="hdr__lang-flag" />
+              <img src={imgAccountIcon} alt="" className="hdr__lang-flag" />
             </div>
 
             <button
@@ -158,7 +159,7 @@ export default function Header() {
                 navigate(target);
               }}
             >
-              <img src={imgAccountIcon} alt="" className="hdr__icon-img" />
+              <img src={imgLangFlag} alt="" className="hdr__icon-img" />
             </button>
 
             <button

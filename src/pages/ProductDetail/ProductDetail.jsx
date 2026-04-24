@@ -11,6 +11,7 @@ import Footer from "../../components/Footer";
 import Posts from "../../components/Posts";
 import Marquee from "../../components/Marquee";
 import useUserProducts from "../../hooks/useUserProducts";
+import useAuth from '../../hooks/useAuth';
 import useCart from '../../hooks/useCart';
 
 const imgPayPng = "/products/pay.png";
@@ -52,15 +53,26 @@ const fallbackRelatedProducts = [
 export default function ProductDetail() {
   const { slug, id } = useParams();
   const navigate = useNavigate();
-  const { getProduct } = useUserProducts();
+  const { getProduct, addReview, fetchReviews, addToWishlist } = useUserProducts();
+  const { isAuthenticated } = useAuth();
   const { addItemToCart } = useCart({ autoLoad: false });
 
   const [activeThumb, setActiveThumb] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [qty, setQty] = useState(1);
   const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [reviewPage, setReviewPage] = useState(1);
+  const REVIEWS_PER_PAGE = 5;
 
   const productSlug = slug || id || "";
 
@@ -78,10 +90,57 @@ export default function ProductDetail() {
     return fallbackRelatedProducts;
   }, [product]);
 
-  const reviewsList = Array.isArray(product?.reviewsList) ? product.reviewsList : [];
+  const reviewsList = reviews;
+
+  const ratingStats = useMemo(() => {
+    const total = reviewsList.length;
+    const avg = total > 0 ? reviewsList.reduce((s, r) => s + r.rating, 0) / total : 0;
+    const counts = [5, 4, 3, 2, 1].map((star) => ({
+      star,
+      count: reviewsList.filter((r) => r.rating === star).length,
+      pct: total > 0 ? (reviewsList.filter((r) => r.rating === star).length / total) * 100 : 0,
+    }));
+    return { total, avg, counts };
+  }, [reviewsList]);
+
+  const totalReviewPages = Math.ceil(reviewsList.length / REVIEWS_PER_PAGE);
+  const paginatedReviews = useMemo(() => {
+    const start = (reviewPage - 1) * REVIEWS_PER_PAGE;
+    return reviewsList.slice(start, start + REVIEWS_PER_PAGE);
+  }, [reviewsList, reviewPage, REVIEWS_PER_PAGE]);
+
   const descriptionHtml = product?.description || "<p>No description available.</p>";
   const additionalInfoHtml =
     product?.additionalInfo || "<p>No additional info available.</p>";
+
+  const loadProductReviews = async (productId) => {
+    if (!productId) {
+      setReviews([]);
+      return;
+    }
+
+    setIsReviewsLoading(true);
+    try {
+      const items = await fetchReviews(productId);
+      const normalized = Array.isArray(items)
+        ? items
+            .filter((review) => review?.status === 'approved' || !review?.status)
+            .map((review) => ({
+              id: String(review?.id || ''),
+              reviewerName: review?.user?.full_name || 'Verified user',
+              rating: Number(review?.rating ?? 0),
+              review: review?.review || 'No comment',
+              createdAt: review?.created_at || null,
+            }))
+        : [];
+      setReviews(normalized);
+      setReviewPage(1);
+    } catch {
+      setReviews([]);
+    } finally {
+      setIsReviewsLoading(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -102,11 +161,13 @@ export default function ProductDetail() {
           setProduct(details);
           setActiveThumb(0);
           setActiveTab("description");
+          await loadProductReviews(details?.id);
         }
       } catch {
         if (isMounted) {
           setProduct(null);
           setErrorMessage("We could not load this product right now.");
+          setReviews([]);
         }
       } finally {
         if (isMounted) {
@@ -141,6 +202,66 @@ export default function ProductDetail() {
       }
     } catch (err) {
       toast.error(err?.message || 'Unable to add item to cart.');
+    }
+  };
+
+  const handleBuyNow = () => {
+    addItemToCart(product?.id, qty).catch(() => {});
+    navigate('/my-cart');
+  };
+
+  const handleAddToWishlist = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    if (!product?.id || isAddingToWishlist) return;
+
+    setIsAddingToWishlist(true);
+    try {
+      await addToWishlist(product.id);
+      setIsWishlisted(true);
+      toast.success('Added to wishlist.');
+    } catch (err) {
+      toast.error(err?.message || 'Unable to add to wishlist.');
+    } finally {
+      setIsAddingToWishlist(false);
+    }
+  };
+
+  const handleSubmitReview = async (event) => {
+    event.preventDefault();
+
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    const nextReview = reviewText.trim();
+    if (!product?.id) {
+      toast.error('Product information is not available.');
+      return;
+    }
+    if (!nextReview) {
+      toast.error('Please write a review before submitting.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    try {
+      await addReview({
+        product_id: Number(product.id),
+        review: nextReview,
+        rating: Number(reviewRating),
+      });
+      toast.success('Review submitted successfully.');
+      setReviewText('');
+      setReviewRating(5);
+      await loadProductReviews(product.id);
+    } catch (err) {
+      toast.error(err?.message || 'Unable to submit review.');
+    } finally {
+      setIsSubmittingReview(false);
     }
   };
 
@@ -241,11 +362,12 @@ export default function ProductDetail() {
                   </div>
 
                   <button className="pd-add-btn" type="button" onClick={handleAddToCart}>Add to cart</button>
-                  <button className="pd-icon-btn" aria-label="Add to wishlist">
+                  <button className="pd-icon-btn" aria-label="Add to wishlist" onClick={handleAddToWishlist} disabled={isAddingToWishlist}>
                     <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
                       <path
                         d="M8 13S1 8.5 1 4.5a3.5 3.5 0 0 1 7-0C8.5 3.667 9 3 10.5 3a3.5 3.5 0 0 1 4.5 1.5C15 8.5 8 13 8 13z"
-                        stroke="#000"
+                        stroke={isWishlisted ? "#ee440e" : "#000"}
+                        fill={isWishlisted ? "#ee440e" : "none"}
                         strokeWidth="1.5"
                       />
                     </svg>
@@ -262,7 +384,7 @@ export default function ProductDetail() {
                   </button>
                 </div>
 
-                <button className="pd-buy-btn">Buy It Now</button>
+                <button className="pd-buy-btn" onClick={handleBuyNow}>Buy It Now</button>
 
                 <div className="pd-guarantee">
                   <p className="pd-guarantee__label">Guarantee Safe &amp; Secure Checkout</p>
@@ -350,18 +472,142 @@ export default function ProductDetail() {
                   )}
 
                   {activeTab === "reviews" && (
-                    <div className="pd-tab-reviews">
-                      {reviewsList.length > 0 ? (
-                        reviewsList.map((review) => (
-                          <div key={review.id} className="pd-tab-p">
-                            <strong>{review.user?.name || "Verified user"}</strong>
-                            {` - ${review.rating}/5`}
-                            <br />
-                            {review.comment || "No comment"}
+                    <div className="">
+                      {/* ── Write a review form ── */}
+                      <form className="pd-review-form" onSubmit={handleSubmitReview}>
+                        <h4 className="pd-review-form__title">Write a Review</h4>
+                        <div className="pd-review-form__row">
+                          <label className="pd-review-form__label">Your Rating</label>
+                          <div className="pd-star-picker">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                className={`pd-star-pick${(hoverRating || reviewRating) >= star ? " pd-star-pick--on" : ""}`}
+                                onMouseEnter={() => setHoverRating(star)}
+                                onMouseLeave={() => setHoverRating(0)}
+                                onClick={() => setReviewRating(star)}
+                                disabled={isSubmittingReview}
+                                aria-label={`Rate ${star} out of 5`}
+                              >
+                                ★
+                              </button>
+                            ))}
+                            <span className="pd-star-pick__label">
+                              {(hoverRating || reviewRating)}/5
+                            </span>
                           </div>
-                        ))
+                        </div>
+                        <div className="pd-review-form__row">
+                          <label htmlFor="pd-review" className="pd-review-form__label">Your Review</label>
+                          <textarea
+                            id="pd-review"
+                            className="pd-review-form__textarea"
+                            placeholder="Share your experience with this product…"
+                            value={reviewText}
+                            onChange={(event) => setReviewText(event.target.value)}
+                            disabled={isSubmittingReview}
+                            rows={4}
+                          />
+                        </div>
+                        <button type="submit" className="pd-review-form__submit" disabled={isSubmittingReview}>
+                          {isSubmittingReview ? 'Submitting…' : 'Submit Review'}
+                        </button>
+                      </form>
+
+                      {/* ── Reviews summary + list ── */}
+                      {isReviewsLoading ? (
+                        <p className="pd-tab-p">Loading reviews…</p>
+                      ) : reviewsList.length > 0 ? (
+                        <>
+                          {/* Summary bar */}
+                          <div className="pd-reviews-summary">
+                            <div className="pd-reviews-summary__score">
+                              <span className="pd-reviews-summary__avg">{ratingStats.avg.toFixed(1)}</span>
+                              <div className="pd-reviews-summary__stars">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                  <span
+                                    key={s}
+                                    className={`pd-star-display${ratingStats.avg >= s ? " pd-star-display--full" : ratingStats.avg >= s - 0.5 ? " pd-star-display--half" : ""}`}
+                                  >★</span>
+                                ))}
+                              </div>
+                              <span className="pd-reviews-summary__count">{ratingStats.total} review{ratingStats.total !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div className="pd-reviews-summary__bars">
+                              {ratingStats.counts.map(({ star, count, pct }) => (
+                                <div key={star} className="pd-rating-bar-row">
+                                  <span className="pd-rating-bar-row__label">{star} ★</span>
+                                  <div className="pd-rating-bar-row__track">
+                                    <div className="pd-rating-bar-row__fill" style={{ width: `${pct}%` }} />
+                                  </div>
+                                  <span className="pd-rating-bar-row__count">{count}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Review cards */}
+                          <div className="pd-reviews-list">
+                            {paginatedReviews.map((review) => (
+                              <div key={review.id} className="pd-review-card">
+                                <div className="pd-review-card__header">
+                                  <div className="pd-review-card__avatar">
+                                    {review.reviewerName.charAt(0).toUpperCase()}
+                                  </div>
+                                  <div className="pd-review-card__meta">
+                                    <span className="pd-review-card__name">{review.reviewerName}</span>
+                                    {review.createdAt && (
+                                      <span className="pd-review-card__date">
+                                        {new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="pd-review-card__stars">
+                                    {[1, 2, 3, 4, 5].map((s) => (
+                                      <span key={s} className={`pd-star-display${review.rating >= s ? " pd-star-display--full" : ""}`}>★</span>
+                                    ))}
+                                  </div>
+                                </div>
+                                <p className="pd-review-card__text">{review.review}</p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Pagination */}
+                          {totalReviewPages > 1 && (
+                            <div className="pd-reviews-pagination">
+                              <button
+                                className="pd-reviews-pagination__btn"
+                                onClick={() => setReviewPage((p) => Math.max(1, p - 1))}
+                                disabled={reviewPage === 1}
+                              >
+                                ← Prev
+                              </button>
+                              {Array.from({ length: totalReviewPages }, (_, i) => i + 1).map((pg) => (
+                                <button
+                                  key={pg}
+                                  className={`pd-reviews-pagination__btn${reviewPage === pg ? " pd-reviews-pagination__btn--active" : ""}`}
+                                  onClick={() => setReviewPage(pg)}
+                                >
+                                  {pg}
+                                </button>
+                              ))}
+                              <button
+                                className="pd-reviews-pagination__btn"
+                                onClick={() => setReviewPage((p) => Math.min(totalReviewPages, p + 1))}
+                                disabled={reviewPage === totalReviewPages}
+                              >
+                                Next →
+                              </button>
+                            </div>
+                          )}
+                        </>
                       ) : (
-                        <p className="pd-tab-p">No reviews yet. Be the first to review this product.</p>
+                        <div className="pd-reviews-empty">
+                          <span className="pd-reviews-empty__icon">★</span>
+                          <p className="pd-reviews-empty__text">No reviews yet. Be the first to share your experience!</p>
+                        </div>
                       )}
                     </div>
                   )}
@@ -400,9 +646,7 @@ export default function ProductDetail() {
                       <div className="pd-popular-item__price">{p.price}</div>
                     </div>
                   ))}
-                </div>
-                <button className="pd-popular__add-btn" type="button" onClick={handleAddToCart}>Add to cart</button>
-              </div>
+                </div>              </div>
             </div>
 
             <section className="hm-section hm-latest">

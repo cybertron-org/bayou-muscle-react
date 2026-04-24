@@ -65,3 +65,26 @@ export const getProductsByCategory = async (categorySlug) => {
   });
   return response;
 }
+
+export const addProductReview = async (reviewData) => {
+  const response = await apiRequest(`/reviews`, {
+    method: 'POST',
+    data: reviewData,
+  });
+  return response;
+}
+
+export const fetchProductReviews = async (productId) => {
+  const response = await apiRequest(`/products/${productId}/reviews`, {
+    method: 'GET',
+  });
+  return response;
+}
+
+export const addProductToWishlist = async (productId) => {
+  const response = await apiRequest(`/wishlist`, {
+    method: 'POST',
+    data: { product_id: productId },
+  });
+  return response;
+}
