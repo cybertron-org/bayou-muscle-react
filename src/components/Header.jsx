@@ -147,9 +147,14 @@ export default function Header() {
               </button>
             </div>
 
-            <div className="hdr__lang">
+            <button className="hdr__lang"
+                          onClick={() => {
+                const target = !isAuthenticated ? '/login' : String(role || '').toLowerCase() === 'admin' ? '/admin/dashboard' : '/my-wishlist';
+                navigate(target);
+              }}>
+              
               <img src={imgAccountIcon} alt="" className="hdr__lang-flag" />
-            </div>
+            </button>
 
             <button
               className="hdr__icon-btn"

@@ -8,7 +8,7 @@ import useUserBlogs from "../../hooks/useUserBlogs";
 
 const formatDate = (dateString) => {
   if (!dateString) {
-    return "--";
+    return "";
   }
 
   const parsed = new Date(dateString.replace(" ", "T"));
@@ -56,12 +56,7 @@ export default function BlogDetails() {
     if (window.__navigate) window.__navigate(page, actualSlug);
   };
 
-  const descriptionHtml = useMemo(() => {
-    if (blog?.description) {
-      return blog.description;
-    }
-    return "<p>No content available.</p>";
-  }, [blog]);
+  const descriptionHtml = useMemo(() => blog?.description || "", [blog]);
 
   return (
     <>
@@ -79,37 +74,41 @@ export default function BlogDetails() {
                 Blogs
               </span>
               <span className="blog-bc-sep"></span>
-              <span className="blog-bc-current">{blog?.title || "Blog Details"}</span>
+              <span className="blog-bc-current">{blog?.title || ""}</span>
             </nav>
           </div>
         </section>
 
         {/* ── ARTICLE HEADER ── */}
         <div className="container">
+          {!isLoading && !error && !blog ? (
+            <div className="bd-content">
+              <p className="bd-text">Loading blog...</p>
+            </div>
+          ) : (
+            <>
           <div className="bd-header">
             <div className="bd-header__sidebar">
-              <span className="bd-cat-badge">{blog?.category || "All Post"}</span>
+              <span className="bd-cat-badge">{blog?.category || ""}</span>
             </div>
             <div className="bd-header__main">
-              <h1 className="bd-title">{blog?.title || "Blog Details"}</h1>
+              <h1 className="bd-title">{blog?.title || ""}</h1>
               <div className="bd-meta">
                 <span className="bd-meta__date">{formatDate(blog?.createdAt)}</span>
-                <span className="bd-meta__divider" />
-                <span className="bd-meta__by">
-                  By <strong>admin</strong>
-                </span>
               </div>
             </div>
           </div>
 
           {/* ── BANNER IMAGE ── */}
-          <div className="bd-banner">
-            <img
-              src={blog?.image || "/blogs/D1.png"}
-              alt={blog?.title || "Blog banner"}
-              className="bd-banner__img"
-            />
-          </div>
+          {blog?.image ? (
+            <div className="bd-banner">
+              <img
+                src={blog.image}
+                alt={blog?.title || "Blog banner"}
+                className="bd-banner__img"
+              />
+            </div>
+          ) : null}
 
           {/* ── ARTICLE CONTENT ── */}
           <div className="bd-content">
@@ -119,8 +118,8 @@ export default function BlogDetails() {
               <p className="bd-text">{error}</p>
             ) : (
               <>
-                <p className="bd-text">{blog?.summary || ""}</p>
-                <div className="bd-text" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+                {blog?.summary ? <p className="bd-text">{blog.summary}</p> : null}
+                {descriptionHtml ? <div className="bd-text" dangerouslySetInnerHTML={{ __html: descriptionHtml }} /> : null}
               </>
             )}
 
@@ -138,7 +137,7 @@ export default function BlogDetails() {
                   fill="black"
                 />
               </svg>
-              <span className="bd-tags__list">{blog?.category || "General"}</span>
+              <span className="bd-tags__list">{blog?.category || ""}</span>
             </div>
 
             {/* Post navigation */}
@@ -168,6 +167,8 @@ export default function BlogDetails() {
               </div>
             </div> */}
           </div>
+            </>
+          )}
         </div>
 
         {/* ── MARQUEE ── */}

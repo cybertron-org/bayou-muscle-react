@@ -122,7 +122,7 @@ export default function CartDrawer({ isOpen, onClose }) {
           {cartItems.length ? (
             <button className="cd-clear-btn" onClick={handleClearCart}>Clear Cart</button>
           ) : null}
-          <button className="cd-btn cd-btn--view" onClick={() => { onClose(); navigate('/my-cart'); }}>View Cart</button>
+          <button className="cd-btn cd-btn--view" onClick={() => { onClose(); navigate('/cart'); }}>View Cart</button>
           <button className="cd-btn cd-btn--checkout" onClick={() => { onClose(); navigate('/checkout'); }}>Checkout</button>
         </div>
       </div>

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { fetchProducts, createProduct, deleteProduct, updateProduct,getProductsByCategory } from '../services/productsService';
+import { fetchProducts, createProduct, deleteProduct, updateProduct, getProductsByCategory, fetchWishlist,removeProductFromWishlist,checkout } from '../services/productsService';
 
 const normalizeProduct = (item) => ({
     id: String(item?.id || ''),
+    wishlistId: item?.wishlistId ?? null,
     name: item?.name || 'Untitled',
     slug: item?.slug || '',
     price: item?.price ?? item?.original_price ?? item?.discounted_price ?? '0',
@@ -40,13 +41,13 @@ const normalizeProduct = (item) => ({
                 image: item?.image,
                 isMain: 1,
             }]
-        : [],
+            : [],
 });
 
 export default function useProducts(options = {}) {
     const { autoLoad = true } = options || {};
     const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(Boolean(autoLoad));
     const [error, setError] = useState('');
 
     const loadProducts = useCallback(async (params) => {
@@ -116,6 +117,71 @@ export default function useProducts(options = {}) {
         }
     }, []);
 
+    const loadWishlist = useCallback(async () => {
+        setIsLoading(true);
+        setError('');
+        try {
+            const response = await fetchWishlist();
+            const wishlistItems = Array.isArray(response?.data)
+                ? response.data
+                : Array.isArray(response)
+                    ? response
+                    : [];
+
+            const mappedProducts = wishlistItems.map((item) =>
+                normalizeProduct({
+                    ...(item?.product || {}),
+                    wishlistId: item?.id,
+                    quantity: item?.product?.quantity ?? 1,
+                })
+            );
+            setProducts(mappedProducts);
+            return mappedProducts;
+        }
+        catch (err) {
+            setError(err?.message || 'Unable to fetch wishlist products.');
+            return [];
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const removeFromWishlist = useCallback(async (wishlistId) => {
+        setIsLoading(true);
+        setError('');
+        try {
+            await removeProductFromWishlist(wishlistId);
+            setProducts((prev) => prev.filter((item) => String(item.wishlistId) !== String(wishlistId)));
+        }
+        catch (err) {
+            setError(err?.message || 'Unable to remove product from wishlist.');
+            throw err;
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const checkoutProducts = useCallback(async (checkoutData) => {
+        setIsLoading(true);
+        setError('');
+        try {
+            const response = await checkout(checkoutData);
+            return response;
+        }
+        catch (err) {
+            setError(err?.message || 'Unable to complete checkout.');
+            throw err;
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+
+
+
     useEffect(() => {
         if (autoLoad) {
             loadProducts();
@@ -130,6 +196,9 @@ export default function useProducts(options = {}) {
         loadProductsByCategory,
         addProduct,
         editProduct,
-        deleteExistingProduct
+        deleteExistingProduct,
+        loadWishlist,
+        removeFromWishlist,
+        checkoutProducts,
     };
 }

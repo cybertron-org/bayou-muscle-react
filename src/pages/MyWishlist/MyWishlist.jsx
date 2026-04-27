@@ -1,120 +1,30 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Marquee from "../../components/Marquee";
+import useWishlist from "../../hooks/useWishlist";
 import "./MyWishlist.css";
-
-const DUMMY_WISHLIST = [
-  {
-    id: 1,
-    slug: "isocool-protein-isolate",
-    name: "ISOCOOL Cold Filtered Protein Isolate",
-    cat: "Protein",
-    price: 89.0,
-    oldPrice: 109.0,
-    badge: "-18%",
-    img: "/products/p1.png",
-    inStock: true,
-    rating: 4.8,
-    reviews: 124,
-  },
-  {
-    id: 2,
-    slug: "horse-power-x",
-    name: "HORSE POWER X Pre-Workout",
-    cat: "Performance",
-    price: 144.99,
-    oldPrice: null,
-    badge: null,
-    img: "/products/horse-power.png",
-    inStock: true,
-    rating: 4.6,
-    reviews: 87,
-  },
-  {
-    id: 3,
-    slug: "muscleblaze-bcaa-gold",
-    name: "MuscleBlaze BCAA Gold",
-    cat: "Health Support",
-    price: 310.39,
-    oldPrice: 349.0,
-    badge: "-11%",
-    img: "/products/muscleblaze.png",
-    inStock: false,
-    rating: 4.5,
-    reviews: 56,
-  },
-  {
-    id: 4,
-    slug: "nutrex-hmb-1000",
-    name: "Nutrex HMB 1000 Capsules",
-    cat: "Health Support",
-    price: 293.84,
-    oldPrice: null,
-    badge: null,
-    img: "/products/nutrex.png",
-    inStock: true,
-    rating: 4.3,
-    reviews: 39,
-  },
-  {
-    id: 5,
-    slug: "performance-stack",
-    name: "Performance Endurance Stack",
-    cat: "Performance",
-    price: 199.0,
-    oldPrice: 240.0,
-    badge: "-17%",
-    img: "/products/performance.png",
-    inStock: true,
-    rating: 4.9,
-    reviews: 201,
-  },
-  {
-    id: 6,
-    slug: "quality-whey-protein",
-    name: "Quality Whey Protein 5lb",
-    cat: "Protein",
-    price: 74.95,
-    oldPrice: null,
-    badge: null,
-    img: "/products/quality.png",
-    inStock: false,
-    rating: 4.7,
-    reviews: 312,
-  },
-];
-
-function StarDisplay({ rating }) {
-  return (
-    <span className="wl-stars">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <span
-          key={s}
-          className={`wl-star${rating >= s ? " wl-star--on" : rating >= s - 0.5 ? " wl-star--half" : ""}`}
-        >
-          ★
-        </span>
-      ))}
-    </span>
-  );
-}
 
 export default function MyWishlist() {
   const navigate = useNavigate();
-  const [items, setItems] = useState(DUMMY_WISHLIST);
-  const [removingId, setRemovingId] = useState(null);
+  const { wishlistItems: items, isLoading, error, loadWishlist, toggleWishlist, isProductPending } = useWishlist();
 
-  const removeItem = (id) => {
-    setRemovingId(id);
-    setTimeout(() => {
-      setItems((prev) => prev.filter((item) => item.id !== id));
-      setRemovingId(null);
-    }, 300);
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  const handleRemoveFromWishlist = async (productId) => {
+    if (!productId || isProductPending(productId)) return;
+
+    try {
+      await toggleWishlist(productId);
+      toast.success("Removed from wishlist.");
+    } catch (err) {
+      toast.error(err?.message || "Unable to remove from wishlist.");
+    }
   };
-
-  const clearAll = () => setItems([]);
 
   return (
     <>
@@ -151,15 +61,15 @@ export default function MyWishlist() {
                 <button className="wl-btn wl-btn--outline" onClick={() => navigate("/supplements")}>
                   Continue Shopping
                 </button>
-                <button className="wl-btn wl-btn--ghost" onClick={clearAll}>
-                  Clear All
-                </button>
               </div>
             )}
           </div>
 
+          {isLoading && <p className="wl-header__sub">Loading wishlist...</p>}
+          {!isLoading && error && <p className="wl-header__sub">{error}</p>}
+
           {/* Empty state */}
-          {items.length === 0 ? (
+          {!isLoading && items.length === 0 ? (
             <div className="wl-empty">
               <div className="wl-empty__icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
@@ -183,17 +93,14 @@ export default function MyWishlist() {
             <div className="wl-grid">
               {items.map((item) => (
                 <div
-                  key={item.id}
-                  className={`wl-card${removingId === item.id ? " wl-card--removing" : ""}`}
+                  key={item.wishlistId || item.id}
+                  className={`wl-card${isProductPending(item.productId) ? " wl-card--removing" : ""}`}
                 >
-                  {/* Badge */}
-                  {item.badge && <span className="wl-card__badge">{item.badge}</span>}
-
-                  {/* Remove button */}
                   <button
                     className="wl-card__remove"
                     aria-label="Remove from wishlist"
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => handleRemoveFromWishlist(item.productId)}
+                    disabled={isProductPending(item.productId)}
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <line x1="18" y1="6" x2="6" y2="18" />
@@ -209,15 +116,15 @@ export default function MyWishlist() {
                     tabIndex={0}
                     onKeyDown={(e) => e.key === "Enter" && navigate(`/product/${item.slug}`)}
                   >
-                    <img src={item.img} alt={item.name} loading="lazy" />
-                    {!item.inStock && (
+                    <img src={item.img || "/products/p1.png"} alt={item.name} loading="lazy" />
+                    {item.quantity === 0 && (
                       <div className="wl-card__oos-overlay">Out of Stock</div>
                     )}
                   </div>
 
                   {/* Body */}
                   <div className="wl-card__body">
-                    <p className="wl-card__cat">{item.cat}</p>
+                    <p className="wl-card__cat">Wishlist Item</p>
                     <p
                       className="wl-card__name"
                       onClick={() => navigate(`/product/${item.slug}`)}
@@ -228,23 +135,16 @@ export default function MyWishlist() {
                       {item.name}
                     </p>
 
-                    <div className="wl-card__rating">
-                      <StarDisplay rating={item.rating} />
-                      <span className="wl-card__rating-val">{item.rating}</span>
-                      <span className="wl-card__rating-count">({item.reviews})</span>
-                    </div>
+                    {!!item.summary && <p className="wl-header__sub">{item.summary}</p>}
 
                     <div className="wl-card__price-row">
-                      <span className="wl-card__price">${item.price.toFixed(2)}</span>
-                      {item.oldPrice && (
-                        <span className="wl-card__old-price">${item.oldPrice.toFixed(2)}</span>
-                      )}
+                      <span className="wl-card__price">${Number(item.price || 0).toFixed(2)}</span>
                     </div>
 
                     <div className="wl-card__stock">
-                      <span className={`wl-card__stock-dot${item.inStock ? "" : " wl-card__stock-dot--oos"}`} />
-                      <span className={`wl-card__stock-text${item.inStock ? "" : " wl-card__stock-text--oos"}`}>
-                        {item.inStock ? "In Stock" : "Out of Stock"}
+                      <span className={`wl-card__stock-dot${item.quantity === 0 ? " wl-card__stock-dot--oos" : ""}`} />
+                      <span className={`wl-card__stock-text${item.quantity === 0 ? " wl-card__stock-text--oos" : ""}`}>
+                        {item.quantity === 0 ? "Out of Stock" : "In Stock"}
                       </span>
                     </div>
                   </div>
@@ -253,10 +153,10 @@ export default function MyWishlist() {
                   <div className="wl-card__footer">
                     <button
                       className="wl-card__cart-btn"
-                      disabled={!item.inStock}
+                      disabled={item.quantity === 0}
                       onClick={() => navigate(`/product/${item.slug}`)}
                     >
-                      {item.inStock ? "Add to Cart" : "Notify Me"}
+                      {item.quantity === 0 ? "Notify Me" : "Add to Cart"}
                     </button>
                     <button
                       className="wl-card__view-btn"

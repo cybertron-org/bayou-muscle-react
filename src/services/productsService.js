@@ -88,3 +88,26 @@ export const addProductToWishlist = async (productId) => {
   });
   return response;
 }
+
+export const fetchWishlist = async () => {
+  const response = await apiRequest('/wishlist', {
+    method: 'GET',
+  });
+  return response;
+}
+
+export const removeProductFromWishlist = async (wishlistItemId) => {
+  const response = await apiRequest(`/wishlist/${wishlistItemId}`, {
+    method: 'DELETE',
+  });
+  return response;
+}
+
+
+export const checkout =  async (checkoutData) => {
+  const response = await apiRequest('/checkout/place-order', {
+    method: 'POST',
+    data: checkoutData,
+  });
+  return response;
+}

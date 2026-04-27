@@ -60,7 +60,7 @@ export default function AppRouter() {
 			<Route path="/reset-password" element={<ResetPassword />} />
 			<Route path="/home"        element={<Home />} />
 			<Route path="/about"       element={<About />} />
-			<Route path="/supplements" element={<Supplements />} />
+			{/* <Route path="/supplements" element={<Supplements />} /> */}
 			<Route path="/category/:categorySlug" element={<CategoryProducts />} />
 			{/* <Route path="/shop"        element={<Shop />} /> */}
 			<Route path="/merchandise" element={<Merchandise />} />
@@ -68,12 +68,12 @@ export default function AppRouter() {
 			<Route path="/product/:slug" element={<ProductDetail onNavigate={navigate} />} />
 			<Route path="/contact"     element={<Contact />} />
 			<Route path="/register"    element={<Register />} />
-			<Route path="/cart"        element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><Cart onNavigate={navigate} initialView="cart" /></ProtectedRoute>} />
+			{/* <Route path="/cart"        element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><Cart onNavigate={navigate} initialView="cart" /></ProtectedRoute>} /> */}
 			<Route path="/checkout"    element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><Cart onNavigate={navigate} initialView="checkout" /></ProtectedRoute>} />
 			<Route path="/blog"        element={<Blog onNavigate={navigate} />} />
 			<Route path="/blogdetails" element={<BlogDetails />} />
 			<Route path="/blogdetails/:slug" element={<BlogDetails />} />
-			<Route path="/my-cart"     element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyCart /></ProtectedRoute>} />
+			<Route path="/cart"     element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyCart /></ProtectedRoute>} />
 			<Route path="/my-wishlist" element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyWishlist /></ProtectedRoute>} />
 			<Route
 				path="/profile"

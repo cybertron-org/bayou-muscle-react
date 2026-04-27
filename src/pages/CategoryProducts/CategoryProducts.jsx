@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import '../Supplements/Supplements.css';
@@ -61,7 +61,7 @@ function StarRating({ rating = 0 }) {
   );
 }
 
-function ProductCard({ product, onAddToCart }) {
+function ProductCard({ product, onAddToCart, onOpenProduct }) {
   const productRating = Number(product?.rating?.average ?? product?.rating?.stars ?? 0);
   const productRatingCount = Number(product?.rating?.count ?? 0);
   const productImage = product?.image || product?.images?.[0]?.image || '';
@@ -69,7 +69,18 @@ function ProductCard({ product, onAddToCart }) {
   const displayOldPrice = product?.originalPrice ? formatPrice(product.originalPrice) : '';
 
   return (
-    <div className="supp-card">
+    <div
+      className="supp-card"
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpenProduct(product)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onOpenProduct(product);
+        }
+      }}
+    >
       <div className="supp-card__inner">
         <div className="supp-card__header">
           <h3 className="supp-card__name">{product?.name || 'Untitled'}</h3>
@@ -108,7 +119,15 @@ function ProductCard({ product, onAddToCart }) {
           </div>
         </div>
 
-        <button className="supp-card__add-btn" aria-label="Add to cart" type="button" onClick={() => onAddToCart(product)}>
+        <button
+          className="supp-card__add-btn"
+          aria-label="Add to cart"
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onAddToCart(product);
+          }}
+        >
           Add to cart
         </button>
       </div>
@@ -117,6 +136,7 @@ function ProductCard({ product, onAddToCart }) {
 }
 
 export default function CategoryProducts() {
+  const navigate = useNavigate();
   const { categorySlug = '' } = useParams();
   const { categories } = useCategories();
   const { products, isLoading, loadProductsByCategory } = useProducts({ autoLoad: false });
@@ -133,6 +153,13 @@ export default function CategoryProducts() {
       }
     } catch (err) {
       toast.error(err?.message || 'Unable to add item to cart.');
+    }
+  };
+
+  const handleOpenProduct = (product) => {
+    const target = product?.slug || product?.id;
+    if (target) {
+      navigate(`/product/${target}`);
     }
   };
 
@@ -295,7 +322,12 @@ export default function CategoryProducts() {
 
           <div className={`supp-grid ${viewMode === 'list' ? 'supp-grid--list' : ''}`}>
             {!isLoading && currentProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onOpenProduct={handleOpenProduct}
+              />
             ))}
           </div>
 

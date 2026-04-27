@@ -13,6 +13,7 @@ import Marquee from "../../components/Marquee";
 import useUserProducts from "../../hooks/useUserProducts";
 import useAuth from '../../hooks/useAuth';
 import useCart from '../../hooks/useCart';
+import useWishlist from '../../hooks/useWishlist';
 
 const imgPayPng = "/products/pay.png";
 const fallbackProductImage = "/products/bp.png";
@@ -53,9 +54,10 @@ const fallbackRelatedProducts = [
 export default function ProductDetail() {
   const { slug, id } = useParams();
   const navigate = useNavigate();
-  const { getProduct, addReview, fetchReviews, addToWishlist } = useUserProducts();
+  const { getProduct, addReview, fetchReviews } = useUserProducts();
   const { isAuthenticated } = useAuth();
   const { addItemToCart } = useCart({ autoLoad: false });
+  const { toggleWishlist, isWishlisted, isProductPending } = useWishlist();
 
   const [activeThumb, setActiveThumb] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
@@ -67,8 +69,6 @@ export default function ProductDetail() {
   const [reviewText, setReviewText] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [reviewPage, setReviewPage] = useState(1);
@@ -112,6 +112,8 @@ export default function ProductDetail() {
   const descriptionHtml = product?.description || "<p>No description available.</p>";
   const additionalInfoHtml =
     product?.additionalInfo || "<p>No additional info available.</p>";
+  const isCurrentProductWishlisted = isWishlisted(product?.id);
+  const isCurrentProductWishlistPending = isProductPending(product?.id);
 
   const loadProductReviews = async (productId) => {
     if (!productId) {
@@ -207,25 +209,25 @@ export default function ProductDetail() {
 
   const handleBuyNow = () => {
     addItemToCart(product?.id, qty).catch(() => {});
-    navigate('/my-cart');
+    navigate('/cart');
   };
 
-  const handleAddToWishlist = async () => {
+  const handleToggleWishlist = async () => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
-    if (!product?.id || isAddingToWishlist) return;
+    if (!product?.id || isCurrentProductWishlistPending) return;
 
-    setIsAddingToWishlist(true);
     try {
-      await addToWishlist(product.id);
-      setIsWishlisted(true);
-      toast.success('Added to wishlist.');
+      const added = await toggleWishlist(product.id);
+      if (added) {
+        toast.success('Added to wishlist.');
+      } else {
+        toast.success('Removed from wishlist.');
+      }
     } catch (err) {
-      toast.error(err?.message || 'Unable to add to wishlist.');
-    } finally {
-      setIsAddingToWishlist(false);
+      toast.error(err?.message || 'Unable to update wishlist.');
     }
   };
 
@@ -276,7 +278,7 @@ export default function ProductDetail() {
               Home Page
             </span>
             <span className="pd-bc-sep">�</span>
-            <span className="pd-bc-link" onClick={() => goToPage("/supplements")}>
+            <span className="pd-bc-link" onClick={() => goToPage("/category/supplements")}>
               Supplements
             </span>
             <span className="pd-bc-sep">�</span>
@@ -362,12 +364,17 @@ export default function ProductDetail() {
                   </div>
 
                   <button className="pd-add-btn" type="button" onClick={handleAddToCart}>Add to cart</button>
-                  <button className="pd-icon-btn" aria-label="Add to wishlist" onClick={handleAddToWishlist} disabled={isAddingToWishlist}>
+                  <button
+                    className="pd-icon-btn"
+                    aria-label={isCurrentProductWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+                    onClick={handleToggleWishlist}
+                    disabled={isCurrentProductWishlistPending}
+                  >
                     <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
                       <path
                         d="M8 13S1 8.5 1 4.5a3.5 3.5 0 0 1 7-0C8.5 3.667 9 3 10.5 3a3.5 3.5 0 0 1 4.5 1.5C15 8.5 8 13 8 13z"
-                        stroke={isWishlisted ? "#ee440e" : "#000"}
-                        fill={isWishlisted ? "#ee440e" : "none"}
+                        stroke={isCurrentProductWishlisted ? "#ee440e" : "#000"}
+                        fill={isCurrentProductWishlisted ? "#ee440e" : "none"}
                         strokeWidth="1.5"
                       />
                     </svg>

@@ -294,7 +294,7 @@ export default function MyCart() {
 									<span key={payment} className="payment-badge">{payment}</span>
 								))}
 							</div>
-
+{/* 
 							<div className="cart-upsell">
 								<p className="cart-upsell-label">You might also like</p>
 								<div className="cart-upsell-item" onClick={() => window.__navigate && window.__navigate('product')}>
@@ -305,7 +305,7 @@ export default function MyCart() {
 									</div>
 									<button className="upsell-add">+ Add</button>
 								</div>
-							</div>
+							</div> */}
 						</div>
 					</div>
 				</div>
