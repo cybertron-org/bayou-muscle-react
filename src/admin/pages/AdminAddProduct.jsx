@@ -44,10 +44,11 @@ export default function AdminAddProduct() {
   const navigate = useNavigate();
   const { productId } = useParams();
   const isEditMode = Boolean(productId);
-  const { addProduct, editProduct } = useProducts();
+  const { addProduct, editProduct, deleteProductImage } = useProducts();
   const { categories, isLoading: isCategoriesLoading } = useCategories();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(isEditMode);
+  const [deletingImageId, setDeletingImageId] = useState('');
 
   // Basic Info
   const [categoryId, setCategoryId] = useState('');
@@ -177,7 +178,21 @@ export default function AdminAddProduct() {
             setBestSeller(product.best_seller ? 1 : 0);
             setIsFeatured(product.is_featured ? 1 : 0);
             setClearance(product.clearance ? 1 : 0);
-            setExistingImages(Array.isArray(product.images) ? product.images : []);
+
+            // Normalize existing images: prefer top-level main_image if present
+            const images = Array.isArray(product.images) ? product.images.map((img) => ({
+              id: img?.id ?? '',
+              image: img?.image || '',
+              is_main: Number(img?.is_main ?? img?.isMain ?? 0),
+            })) : [];
+
+            if (product.main_image) {
+              // if main_image exists, put it first and mark as main
+              const main = { id: 'main', image: product.main_image, is_main: 1 };
+              setExistingImages([main, ...images]);
+            } else {
+              setExistingImages(images);
+            }
           }
         } catch (err) {
           toast.error('Failed to load product. ' + (err?.message || ''));
@@ -223,6 +238,21 @@ export default function AdminAddProduct() {
 
   const removeGalleryImage = (index) => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingImage = async (imageId) => {
+    if (deletingImageId) return;
+
+    setDeletingImageId(imageId);
+    try {
+      await deleteProductImage(imageId);
+      setExistingImages((prev) => prev.filter((img) => String(img.id) !== String(imageId)));
+      toast.success('Image removed successfully.');
+    } catch (err) {
+      toast.error(err?.message || 'Failed to remove image.');
+    } finally {
+      setDeletingImageId('');
+    }
   };
 
   const insertImageIntoEditor = (editor) => {
@@ -376,16 +406,33 @@ export default function AdminAddProduct() {
       formData.append('additional_info', additionalInfo);
       formData.append('gender', gender);
       formData.append('is_active', String(isActive));
-      formData.append('main_image_index', String(mainImageIndex));
       formData.append('sku', sku);
       formData.append('best_seller', String(bestSeller));
       formData.append('is_featured', String(isFeatured));
       formData.append('clearance', String(clearance));
 
-      // Add all images only if there are new images
-      if (allImages.length > 0) {
-        allImages.forEach((image, index) => {
-          formData.append(`images[${index}]`, image);
+      // Files: send new main image as `main_image` and gallery images as `images[]`
+      const maxSizeKB = 2048; // server limit in KB
+
+      // Validate sizes before appending
+      const filesToCheck = [];
+      if (mainImage) filesToCheck.push({ name: 'main_image', file: mainImage });
+      galleryImages.forEach((file, idx) => filesToCheck.push({ name: `images[${idx}]`, file }));
+
+      for (const item of filesToCheck) {
+        const sizeKB = Math.ceil(item.file.size / 1024);
+        if (sizeKB > maxSizeKB) {
+          throw { message: `${item.name} must not be greater than ${maxSizeKB} kilobytes.` };
+        }
+      }
+
+      if (mainImage) {
+        formData.append('main_image', mainImage);
+      }
+
+      if (galleryImages.length > 0) {
+        galleryImages.forEach((image, idx) => {
+          formData.append(`images[${idx}]`, image);
         });
       }
 
@@ -402,7 +449,18 @@ export default function AdminAddProduct() {
         navigate('/admin/products');
       }, 500);
     } catch (err) {
-      toast.error(err?.message || `Failed to ${isEditMode ? 'update' : 'create'} product`);
+      // API returns formatted error from apiRequest interceptor: { message, errors }
+      if (err?.errors && typeof err.errors === 'object') {
+        Object.values(err.errors).forEach((val) => {
+          if (Array.isArray(val)) {
+            val.forEach((m) => toast.error(m));
+          } else if (typeof val === 'string') {
+            toast.error(val);
+          }
+        });
+      } else {
+        toast.error(err?.message || `Failed to ${isEditMode ? 'update' : 'create'} product`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -626,23 +684,36 @@ export default function AdminAddProduct() {
                 </div>
 
                 <div className="admin-field-group admin-field-group--full">
+                  <label className="admin-field-label">Visibility *</label>
+                  <div className="admin-rich-editor-mode" role="group" aria-label="Product visibility">
+                  <button
+                    className={`admin-toggle-btn ${isActive === 1 ? 'is-active' : ''}`}
+                    type="button"
+                    onClick={() => setIsActive(1)}
+                    disabled={isSubmitting}
+                  >
+                    Active
+                  </button>
+                  <button
+                    className={`admin-toggle-btn ${isActive === 0 ? 'is-active' : ''}`}
+                    type="button"
+                    onClick={() => setIsActive(0)}
+                    disabled={isSubmitting}
+                  >
+                    Inactive
+                  </button>
+                  </div>
+                  <div className="admin-inline-note">This controls whether the product is visible to customers.</div>
+                </div>
+
+                <div className="admin-field-group admin-field-group--full">
                   <label className="admin-field-label">Product Flags</label>
                   <div className="admin-flag-grid">
                     <label className="admin-check-card">
                       <input
                         type="checkbox"
-                        checked={isActive === 1}
-                        onChange={(event) => setIsActive(event.target.checked ? 1 : 0)}
-                        disabled={isSubmitting}
-                      />
-                      <span>Active</span>
-                    </label>
-
-                    <label className="admin-check-card">
-                      <input
-                        type="checkbox"
-                        checked={bestSeller === 1}
-                        onChange={(event) => setBestSeller(event.target.checked ? 1 : 0)}
+                    checked={bestSeller === 1}
+                    onChange={(event) => setBestSeller(event.target.checked ? 1 : 0)}
                         disabled={isSubmitting}
                       />
                       <span>Best Seller</span>
@@ -708,10 +779,19 @@ export default function AdminAddProduct() {
                 <div className="admin-gallery-grid">
                   {existingGalleryImages.length || galleryPreviews.length ? (
                     <>
-                      {existingGalleryImages.map((image, index) => (
-                        <div className="admin-gallery-item" key={`existing-${image.id || index}`}>
-                          <img alt={`Existing image ${index + 1}`} src={image.image} />
-                          <div className="admin-inline-note admin-inline-note--padded">Existing image</div>
+                      {existingGalleryImages.map((image) => (
+                        <div className="admin-gallery-item" key={`existing-${image.id}`}>
+                          <img alt="Existing gallery image" src={image.image} />
+                          <button
+                            className="admin-gallery-remove"
+                            onClick={() => handleRemoveExistingImage(image.id)}
+                            type="button"
+                            disabled={isSubmitting || deletingImageId === image.id}
+                            title="Remove this image"
+                          >
+                            {deletingImageId === image.id ? 'Removing...' : 'Remove'}
+                          </button>
+                          <div className="admin-inline-note admin-inline-note--padded">Gallery image</div>
                         </div>
                       ))}
                       {galleryPreviews.map(({ file, src }, index) => (

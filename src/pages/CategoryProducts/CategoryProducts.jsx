@@ -180,13 +180,16 @@ export default function CategoryProducts() {
         return;
       }
 
-      const localSubcategories = Array.isArray(currentCategory.subcategories)
-        ? currentCategory.subcategories
-        : [];
+      let resolvedSubcategories = [];
 
-      const resolvedSubcategories = localSubcategories.length > 0
-        ? localSubcategories
-        : await loadSubCategories(currentCategory.id);
+      // Only call API if subcategories haven't been loaded yet
+      if (Array.isArray(currentCategory.subcategories)) {
+        // Already have subcategories array (even if empty), use it
+        resolvedSubcategories = currentCategory.subcategories;
+      } else {
+        // Subcategories not fetched yet, load them
+        resolvedSubcategories = await loadSubCategories(currentCategory.id);
+      }
 
       if (!isActive) {
         return;
@@ -209,7 +212,7 @@ export default function CategoryProducts() {
     return () => {
       isActive = false;
     };
-  }, [currentCategory, loadSubCategories]);
+  }, [currentCategory]);
 
   const categoryTitle =
     currentCategory?.title || formatTitleFromSlug(categorySlug);

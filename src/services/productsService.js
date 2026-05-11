@@ -111,3 +111,10 @@ export const checkout =  async (checkoutData) => {
   });
   return response;
 }
+
+export const removeProductImage = async (imageId) => {
+  const response = await apiRequest(`/admin/products/remove-image/${imageId}`, {
+    method: 'DELETE',
+  });
+  return response;
+}

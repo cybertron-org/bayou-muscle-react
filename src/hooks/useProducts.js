@@ -1,48 +1,68 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { fetchProducts, createProduct, deleteProduct, updateProduct, getProductsByCategory, fetchWishlist,removeProductFromWishlist,checkout } from '../services/productsService';
+import { fetchProducts, createProduct, deleteProduct, updateProduct, getProductsByCategory, fetchWishlist, removeProductFromWishlist, checkout, removeProductImage } from '../services/productsService';
 
-const normalizeProduct = (item) => ({
-    id: String(item?.id || ''),
-    wishlistId: item?.wishlistId ?? null,
-    name: item?.name || 'Untitled',
-    slug: item?.slug || '',
-    price: item?.price ?? item?.original_price ?? item?.discounted_price ?? '0',
-    discountedPrice: item?.discounted_price ?? item?.price ?? item?.original_price ?? '0',
-    quantity: Number(item?.quantity ?? 0),
-    sku: item?.sku || '--',
-    summary: item?.summary || '--',
-    description: item?.description || '--',
-    additionalInfo: item?.additional_info || '--',
-    bestSeller: Number(item?.best_seller || 0),
-    isFeatured: Number(item?.is_featured || 0),
-    clearance: Number(item?.clearance || 0),
-    gender: item?.gender || '--',
-    isActive: Number(item?.is_active || 0),
-    createdAt: item?.created_at || null,
-    updatedAt: item?.updated_at || null,
-    categoryTitle: item?.category?.title || item?.category || item?.category_title || '--',
-    categorySlug: item?.category_slug || item?.category?.slug || '',
-    originalPrice: item?.original_price ?? null,
-    discountPercentage: item?.discount_percentage ?? null,
-    rating: item?.rating || { average: 0, count: 0, stars: 0 },
-    image: item?.image || item?.thumbnail || '',
-    img: item?.image || item?.thumbnail || '',
-    cat: item?.category?.title || item?.category || item?.category_title || '--',
-    images: Array.isArray(item?.images)
-        ? item.images.map((image) => ({
+const normalizeProduct = (item) => {
+    const mainImageUrl = item?.main_image || item?.mainImage || item?.image || item?.thumbnail || '';
+
+    // Build images array and mark the main image when possible
+    let images = [];
+    if (Array.isArray(item?.images)) {
+        images = item.images.map((image) => ({
             id: String(image?.id || ''),
             image: image?.image || '',
-            isMain: Number(image?.is_main || 0),
-        }))
-        : item?.image
-            ? [{
-                id: String(item?.id || ''),
-                image: item?.image,
-                isMain: 1,
-            }]
-            : [],
-});
+            isMain: 0,
+        }));
+
+        // If API provides a top-level main_image, try to mark it in the images list
+        if (mainImageUrl) {
+            const matchIndex = images.findIndex((img) => img.image === mainImageUrl);
+            if (matchIndex >= 0) {
+                images[matchIndex].isMain = 1;
+            } else {
+                // Ensure main image is present first in the list
+                images.unshift({ id: 'main', image: mainImageUrl, isMain: 1 });
+            }
+        } else {
+            // If no main_image provided, try to preserve any is_main flag from image objects
+            images = images.map((img, idx) => ({ ...img, isMain: Number(item.images[idx]?.is_main ?? item.images[idx]?.isMain ?? 0) }));
+        }
+    } else if (mainImageUrl) {
+        images = [{ id: String(item?.id || ''), image: mainImageUrl, isMain: 1 }];
+    } else {
+        images = [];
+    }
+
+    return {
+        id: String(item?.id || ''),
+        wishlistId: item?.wishlistId ?? null,
+        name: item?.name || 'Untitled',
+        slug: item?.slug || '',
+        price: item?.price ?? item?.original_price ?? item?.discounted_price ?? '0',
+        discountedPrice: item?.discounted_price ?? item?.price ?? item?.original_price ?? '0',
+        quantity: Number(item?.quantity ?? 0),
+        sku: item?.sku || '--',
+        summary: item?.summary || '--',
+        description: item?.description || '--',
+        additionalInfo: item?.additional_info ?? item?.additionalInfo ?? '--',
+        bestSeller: Number(item?.best_seller ?? item?.bestSeller ?? 0),
+        isFeatured: Number(item?.is_featured ?? item?.isFeatured ?? 0),
+        clearance: Number(item?.clearance ?? 0),
+        gender: item?.gender || '--',
+        isActive: Number(item?.is_active ?? item?.isActive ?? 0),
+        createdAt: item?.created_at || item?.createdAt || null,
+        updatedAt: item?.updated_at || item?.updatedAt || null,
+        categoryTitle: item?.category?.title || item?.category || item?.category_title || '--',
+        categorySlug: item?.category_slug || item?.category?.slug || '',
+        originalPrice: item?.original_price ?? null,
+        discountPercentage: item?.discount_percentage ?? null,
+        rating: item?.rating || { average: 0, count: 0, stars: 0 },
+        image: mainImageUrl,
+        img: mainImageUrl,
+        cat: item?.category?.title || item?.category || item?.category_title || '--',
+        images,
+    };
+};
 
 export default function useProducts(options = {}) {
     const { autoLoad = true } = options || {};
@@ -179,6 +199,22 @@ export default function useProducts(options = {}) {
         }
     }, []);
 
+    const deleteProductImage = useCallback(async (imageId) => {
+        setIsLoading(true);
+        setError('');
+        try {
+            const response = await removeProductImage(imageId);
+            return response;
+        }
+        catch (err) {
+            setError(err?.message || 'Unable to delete product image.');
+            throw err;
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+
 
 
 
@@ -200,5 +236,6 @@ export default function useProducts(options = {}) {
         loadWishlist,
         removeFromWishlist,
         checkoutProducts,
+        deleteProductImage,
     };
 }

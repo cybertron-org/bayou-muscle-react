@@ -7,33 +7,53 @@ import AdminLayout from '../layouts/AdminLayout';
 
 const pageSize = 10;
 
-const normalizeProduct = (item) => ({
-	id: String(item?.id || ''),
-	name: item?.name || 'Untitled',
-	slug: item?.slug || '',
-	price: item?.price ?? '0',
-	discountedPrice: item?.discounted_price ?? item?.discountedPrice ?? item?.price ?? '0',
-	quantity: Number(item?.quantity ?? 0),
-	sku: item?.sku || '--',
-	summary: item?.summary || '--',
-	description: item?.description || '--',
-	additionalInfo: item?.additional_info ?? item?.additionalInfo ?? '--',
-	bestSeller: Number(item?.best_seller ?? item?.bestSeller ?? 0),
-	isFeatured: Number(item?.is_featured ?? item?.isFeatured ?? 0),
-	clearance: Number(item?.clearance ?? 0),
-	gender: item?.gender || '--',
-	isActive: Number(item?.is_active ?? item?.isActive ?? 0),
-	createdAt: item?.created_at ?? item?.createdAt ?? null,
-	updatedAt: item?.updated_at ?? item?.updatedAt ?? null,
-	categoryTitle: item?.category?.title ?? item?.categoryTitle ?? '--',
-	images: Array.isArray(item?.images)
-		? item.images.map((image) => ({
+const normalizeProduct = (item) => {
+	const mainImageUrl = item?.main_image || item?.mainImage || item?.image || '';
+
+	let images = [];
+	if (Array.isArray(item?.images)) {
+		images = item.images.map((image) => ({
 			id: String(image?.id || ''),
 			image: image?.image || '',
-			isMain: Number(image?.is_main ?? image?.isMain ?? 0),
-		}))
-		: [],
-});
+			isMain: 0,
+		}));
+
+		if (mainImageUrl) {
+			const match = images.find((img) => img.image === mainImageUrl);
+			if (match) {
+				match.isMain = 1;
+			} else {
+				images.unshift({ id: 'main', image: mainImageUrl, isMain: 1 });
+			}
+		} else {
+			images = images.map((img, idx) => ({ ...img, isMain: Number(item.images[idx]?.is_main ?? item.images[idx]?.isMain ?? 0) }));
+		}
+	} else if (mainImageUrl) {
+		images = [{ id: String(item?.id || ''), image: mainImageUrl, isMain: 1 }];
+	}
+
+	return {
+		id: String(item?.id || ''),
+		name: item?.name || 'Untitled',
+		slug: item?.slug || '',
+		price: item?.price ?? '0',
+		discountedPrice: item?.discounted_price ?? item?.discountedPrice ?? item?.price ?? '0',
+		quantity: Number(item?.quantity ?? 0),
+		sku: item?.sku || '--',
+		summary: item?.summary || '--',
+		description: item?.description || '--',
+		additionalInfo: item?.additional_info ?? item?.additionalInfo ?? '--',
+		bestSeller: Number(item?.best_seller ?? item?.bestSeller ?? 0),
+		isFeatured: Number(item?.is_featured ?? item?.isFeatured ?? 0),
+		clearance: Number(item?.clearance ?? 0),
+		gender: item?.gender || '--',
+		isActive: Number(item?.is_active ?? item?.isActive ?? 0),
+		createdAt: item?.created_at ?? item?.createdAt ?? null,
+		updatedAt: item?.updated_at ?? item?.updatedAt ?? null,
+		categoryTitle: item?.category?.title ?? item?.categoryTitle ?? '--',
+		images,
+	};
+};
 
 const formatDate = (value) => {
 	if (!value) {
@@ -123,6 +143,14 @@ const getFlagTokens = (product) => {
 	return flags;
 };
 
+const getVisibilityMeta = (product) => {
+	if (Number(product?.isActive) === 1) {
+		return { label: 'Active', className: 'admin-status--success' };
+	}
+
+	return { label: 'Inactive', className: 'admin-status--neutral' };
+};
+
 export default function AdminProducts() {
 	const navigate = useNavigate();
 	const { products: rawProducts, isLoading, error, deleteExistingProduct } = useProducts();
@@ -158,6 +186,7 @@ export default function AdminProducts() {
 	const selectedProduct = products.find((product) => product.id === selectedProductId) || null;
 	const visibleImage = selectedProduct?.images?.find((image) => image.isMain === 1) || selectedProduct?.images?.[0] || null;
 	const selectedStatus = getStatusMeta(selectedProduct || {});
+	const selectedVisibility = getVisibilityMeta(selectedProduct || {});
 	const isPreviewOpen = !!selectedProduct;
 	const safeDescriptionHtml = useMemo(
 		() => DOMPurify.sanitize(String(selectedProduct?.description || ''), { USE_PROFILES: { html: true } }),
@@ -327,6 +356,7 @@ export default function AdminProducts() {
 										<th><strong>Qty</strong></th>
 										<th><strong>SKU</strong></th>
 										<th><strong>Flags</strong></th>
+										<th><strong>Status</strong></th>
 										<th><strong>Created At</strong></th>
 										<th><strong>Actions</strong></th>
 									</tr>
@@ -363,6 +393,11 @@ export default function AdminProducts() {
 																<span className="admin-product-flag admin-product-flag--none">None</span>
 															)}
 														</div>
+													</td>
+													<td data-label="Status">
+														<span className={`admin-status ${product.isActive === 1 ? 'admin-status--success' : 'admin-status--neutral'}`}>
+															{product.isActive === 1 ? 'Active' : 'Inactive'}
+														</span>
 													</td>
 													<td data-label="Created At">{formatDate(product.createdAt)}</td>
 													<td data-label="Actions">
@@ -459,6 +494,9 @@ export default function AdminProducts() {
 									<div>Quantity: {selectedProduct?.quantity}</div>
 									<div>SKU: {selectedProduct?.sku}</div>
 									<div>Status: {selectedStatus.label}</div>
+									<div style={{ marginTop: '10px' }}>
+										<span className={`admin-status ${selectedVisibility.className}`}>{selectedVisibility.label}</span>
+									</div>
 									<div>Gender: {selectedProduct?.gender}</div>
 													<div style={{ marginTop: '10px' }}>{stripHtml(selectedProduct?.summary)}</div>
 													<div className="admin-rich-content" style={{ marginTop: '12px' }} dangerouslySetInnerHTML={{ __html: safeDescriptionHtml }} />

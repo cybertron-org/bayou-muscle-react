@@ -53,6 +53,7 @@ const normalizeProductDetail = (item) => {
         ratingAverage: Number(item?.rating?.average ?? 0),
         reviewsList: Array.isArray(item?.reviews) ? item.reviews : [],
         relatedProducts: relatedItems,
+        all_images: Array.isArray(item?.all_images) ? item.all_images : [],
     };
 };
 

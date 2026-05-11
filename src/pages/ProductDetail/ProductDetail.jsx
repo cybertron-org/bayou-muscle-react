@@ -77,10 +77,25 @@ export default function ProductDetail() {
   const productSlug = slug || id || "";
 
   const galleryImages = useMemo(() => {
-    if (product?.img) {
-      return [product.img];
+    const images = [];
+    
+    // Add main image first (from image or img field)
+    if (product?.image) {
+      images.push(product.image);
+    } else if (product?.img) {
+      images.push(product.img);
     }
-    return [fallbackProductImage];
+    
+    // Add all additional images
+    if (Array.isArray(product?.all_images) && product.all_images.length > 0) {
+      product.all_images.forEach((img) => {
+        if (img && !images.includes(img)) {
+          images.push(img);
+        }
+      });
+    }
+    
+    return images.length > 0 ? images : [fallbackProductImage];
   }, [product]);
 
   const relatedProducts = useMemo(() => {
