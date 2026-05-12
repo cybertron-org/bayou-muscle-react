@@ -78,14 +78,14 @@ export default function ProductDetail() {
 
   const galleryImages = useMemo(() => {
     const images = [];
-    
+
     // Add main image first (from image or img field)
     if (product?.image) {
       images.push(product.image);
     } else if (product?.img) {
       images.push(product.img);
     }
-    
+
     // Add all additional images
     if (Array.isArray(product?.all_images) && product.all_images.length > 0) {
       product.all_images.forEach((img) => {
@@ -94,7 +94,7 @@ export default function ProductDetail() {
         }
       });
     }
-    
+
     return images.length > 0 ? images : [fallbackProductImage];
   }, [product]);
 
@@ -141,14 +141,14 @@ export default function ProductDetail() {
       const items = await fetchReviews(productId);
       const normalized = Array.isArray(items)
         ? items
-            .filter((review) => review?.status === 'approved' || !review?.status)
-            .map((review) => ({
-              id: String(review?.id || ''),
-              reviewerName: review?.user?.full_name || 'Verified user',
-              rating: Number(review?.rating ?? 0),
-              review: review?.review || 'No comment',
-              createdAt: review?.created_at || null,
-            }))
+          .filter((review) => review?.status === 'approved' || !review?.status)
+          .map((review) => ({
+            id: String(review?.id || ''),
+            reviewerName: review?.user?.full_name || 'Verified user',
+            rating: Number(review?.rating ?? 0),
+            review: review?.review || 'No comment',
+            createdAt: review?.created_at || null,
+          }))
         : [];
       setReviews(normalized);
       setReviewPage(1);
@@ -223,7 +223,7 @@ export default function ProductDetail() {
   };
 
   const handleBuyNow = () => {
-    addItemToCart(product?.id, qty).catch(() => {});
+    addItemToCart(product?.id, qty).catch(() => { });
     navigate('/cart');
   };
 
@@ -458,7 +458,7 @@ export default function ProductDetail() {
                 <div className="pd-tab-content">
                   {activeTab === "description" && (
                     <div className="pd-tab-description">
-                      <h3 className="pd-tab-h3">Product Description</h3>
+
                       <div
                         className="pd-tab-p"
                         dangerouslySetInnerHTML={{ __html: descriptionHtml }}
@@ -470,23 +470,13 @@ export default function ProductDetail() {
                     <div className="pd-tab-additional">
                       <table className="pd-info-table">
                         <tbody>
+
                           <tr>
-                            <td className="pd-info-label">Category</td>
-                            <td>{product?.cat || "General"}</td>
-                          </tr>
-                          <tr>
-                            <td className="pd-info-label">Product URL</td>
-                            <td>{product?.url || "N/A"}</td>
-                          </tr>
-                          <tr>
-                            <td className="pd-info-label">Additional Info</td>
-                            <td>
                               <div
                                 dangerouslySetInnerHTML={{
                                   __html: additionalInfoHtml,
                                 }}
                               />
-                            </td>
                           </tr>
                         </tbody>
                       </table>

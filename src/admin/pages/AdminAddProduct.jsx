@@ -49,6 +49,7 @@ export default function AdminAddProduct() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(isEditMode);
   const [deletingImageId, setDeletingImageId] = useState('');
+  const [confirmRemoval, setConfirmRemoval] = useState(null);
 
   // Basic Info
   const [categoryId, setCategoryId] = useState('');
@@ -238,6 +239,51 @@ export default function AdminAddProduct() {
 
   const removeGalleryImage = (index) => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const closeRemoveConfirm = () => {
+    setConfirmRemoval(null);
+  };
+
+  const promptRemoveExistingImage = (image) => {
+    if (deletingImageId) return;
+    setConfirmRemoval({ type: 'existing', image });
+  };
+
+  const promptRemoveGalleryImage = (index, file) => {
+    setConfirmRemoval({ type: 'gallery', index, file });
+  };
+
+  const confirmRemoveImage = async () => {
+    if (!confirmRemoval) {
+      return;
+    }
+
+    if (confirmRemoval.type === 'existing') {
+      const imageId = confirmRemoval.image?.id;
+      if (!imageId || deletingImageId) {
+        return;
+      }
+
+      setConfirmRemoval(null);
+      setDeletingImageId(imageId);
+      try {
+        await deleteProductImage(imageId);
+        setExistingImages((prev) => prev.filter((img) => String(img.id) !== String(imageId)));
+        toast.success('Image removed successfully.');
+      } catch (err) {
+        toast.error(err?.message || 'Failed to remove image.');
+      } finally {
+        setDeletingImageId('');
+      }
+      return;
+    }
+
+    if (confirmRemoval.type === 'gallery') {
+      const { index } = confirmRemoval;
+      setConfirmRemoval(null);
+      removeGalleryImage(index);
+    }
   };
 
   const handleRemoveExistingImage = async (imageId) => {
@@ -784,7 +830,7 @@ export default function AdminAddProduct() {
                           <img alt="Existing gallery image" src={image.image} />
                           <button
                             className="admin-gallery-remove"
-                            onClick={() => handleRemoveExistingImage(image.id)}
+                            onClick={() => promptRemoveExistingImage(image)}
                             type="button"
                             disabled={isSubmitting || deletingImageId === image.id}
                             title="Remove this image"
@@ -799,7 +845,7 @@ export default function AdminAddProduct() {
                           <img alt={file.name} src={src} />
                           <button
                             className="admin-gallery-remove"
-                            onClick={() => removeGalleryImage(index)}
+                            onClick={() => promptRemoveGalleryImage(index, file)}
                             type="button"
                             disabled={isSubmitting}
                           >
@@ -840,6 +886,49 @@ export default function AdminAddProduct() {
 
         </section>
       </form>
+
+      {confirmRemoval ? (
+        <div className="admin-modal-backdrop" onClick={closeRemoveConfirm} role="presentation">
+          <div
+            className="admin-modal"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="remove-image-modal-title"
+          >
+            <div className="admin-modal-head">
+              <div>
+                <div className="admin-card-kicker">Remove image</div>
+                <div className="admin-card-title" id="remove-image-modal-title">Confirm removal</div>
+
+              </div>
+              <button className="admin-icon-btn admin-modal-close" onClick={closeRemoveConfirm} type="button" aria-label="Close modal">
+                ×
+              </button>
+            </div>
+
+            <div className="admin-modal-body">
+              <p className="admin-preview-copy">
+                Are you sure you want to remove{' '}
+                <strong>
+                  {confirmRemoval.type === 'existing'
+                    ? 'this existing image'
+                    : confirmRemoval.file?.name || 'this selected image'}
+                </strong>
+                ?
+              </p>
+              <div className="admin-modal-actions">
+                <button className="admin-action-btn admin-action-btn--ghost" type="button" onClick={closeRemoveConfirm}>
+                  Cancel
+                </button>
+                <button className="admin-action-btn" type="button" onClick={confirmRemoveImage}>
+                  Remove image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </AdminLayout>
   );
 }
