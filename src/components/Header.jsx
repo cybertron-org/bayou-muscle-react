@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import CartDrawer from '../pages/CartDrawer/CartDrawer';
 
-const imgLogoVector  = '/images/logo.png';
+const imgLogoVector  = '/images/logo-Bayou.png';
 const imgSearchIcon  = '/blogs/search.png';
 const imgLangFlag    = '/supplements/profile.png';
 const imgAccountIcon = '/supplements/heart.png';
