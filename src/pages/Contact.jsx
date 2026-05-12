@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Posts from "../components/Posts";
 import Marquee from "../components/Marquee";
+import useContacts from "../hooks/useContacts";
 // import "./Contact.css";
 
 // Star Rating Component
@@ -63,6 +64,8 @@ const trustItems = [
 ];
 
 const ContactPage = () => {
+  const { submitUserContact } = useContacts();
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -89,15 +92,14 @@ const ContactPage = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    // Simulate API call (replace with actual API)
     try {
-      // Example: Send to your backend or email service
-      console.log("Form submitted:", formData);
+      await submitUserContact({
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      });
 
-      // Simulate network request
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Success
       setSubmitStatus("success");
       setFormData({ name: "", phone: "", email: "", message: "" });
 

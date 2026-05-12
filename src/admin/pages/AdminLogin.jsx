@@ -5,7 +5,7 @@ import useAuth from '../../hooks/useAuth';
 
 export default function AdminLogin() {
 	const navigate = useNavigate();
-	const { login, isLoading, error } = useAuth();
+	const { login, logout, isLoading, error } = useAuth();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
@@ -29,8 +29,15 @@ export default function AdminLogin() {
 				password,
 				rememberMe,
 			});
+
+			if (String(result?.role || '').toLowerCase() !== 'admin') {
+				await logout();
+				toast.error('Admin access only. Please use a valid admin account.');
+				return;
+			}
+
 			toast.success(result?.message || 'Logged in successfully');
-			navigate('/admin/dashboard');
+			navigate('/admin/dashboard', { replace: true });
 		} catch (err) {
 			toast.error(err?.message || 'Unable to sign in. Please try again.');
 		}

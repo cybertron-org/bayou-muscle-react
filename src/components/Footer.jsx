@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import useNewsletter from '../hooks/useNewsletter';
+
 /* Figma asset URLs — node 67:1983 */
 const imgLogo = '/images/logo.png';
     const imgPhoneIcon = '/images/number.png';
@@ -9,6 +13,22 @@ const imgMC = 'https://www.figma.com/api/mcp/asset/7b5774aa-4a17-43da-947b-c4b84
 const imgAmex = 'https://www.figma.com/api/mcp/asset/6b7a0ee2-5475-4d37-a112-e364ba0b7d8e';
 
 export default function Footer() {
+  const { subscribe } = useNewsletter();
+  const [email, setEmail] = useState('');
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      return;
+    }
+
+    await subscribe(trimmedEmail);
+    toast.success('Subscribed successfully.');
+    setEmail('');
+  };
+
   return (
     <footer className="ftr">
       {/* ── CAP ── Figma: Section y=0 h=30, bg white, border-radius 0 0 40px 40px */}
@@ -112,14 +132,16 @@ export default function Footer() {
             {/* Figma: "Sign up..." Instrument Sans Regular 16px white, text-align center */}
             <p className="ftr__nl-sub">Sign up to receive our special offers .</p>
             {/* Figma: Form — Input bg #2b2b2b h=54 rounded 30px, Button bg white border #000 h=50 rounded 30px */}
-            <div className="ftr__nl-form">
+            <form className="ftr__nl-form" onSubmit={handleSubscribe}>
               <input
                 type="email"
                 placeholder="Your E-mail"
                 className="ftr__nl-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              <button className="ftr__nl-btn">Subscribe</button>
-            </div>
+              <button className="ftr__nl-btn" type="submit">Subscribe</button>
+            </form>
           </div>
         </div>
       </div>

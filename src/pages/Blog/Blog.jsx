@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './blog.css';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Marquee from "../../components/Marquee";
+import useUserBlogs from '../../hooks/useUserBlogs';
 
 const imgBlog18 = '/blogs/bh.png';
 const imgBlog17 = '/blogs/b2.png';
@@ -29,17 +30,36 @@ const TABS = ['All post', 'Nutrition', 'Fitness', 'Tips & Tricks', 'Supplement']
 export default function Blog() {
   const [activeTab, setActiveTab] = useState('All post');
   const [activePage, setActivePage] = useState(1);
+  const { blogs, loadBlogs } = useUserBlogs();
 
-  const go = (page, e) => {
+  useEffect(() => {
+    loadBlogs();
+  }, [loadBlogs]);
+
+  const go = (page, slug, e) => {
     if (e) e.preventDefault();
-    if (window.__navigate) window.__navigate(page);
+    const actualSlug = typeof slug === 'object' ? null : slug;
+    if (window.__navigate) window.__navigate(page, actualSlug);
   };
 
-  const filtered = activeTab === 'All post'
-    ? ALL_POSTS
-    : ALL_POSTS.filter(p => p.cat === activeTab);
+  const apiPosts = blogs.map((item) => ({
+    id: Number(item.id),
+    img: item.image || '/images/blog1.png',
+    cat: item.category || 'All Post',
+    catType: item.categorySlug || 'all',
+    title: item.title,
+    desc: item.summary,
+    date: item.createdAt,
+    slug: item.slug,
+  }));
 
-  const featuredPost = ALL_POSTS[0];
+  const allPosts = apiPosts.length > 0 ? apiPosts : ALL_POSTS;
+
+  const filtered = activeTab === 'All post'
+    ? allPosts
+    : allPosts.filter(p => p.cat === activeTab);
+
+  const featuredPost = allPosts[0] || ALL_POSTS[0];
 
   return (
     <>
@@ -51,7 +71,7 @@ export default function Blog() {
           <div className="blog-hero__inner">
             <h1 className="blog-hero__title">Blog</h1>
             <nav className="blog-hero__breadcrumb">
-              <span className="blog-bc-link" onClick={e => go('home', e)}>Home Page</span>
+              <span className="blog-bc-link" onClick={e => go('home', null, e)}>Home Page</span>
               <span className="blog-bc-sep">•</span>
               <span className="blog-bc-current">Blog</span>
             </nav>
@@ -72,7 +92,7 @@ export default function Blog() {
               <p className="blog-featured__desc">{featuredPost.desc}</p>
               <button
                 className="blog-read-more"
-                onClick={e => go('BlogDetails', e)}
+                onClick={e => go('blogdetails', featuredPost.slug, e)}
               >
                 Read More
               </button>
@@ -113,7 +133,7 @@ export default function Blog() {
                     <p className="blog-card__desc">{post.desc}</p>
                     <button
                       className="blog-read-more"
-                      onClick={e => go('blogDetails', e)}
+                      onClick={e => go('blogdetails', post.slug, e)}
                     >
                       Read More
                     </button>

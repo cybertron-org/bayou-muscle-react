@@ -1,9 +1,11 @@
 import { useState } from "react";
+import toast from 'react-hot-toast';
 import "./Supplements.css";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Posts from "../../components/Posts";
 import Marquee from "../../components/Marquee";
+import useCart from '../../hooks/useCart';
 
 const imgProduct1 = "/supplements/p1.png";
 const imgProduct2 = "/supplements/p2.png";
@@ -194,7 +196,7 @@ function StarRating() {
   );
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart }) {
   return (
     <div className="supp-card">
       <div className="supp-card__inner">
@@ -255,7 +257,7 @@ function ProductCard({ product }) {
           </div>
         </div>
 
-        <button className="supp-card__add-btn" aria-label="Add to cart">
+        <button className="supp-card__add-btn" aria-label="Add to cart" type="button" onClick={() => onAddToCart(product)}>
           Add to cart
         </button>
       </div>
@@ -268,6 +270,18 @@ export default function Supplements() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState("New Arrivals");
   const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
+  const { addItemToCart } = useCart({ autoLoad: false });
+
+  const handleAddToCart = async (product) => {
+    try {
+      const result = await addItemToCart(product?.id, 1);
+      if (result) {
+        toast.success('Added to cart.');
+      }
+    } catch (err) {
+      toast.error(err?.message || 'Unable to add item to cart.');
+    }
+  };
 
   // Calculate pagination
   const totalProducts = allProducts.length;
@@ -449,7 +463,7 @@ export default function Supplements() {
 
           <div className={`supp-grid ${viewMode === "list" ? "supp-grid--list" : ""}`}>
             {currentProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} onAddToCart={handleAddToCart} />
             ))}
           </div>
 

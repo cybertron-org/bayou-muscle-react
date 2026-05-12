@@ -12,25 +12,25 @@ const normalizeProduct = (item) => ({
 	name: item?.name || 'Untitled',
 	slug: item?.slug || '',
 	price: item?.price ?? '0',
-	discountedPrice: item?.discounted_price ?? item?.price ?? '0',
+	discountedPrice: item?.discounted_price ?? item?.discountedPrice ?? item?.price ?? '0',
 	quantity: Number(item?.quantity ?? 0),
 	sku: item?.sku || '--',
 	summary: item?.summary || '--',
 	description: item?.description || '--',
-	additionalInfo: item?.additional_info || '--',
-	bestSeller: Number(item?.best_seller || 0),
-	isFeatured: Number(item?.is_featured || 0),
-	clearance: Number(item?.clearance || 0),
+	additionalInfo: item?.additional_info ?? item?.additionalInfo ?? '--',
+	bestSeller: Number(item?.best_seller ?? item?.bestSeller ?? 0),
+	isFeatured: Number(item?.is_featured ?? item?.isFeatured ?? 0),
+	clearance: Number(item?.clearance ?? 0),
 	gender: item?.gender || '--',
-	isActive: Number(item?.is_active || 0),
-	createdAt: item?.created_at || null,
-	updatedAt: item?.updated_at || null,
-	categoryTitle: item?.category?.title || '--',
+	isActive: Number(item?.is_active ?? item?.isActive ?? 0),
+	createdAt: item?.created_at ?? item?.createdAt ?? null,
+	updatedAt: item?.updated_at ?? item?.updatedAt ?? null,
+	categoryTitle: item?.category?.title ?? item?.categoryTitle ?? '--',
 	images: Array.isArray(item?.images)
 		? item.images.map((image) => ({
 			id: String(image?.id || ''),
 			image: image?.image || '',
-			isMain: Number(image?.is_main || 0),
+			isMain: Number(image?.is_main ?? image?.isMain ?? 0),
 		}))
 		: [],
 });
@@ -82,6 +82,45 @@ const getStatusMeta = (product) => {
 	}
 
 	return { label: 'Active', className: 'admin-status--success' };
+};
+
+const getFlagTokens = (product) => {
+	const flags = [];
+
+	if (Number(product?.bestSeller) === 1) {
+		flags.push({
+			key: 'bestSeller',
+			label: 'Best Seller',
+			variant: 'admin-product-flag--best-seller',
+		});
+	}
+
+	if (Number(product?.isFeatured) === 1) {
+		flags.push({
+			key: 'isFeatured',
+			label: 'Featured',
+			icon: '★',
+			variant: 'admin-product-flag--featured',
+		});
+	}
+
+	if (Number(product?.clearance) === 1) {
+		flags.push({
+			key: 'clearance',
+			label: 'Clearance',
+			variant: 'admin-product-flag--clearance',
+		});
+	}
+
+	if (Number(product?.isActive) === 1) {
+		flags.push({
+			key: 'isActive',
+			label: 'Active',
+			variant: 'admin-product-flag--active',
+		});
+	}
+
+	return flags;
 };
 
 export default function AdminProducts() {
@@ -287,7 +326,7 @@ export default function AdminProducts() {
 										<th><strong>Price</strong></th>
 										<th><strong>Qty</strong></th>
 										<th><strong>SKU</strong></th>
-										<th><strong>Status</strong></th>
+										<th><strong>Flags</strong></th>
 										<th><strong>Created At</strong></th>
 										<th><strong>Actions</strong></th>
 									</tr>
@@ -295,7 +334,7 @@ export default function AdminProducts() {
 								<tbody>
 									{paginatedProducts.length ? (
 										paginatedProducts.map((product) => {
-											const statusMeta = getStatusMeta(product);
+											const flags = getFlagTokens(product);
 											const isSelected = selectedProduct?.id === product.id;
 
 											return (
@@ -307,8 +346,23 @@ export default function AdminProducts() {
 													<td data-label="Price">{formatCurrency(product.price)}</td>
 													<td data-label="Qty">{product.quantity}</td>
 													<td data-label="SKU">{product.sku}</td>
-													<td data-label="Status">
-														<span className={`admin-status ${statusMeta.className}`}>{statusMeta.label}</span>
+													<td data-label="Flags">
+														<div className="admin-product-flag-cluster">
+															{flags.length ? (
+																flags.map((flag) => (
+																	<span
+																		key={flag.key}
+																		className={`admin-product-flag ${flag.variant}`}
+																		title={flag.label}
+																	>
+																		{flag.icon ? <span className="admin-product-flag-icon">{flag.icon}</span> : null}
+																		<span className="admin-product-flag-label">{flag.label}</span>
+																	</span>
+																))
+															) : (
+																<span className="admin-product-flag admin-product-flag--none">None</span>
+															)}
+														</div>
 													</td>
 													<td data-label="Created At">{formatDate(product.createdAt)}</td>
 													<td data-label="Actions">

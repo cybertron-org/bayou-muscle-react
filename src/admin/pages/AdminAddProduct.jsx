@@ -317,7 +317,7 @@ export default function AdminAddProduct() {
 
   const validateForm = () => {
     const errors = [];
-    
+
     if (!categoryId.trim()) {
       errors.push('Category ID is required');
     }
@@ -396,7 +396,7 @@ export default function AdminAddProduct() {
         await addProduct(formData);
         toast.success('Product created successfully!');
       }
-      
+
       // Navigate back
       setTimeout(() => {
         navigate('/admin/products');
@@ -426,7 +426,7 @@ export default function AdminAddProduct() {
       title={isEditMode ? 'Edit Product' : 'Add Product'}
       subtitle={isEditMode ? 'Update the product details below.' : 'Complete the form below to create a new product with all required details and images.'}
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="admin-product-form">
         <section className="admin-card">
           <div className="admin-card-head">
             <div>
@@ -446,10 +446,11 @@ export default function AdminAddProduct() {
             </button>
           </div>
 
-          <div className="admin-create-layout">
-            {/* Basic Information Section */}
-            <div className="admin-card" style={{ padding: '18px' }}>
+          <div className="admin-create-layout admin-product-form-layout">
+            <div className="admin-card admin-form-panel">
               <div className="admin-form-section-title">Basic Information</div>
+              <div className="admin-inline-note">Core catalog details, pricing, and product content.</div>
+
               <div className="admin-form-grid">
                 <div className="admin-field-group">
                   <label className="admin-field-label" htmlFor="categoryId">Category *</label>
@@ -578,19 +579,16 @@ export default function AdminAddProduct() {
                       </button>
                     </div>
                   </div>
-                  {descriptionEditorMode === 'visual' ? (
-                    <div className="admin-rich-editor" id="description">
-                      <div ref={descriptionEditorRef} />
-                    </div>
-                  ) : (
-                    <textarea
-                      className="admin-field admin-field--textarea admin-html-source"
-                      value={description}
-                      onChange={(event) => setDescription(event.target.value)}
-                      placeholder="Write or paste HTML here..."
-                      disabled={isSubmitting}
-                    />
-                  )}
+                  <div className={`admin-rich-editor ${descriptionEditorMode === 'visual' ? '' : 'admin-hidden'}`} id="description">
+                    <div ref={descriptionEditorRef} className="admin-quill-host" />
+                  </div>
+                  <textarea
+                    className={`admin-field admin-field--textarea admin-html-source ${descriptionEditorMode === 'html' ? '' : 'admin-hidden'}`}
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    placeholder="Write or paste HTML here..."
+                    disabled={isSubmitting}
+                  />
                 </div>
 
                 <div className="admin-field-group admin-field-group--full">
@@ -615,80 +613,68 @@ export default function AdminAddProduct() {
                       </button>
                     </div>
                   </div>
-                  {additionalInfoEditorMode === 'visual' ? (
-                    <div className="admin-rich-editor admin-rich-editor--small" id="additionalInfo">
-                      <div ref={additionalInfoEditorRef} />
-                    </div>
-                  ) : (
-                    <textarea
-                      className="admin-field admin-field--textarea admin-field--small admin-html-source"
-                      value={additionalInfo}
-                      onChange={(event) => setAdditionalInfo(event.target.value)}
-                      placeholder="Write or paste HTML here..."
-                      disabled={isSubmitting}
-                    />
-                  )}
+                  <div className={`admin-rich-editor admin-rich-editor--small ${additionalInfoEditorMode === 'visual' ? '' : 'admin-hidden'}`} id="additionalInfo">
+                    <div ref={additionalInfoEditorRef} className="admin-quill-host admin-quill-host--small" />
+                  </div>
+                  <textarea
+                    className={`admin-field admin-field--textarea admin-field--small admin-html-source ${additionalInfoEditorMode === 'html' ? '' : 'admin-hidden'}`}
+                    value={additionalInfo}
+                    onChange={(event) => setAdditionalInfo(event.target.value)}
+                    placeholder="Write or paste HTML here..."
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="admin-field-group admin-field-group--full">
+                  <label className="admin-field-label">Product Flags</label>
+                  <div className="admin-flag-grid">
+                    <label className="admin-check-card">
+                      <input
+                        type="checkbox"
+                        checked={isActive === 1}
+                        onChange={(event) => setIsActive(event.target.checked ? 1 : 0)}
+                        disabled={isSubmitting}
+                      />
+                      <span>Active</span>
+                    </label>
+
+                    <label className="admin-check-card">
+                      <input
+                        type="checkbox"
+                        checked={bestSeller === 1}
+                        onChange={(event) => setBestSeller(event.target.checked ? 1 : 0)}
+                        disabled={isSubmitting}
+                      />
+                      <span>Best Seller</span>
+                    </label>
+
+                    <label className="admin-check-card">
+                      <input
+                        type="checkbox"
+                        checked={isFeatured === 1}
+                        onChange={(event) => setIsFeatured(event.target.checked ? 1 : 0)}
+                        disabled={isSubmitting}
+                      />
+                      <span>Featured</span>
+                    </label>
+
+                    <label className="admin-check-card">
+                      <input
+                        type="checkbox"
+                        checked={clearance === 1}
+                        onChange={(event) => setClearance(event.target.checked ? 1 : 0)}
+                        disabled={isSubmitting}
+                      />
+                      <span>Clearance</span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Product Flags Section */}
-            <div className="admin-card" style={{ padding: '18px' }}>
-              <div className="admin-form-section-title">Product Flags</div>
-              <div className="admin-form-grid">
-                <div className="admin-field-group">
-                  <label className="admin-field-label">
-                    <input
-                      type="checkbox"
-                      checked={isActive === 1}
-                      onChange={(event) => setIsActive(event.target.checked ? 1 : 0)}
-                      disabled={isSubmitting}
-                    />
-                    {' '}Active
-                  </label>
-                </div>
-
-                <div className="admin-field-group">
-                  <label className="admin-field-label">
-                    <input
-                      type="checkbox"
-                      checked={bestSeller === 1}
-                      onChange={(event) => setBestSeller(event.target.checked ? 1 : 0)}
-                      disabled={isSubmitting}
-                    />
-                    {' '}Best Seller
-                  </label>
-                </div>
-
-                <div className="admin-field-group">
-                  <label className="admin-field-label">
-                    <input
-                      type="checkbox"
-                      checked={isFeatured === 1}
-                      onChange={(event) => setIsFeatured(event.target.checked ? 1 : 0)}
-                      disabled={isSubmitting}
-                    />
-                    {' '}Featured
-                  </label>
-                </div>
-
-                <div className="admin-field-group">
-                  <label className="admin-field-label">
-                    <input
-                      type="checkbox"
-                      checked={clearance === 1}
-                      onChange={(event) => setClearance(event.target.checked ? 1 : 0)}
-                      disabled={isSubmitting}
-                    />
-                    {' '}Clearance
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Images Section */}
-            <div className="admin-card" style={{ padding: '18px' }}>
+            <div className="admin-card admin-form-panel">
               <div className="admin-form-section-title">Images</div>
+              <div className="admin-inline-note">Manage main thumbnail and gallery images for this product.</div>
 
               <div className="admin-upload-block">
                 <label className="admin-field-label" htmlFor="mainImage">Main Image (Thumbnail) *</label>
@@ -725,7 +711,7 @@ export default function AdminAddProduct() {
                       {existingGalleryImages.map((image, index) => (
                         <div className="admin-gallery-item" key={`existing-${image.id || index}`}>
                           <img alt={`Existing image ${index + 1}`} src={image.image} />
-                          <div className="admin-inline-note" style={{ padding: '8px 10px' }}>Existing image</div>
+                          <div className="admin-inline-note admin-inline-note--padded">Existing image</div>
                         </div>
                       ))}
                       {galleryPreviews.map(({ file, src }, index) => (
@@ -754,7 +740,15 @@ export default function AdminAddProduct() {
             </div>
           </div>
 
-          <div className="admin-card" style={{ padding: '18px', marginTop: '16px' }}>
+          <div className="admin-actions-row admin-product-form-actions">
+            <button
+              className="admin-action-btn admin-action-btn--ghost"
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => navigate('/admin/products')}
+            >
+              Cancel
+            </button>
             <button
               className="admin-action-btn"
               type="submit"
@@ -763,6 +757,7 @@ export default function AdminAddProduct() {
               {isSubmitting ? (isEditMode ? 'Updating Product...' : 'Creating Product...') : (isEditMode ? 'Update Product' : 'Create Product')}
             </button>
           </div>
+
         </section>
       </form>
     </AdminLayout>

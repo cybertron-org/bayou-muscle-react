@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CartDrawer from '../pages/CartDrawer/CartDrawer';
+import useAuth from '../hooks/useAuth';
+import useCategories from '../hooks/useCategories';
+import useCart from '../hooks/useCart';
 
 const imgLogoVector  = '/images/logo-Bayou.png';
 const imgSearchIcon  = '/blogs/search.png';
@@ -17,26 +21,33 @@ const topbarItems = [
 ];
 const marqueeItems = [...topbarItems, ...topbarItems, ...topbarItems];
 
-const NAV_LINKS = [
-  { label: 'Supplements', page: 'supplements' },
-  { label: 'Merchandise', page: 'merchandise' },
-  { label: 'About',       page: 'about'        },
-  { label: 'Contact',     page: 'contact'      },
-];
-
-const MOBILE_LINKS = [
-  { label: 'Home',        page: 'home'        },
-  { label: 'Supplements', page: 'supplements' },
-  { label: 'Blog',        page: 'blog'        },
-  { label: 'About',     page: 'about'     },
-  { label: 'Contact',   page: 'contact'        },
-];
-
 export default function Header() {
+  const navigate = useNavigate();
+  const { isAuthenticated, role } = useAuth();
+  const { cartCount } = useCart();
+  const { categories, isLoading } = useCategories();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [cartCount]  = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
+
+  const categoryLinks = categories.map((category) => ({
+    label: category.title,
+    page: `category/${category.slug || category.title.toLowerCase().replace(/\s+/g, '-')}`,
+  }));
+
+  const NAV_LINKS = [
+    ...categoryLinks,
+    { label: 'About',   page: 'about'   },
+    { label: 'Contact', page: 'contact' },
+  ];
+
+  const MOBILE_LINKS = [
+    { label: 'Home', page: 'home' },
+    ...categoryLinks,
+    { label: 'Blog', page: 'blog' },
+    { label: 'About', page: 'about' },
+    { label: 'Contact', page: 'contact' },
+  ];
 
   // Listen for route changes
   useEffect(() => {
@@ -65,6 +76,15 @@ export default function Header() {
 
   return (
     <header className="hdr">
+      {isLoading && (
+        <div className="hdr__loading-overlay" aria-busy="true" aria-live="polite">
+          <div className="hdr__loading-card">
+            <img src={imgLogoVector} alt="Bayou Muscle" className="hdr__loading-logo" />
+            <div className="hdr__loading-bar" />
+            <p className="hdr__loading-text"></p>
+          </div>
+        </div>
+      )}
 
       <div className="hdr__topbar">
         <div className="hdr__topbar-track">
@@ -84,7 +104,18 @@ export default function Header() {
         <div className="hdr__main-inner">
 
           <nav className="hdr__nav">
-            {NAV_LINKS.map(({ label, page }) => (
+            {categoryLinks.map(({ label, page }) => (
+              <a
+                key={page}
+                href={'/' + page}
+                className={`hdr__nav-link ${currentPage === page ? 'active' : ''}`}
+                onClick={e => go(page, e)}
+              >
+                {label}
+              </a>
+            ))}
+
+            {NAV_LINKS.slice(categoryLinks.length).map(({ label, page }) => (
               <a
                 key={page}
                 href={'/' + page}
@@ -117,21 +148,31 @@ export default function Header() {
             </div>
 
             <div className="hdr__lang">
-              <img src={imgLangFlag} alt="Language" className="hdr__lang-flag" />
+              <img src={imgAccountIcon} alt="" className="hdr__lang-flag" />
             </div>
 
             <button
               className="hdr__icon-btn"
               aria-label="Account"
-              onClick={e => go('contact', e)}
+              onClick={() => {
+                const target = !isAuthenticated ? '/login' : String(role || '').toLowerCase() === 'admin' ? '/admin/dashboard' : '/profile';
+                navigate(target);
+              }}
             >
-              <img src={imgAccountIcon} alt="" className="hdr__icon-img" />
+              <img src={imgLangFlag} alt="" className="hdr__icon-img" />
             </button>
 
             <button
               className="hdr__cart-btn"
               aria-label="Cart"
-              onClick={() => setCartOpen(true)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate('/login');
+                  return;
+                }
+
+                setCartOpen(true);
+              }}
             >
               <img src={imgCartIcon} alt="" className="hdr__cart-icon" />
               <span className="hdr__cart-badge">{cartCount}</span>

@@ -1,20 +1,67 @@
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import "../Blog/blog.css";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Marquee from "../../components/Marquee";
+import useUserBlogs from "../../hooks/useUserBlogs";
 
-const imgBanner = "/blogs/D1.png";
-const imgSingleBlog1 = "/blogs/D2.png";
-const imgSingleBlog2 = "/blogs/D3.png";
-const imgSingleBlog3 = "/blogs/D4.png";
-const imgAuthorThumb =
-  "https://www.figma.com/api/mcp/asset/7459bbcc-64db-40b9-962e-e4c99179fc2a";
+const formatDate = (dateString) => {
+  if (!dateString) {
+    return "--";
+  }
+
+  const parsed = new Date(dateString.replace(" ", "T"));
+  if (Number.isNaN(parsed.getTime())) {
+    return dateString;
+  }
+
+  return parsed.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 export default function BlogDetails() {
-  const go = (page, e) => {
+  const { slug } = useParams();
+  const { getUserBlogDetails, isLoading, error } = useUserBlogs();
+  const [blog, setBlog] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadDetails = async () => {
+      if (!slug) {
+        setBlog(null);
+        return;
+      }
+
+      const details = await getUserBlogDetails(slug);
+      if (isMounted) {
+        setBlog(details);
+      }
+    };
+
+    loadDetails();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getUserBlogDetails, slug]);
+
+  const go = (page, detailSlug, e) => {
     if (e) e.preventDefault();
-    if (window.__navigate) window.__navigate(page);
+    const actualSlug = typeof detailSlug === "object" ? null : detailSlug;
+    if (window.__navigate) window.__navigate(page, actualSlug);
   };
+
+  const descriptionHtml = useMemo(() => {
+    if (blog?.description) {
+      return blog.description;
+    }
+    return "<p>No content available.</p>";
+  }, [blog]);
 
   return (
     <>
@@ -24,17 +71,15 @@ export default function BlogDetails() {
         <section className="blog-hero blog-hero--detail">
           <div className="blog-hero__inner">
             <nav className="blog-hero__breadcrumb">
-              <span className="blog-bc-link" onClick={(e) => go("home", e)}>
+              <span className="blog-bc-link" onClick={(e) => go("home", null, e)}>
                 Home Page
               </span>
               <span className="blog-bc-sep"></span>
-              <span className="blog-bc-link" onClick={(e) => go("blog", e)}>
+              <span className="blog-bc-link" onClick={(e) => go("blog", null, e)}>
                 Blogs
               </span>
               <span className="blog-bc-sep"></span>
-              <span className="blog-bc-current">
-                Can Supplements Help You Lose Weight? What Science Says
-              </span>
+              <span className="blog-bc-current">{blog?.title || "Blog Details"}</span>
             </nav>
           </div>
         </section>
@@ -43,16 +88,12 @@ export default function BlogDetails() {
         <div className="container">
           <div className="bd-header">
             <div className="bd-header__sidebar">
-              <span className="bd-cat-badge">All Post</span>
+              <span className="bd-cat-badge">{blog?.category || "All Post"}</span>
             </div>
             <div className="bd-header__main">
-              <h1 className="bd-title">
-                Can Supplements Help You Lose Weight?
-                <br />
-                What Science Says
-              </h1>
+              <h1 className="bd-title">{blog?.title || "Blog Details"}</h1>
               <div className="bd-meta">
-                <span className="bd-meta__date">September 14, 2024</span>
+                <span className="bd-meta__date">{formatDate(blog?.createdAt)}</span>
                 <span className="bd-meta__divider" />
                 <span className="bd-meta__by">
                   By <strong>admin</strong>
@@ -63,79 +104,25 @@ export default function BlogDetails() {
 
           {/* ── BANNER IMAGE ── */}
           <div className="bd-banner">
-            <img src={imgBanner} alt="Blog banner" className="bd-banner__img" />
+            <img
+              src={blog?.image || "/blogs/D1.png"}
+              alt={blog?.title || "Blog banner"}
+              className="bd-banner__img"
+            />
           </div>
 
           {/* ── ARTICLE CONTENT ── */}
           <div className="bd-content">
-            <p className="bd-text">
-              Tactical backpacks have multiple uses. They are used in the
-              military, to carry weapons and supplies. They are used in outdoor
-              adventures, for hiking, camping, or trekking. They are also used
-              in everyday circumstances, such as for school backpacks, college
-              backpacks and for any other daily tasks. Tactical backpacks are
-              known to be extremely durable, weather proof, and comfortable for
-              any situation
-            </p>
-
-            <h2 className="bd-h2">1. GEAR UP</h2>
-            <p className="bd-text">
-              Black tactical backpacks are, by US law, the only color except for
-              matching camouflage, that may be worn on soldiers' backs in the
-              military. If the backpack is not black, or the same camouflage
-              pattern that the soldier is wearing, the bag may only be carried
-              in the soldier's hands.
-            </p>
-
-            <div className="bd-img-pair">
-              <div className="bd-img-pair__item">
-                <img src={imgSingleBlog1} alt="Blog image 1" loading="lazy" />
-              </div>
-              <div className="bd-img-pair__item">
-                <img src={imgSingleBlog2} alt="Blog image 2" loading="lazy" />
-              </div>
-            </div>
-
-            <h2 className="bd-h2">2. EAT YOUR VITAMIN D</h2>
-            <p className="bd-text">
-              Choosing the size of the backpack isn't the only thing to think
-              about when choosing which tactical backpack you may need. The
-              color of your backpack is also extremely important. Choosing the
-              black backpack isn't just guaranteed to fit in with the everyday
-              requirements of a backpack, but this color is easily switchable to
-              tactical and outdoor missions should you need it.
-            </p>
-
-            <div className="bd-img-full">
-              <img src={imgSingleBlog3} alt="Blog image 3" loading="lazy" />
-            </div>
-
-            <h2 className="bd-h2">
-              3. FIND AN ACTIVITY THAT YOU CAN GET EXCITED ABOUT
-            </h2>
-            <p className="bd-text">
-              Really try and depict what situation your military style backpack
-              will be used in, and if you are unsure of any of the questions, or
-              you are in between colors, black is most likely to be the best way
-              forward.
-            </p>
-
-            <h2 className="bd-h2">4. START YOUR DAY EARLY</h2>
-            <p className="bd-text">
-              Black tactical backpacks are, by US law, the only color except for
-              matching camouflage, that may be worn on soldiers' backs in the
-              military. If the backpack is not black, or the same camouflage
-              pattern that the soldier is wearing, the bag may only be carried
-              in the soldier's hands.
-            </p>
-
-            <h2 className="bd-h2">5. GET SOCIAL</h2>
-            <p className="bd-text">
-              The law for black tactical backpacks is relevant for the army's
-              OCP only (Operational Camouflage Pattern), so applies to the US
-              army, the US Space Force, and the US Military Force. The US Navy
-              and Marine Corps have different uniforms and regulations in place.
-            </p>
+            {isLoading ? (
+              <p className="bd-text">Loading blog details...</p>
+            ) : error ? (
+              <p className="bd-text">{error}</p>
+            ) : (
+              <>
+                <p className="bd-text">{blog?.summary || ""}</p>
+                <div className="bd-text" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+              </>
+            )}
 
             {/* Tags */}
             <div className="bd-tags">
@@ -151,10 +138,7 @@ export default function BlogDetails() {
                   fill="black"
                 />
               </svg>
-              <span className="bd-tags__list">
-                Energy, Fitness, Healthy, Nutrition, Powders, Protein, Snack,
-                Wellness
-              </span>
+              <span className="bd-tags__list">{blog?.category || "General"}</span>
             </div>
 
             {/* Post navigation */}

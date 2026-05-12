@@ -2,10 +2,11 @@ import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Toaster } from 'react-hot-toast';
 import AppRouter from './router/AppRouter';
+import { CartProvider } from './context/CartContext';
 
 export default function App() {
   return (
-    <>
+    <CartProvider>
       <AppRouter />
       <Toaster
         position="top-right"
@@ -33,6 +34,6 @@ export default function App() {
           },
         }}
       />
-    </>
+    </CartProvider>
   );
 }

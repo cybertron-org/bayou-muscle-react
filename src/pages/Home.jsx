@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -7,95 +7,10 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Posts from "../components/Posts";
 import Marquee from "../components/Marquee";
+import useUserProducts from "../hooks/useUserProducts";
+import useUserBlogs from "../hooks/useUserBlogs";
 
 /* ── DATA ── */
-const featuredProducts = [
-  {
-    id: 1,
-    name: "CPT: Conjugated Linoleic Acid Supplement",
-    cat: "CHOCOLATE MILKSHAKE",
-    price: "$9.00",
-    stars: 4,
-    reviews: 4,
-    img: "/images/p14.png",
-  },
-  {
-    id: 2,
-    name: "Denzour micronised creatine - 100 g",
-    cat: "Art",
-    price: "$9.95",
-    stars: 4,
-    reviews: 3,
-    img: "/images/p12.png",
-  },
-  {
-    id: 3,
-    name: "ISOCOOL Cold Filtered Protein Isolate",
-    cat: "Art",
-    price: "$9.00",
-    oldPrice: "$29.00",
-    badge: "-8%",
-    stars: 5,
-    reviews: 4,
-    img: "/images/p13.png",
-  },
-  {
-    id: 4,
-    name: "L-Carnitine: An Amino Acid Supplement for Athletes",
-    cat: "Home Accessories",
-    price: "$9.00",
-    stars: 4,
-    reviews: 4,
-    img: "/images/p14.png",
-  },
-  {
-    id: 5,
-    name: "Denzour micronised creatine -100 g",
-    cat: "Art",
-    price: "$9.00",
-    stars: 4,
-    reviews: 3,
-    img: "/images/p15.png",
-  },
-];
-
-const latestReleases = [
-  {
-    id: 1,
-    name: "Ultra Ripped: A Thermogenic Fat Burner",
-    cat: "Home Accessories",
-    price: "$11.90",
-    stars: 5,
-    img: "/images/p15.png",
-  },
-  {
-    id: 2,
-    name: "Denzour micronised creatine - 100 g",
-    cat: "Art",
-    price: "$29.00",
-    stars: 4,
-    img: "/images/p14.png",
-  },
-  {
-    id: 3,
-    name: "CLA: Conjugated Linoleic Acid Supplement",
-    cat: "Home Accessories",
-    price: "$10.12",
-    oldPrice: "$11.90",
-    badge: "-15%",
-    stars: 4,
-    img: "/images/p14.png",
-  },
-  {
-    id: 4,
-    name: "Ultra Ripped: A Thermogenic Fat Burner",
-    cat: "Home Accessories",
-    price: "$11.90",
-    stars: 5,
-    img: "/images/p13.png",
-  },
-];
-
 const goalBanners = [
   {
     title: "WEIGHT",
@@ -236,6 +151,67 @@ function Stars({ count }) {
 }
 
 export default function Home() {
+  const { fetchUserProducts, fetchLatestProducts } = useUserProducts();
+  const { blogs, loadLatestBlogs } = useUserBlogs();
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [isFeaturedLoading, setIsFeaturedLoading] = useState(true);
+  const [latestProducts, setLatestProducts] = useState([]);
+  const [isLatestLoading, setIsLatestLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProducts = async () => {
+      setIsFeaturedLoading(true);
+      setIsLatestLoading(true);
+
+      try {
+        const [featured, latest] = await Promise.all([
+          fetchUserProducts(),
+          fetchLatestProducts(),
+        ]);
+
+        if (isMounted) {
+          setFeaturedProducts(Array.isArray(featured) ? featured : []);
+          setLatestProducts(Array.isArray(latest) ? latest : []);
+        }
+      } catch {
+        if (isMounted) {
+          setFeaturedProducts([]);
+          setLatestProducts([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsFeaturedLoading(false);
+          setIsLatestLoading(false);
+        }
+      }
+    };
+
+    loadProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fetchUserProducts, fetchLatestProducts]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBlogs = async () => {
+      await loadLatestBlogs();
+      if (!isMounted) {
+        return;
+      }
+    };
+
+    loadBlogs();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [loadLatestBlogs]);
+
   // Testimonial Slider Logic
   useEffect(() => {
     const testimonials = [
@@ -304,6 +280,8 @@ export default function Home() {
     window.__navigate && window.__navigate(page, actualProductId);
   };
 
+  const latestBlogs = blogs.slice(0, 2);
+
   return (
     <>
       <Header />
@@ -340,56 +318,62 @@ export default function Home() {
           </div>
         </div>
         <div className="hm-slider-wrap">
-          <Swiper
-            modules={[Navigation]}
-            spaceBetween={20}
-            slidesPerView={5}
-            slidesOffsetBefore={0}
-            slidesOffsetAfter={0}
-            navigation={false}
-            className="hm-swiper"
-            breakpoints={{
-              0: { slidesPerView: 1.3, spaceBetween: 12 },
-              576: { slidesPerView: 2.2, spaceBetween: 14 },
-              768: { slidesPerView: 3.2, spaceBetween: 16 },
-              1024: { slidesPerView: 4.2, spaceBetween: 18 },
-              1280: { slidesPerView: 5, spaceBetween: 20 },
-            }}
-          >
-            {featuredProducts.map((p) => (
-              <SwiperSlide key={p.id}>
-                <div
-                  className="hm-feat-card"
-                  onClick={(e) => nav("product", p.id, e)}
-                >
-                  {p.badge && <span className="hm-badge">{p.badge}</span>}
-                  <div className="hm-feat-card__body">
-                    <p className="hm-feat-card__name">{p.name}</p>
-                    <p className="hm-feat-card__cat">{p.cat}</p>
-                    <div className="hm-feat-card__img">
-                      <img src={p.img} alt={p.name} loading="lazy" />
-                    </div>
-                    <div className="hm-feat-card__footer">
-                      <div className="hm-feat-card__rating">
-                        <Stars count={p.stars} />
-                        <span className="hm-feat-card__reviews">
-                          ({p.reviews}.{p.stars})
-                        </span>
+          {isFeaturedLoading ? (
+            <p className="hm-blog__excerpt text-center">Loading featured products...</p>
+          ) : featuredProducts.length > 0 ? (
+            <Swiper
+              modules={[Navigation]}
+              spaceBetween={20}
+              slidesPerView={5}
+              slidesOffsetBefore={0}
+              slidesOffsetAfter={0}
+              navigation={false}
+              className="hm-swiper"
+              breakpoints={{
+                0: { slidesPerView: 1.3, spaceBetween: 12 },
+                576: { slidesPerView: 2.2, spaceBetween: 14 },
+                768: { slidesPerView: 3.2, spaceBetween: 16 },
+                1024: { slidesPerView: 4.2, spaceBetween: 18 },
+                1280: { slidesPerView: 5, spaceBetween: 20 },
+              }}
+            >
+              {featuredProducts.map((p) => (
+                <SwiperSlide key={p.id}>
+                  <div
+                    className="hm-feat-card"
+                    onClick={(e) => nav("product", p.slug || p.id, e)}
+                  >
+                    {p.badge && <span className="hm-badge">{p.badge}</span>}
+                    <div className="hm-feat-card__body">
+                      <p className="hm-feat-card__name">{p.name}</p>
+                      <p className="hm-feat-card__cat">{p.cat}</p>
+                      <div className="hm-feat-card__img">
+                        <img src={p.img} alt={p.name} loading="lazy" />
                       </div>
-                      <div className="hm-feat-card__price-wrap">
-                        <span className="hm-feat-card__price">{p.price}</span>
-                        {p.oldPrice && (
-                          <span className="hm-feat-card__old">
-                            {p.oldPrice}
+                      <div className="hm-feat-card__footer">
+                        <div className="hm-feat-card__rating">
+                          <Stars count={p.stars} />
+                          <span className="hm-feat-card__reviews">
+                            ({p.reviews}.{p.stars})
                           </span>
-                        )}
+                        </div>
+                        <div className="hm-feat-card__price-wrap">
+                          <span className="hm-feat-card__price">{p.price}</span>
+                          {p.oldPrice && (
+                            <span className="hm-feat-card__old">
+                              {p.oldPrice}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <p className="hm-blog__excerpt text-center">No featured products available right now.</p>
+          )}
         </div>
       </section>
 
@@ -424,43 +408,49 @@ export default function Home() {
           </a>
         </div>
         <div className="hm-slider-wrap">
-          <Swiper
-            modules={[Navigation]}
-            spaceBetween={20}
-            slidesPerView={4}
-            navigation={false}
-            className="hm-swiper"
-            breakpoints={{
-              0: { slidesPerView: 1.2, spaceBetween: 12 },
-              576: { slidesPerView: 2.1, spaceBetween: 14 },
-              768: { slidesPerView: 3.1, spaceBetween: 16 },
-              1200: { slidesPerView: 4, spaceBetween: 20 },
-            }}
-          >
-            {latestReleases.map((p) => (
-              <SwiperSlide key={p.id}>
-                <div
-                  className="hm-latest-card"
-                  onClick={(e) => nav("product", p.id, e)}
-                >
-                  {/* {p.badge && <span className="hm-badge">{p.badge}</span>} */}
-                  <div className="hm-latest-card__body">
-                    <p className="hm-latest-card__name">{p.name}</p>
-                    <p className="hm-latest-card__cat">{p.cat}</p>
-                    <div className="hm-latest-card__img">
-                      <img src={p.img} alt={p.name} loading="lazy" />
-                    </div>
-                    <div className="hm-latest-card__footer">
-                      <span className="hm-latest-card__price">{p.price}</span>
-                      {p.oldPrice && (
-                        <span className="hm-feat-card__old">{p.oldPrice}</span>
-                      )}
+          {isLatestLoading ? (
+            <p className="hm-blog__excerpt text-center">Loading latest releases...</p>
+          ) : latestProducts.length > 0 ? (
+            <Swiper
+              modules={[Navigation]}
+              spaceBetween={20}
+              slidesPerView={4}
+              navigation={false}
+              className="hm-swiper"
+              breakpoints={{
+                0: { slidesPerView: 1.2, spaceBetween: 12 },
+                576: { slidesPerView: 2.1, spaceBetween: 14 },
+                768: { slidesPerView: 3.1, spaceBetween: 16 },
+                1200: { slidesPerView: 4, spaceBetween: 20 },
+              }}
+            >
+              {latestProducts.map((p) => (
+                <SwiperSlide key={p.id}>
+                  <div
+                    className="hm-latest-card"
+                    onClick={(e) => nav("product", p.slug || p.id, e)}
+                  >
+                    {p.badge && <span className="hm-badge">{p.badge}</span>}
+                    <div className="hm-latest-card__body">
+                      <p className="hm-latest-card__name">{p.name}</p>
+                      <p className="hm-latest-card__cat">{p.cat}</p>
+                      <div className="hm-latest-card__img">
+                        <img src={p.img} alt={p.name} loading="lazy" />
+                      </div>
+                      <div className="hm-latest-card__footer">
+                        <span className="hm-latest-card__price">{p.price}</span>
+                        {p.oldPrice && (
+                          <span className="hm-feat-card__old">{p.oldPrice}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <p className="hm-blog__excerpt text-center">No latest releases available right now.</p>
+          )}
         </div>
       </section>
 
@@ -663,19 +653,19 @@ export default function Home() {
           </a>
         </div>
         <div className="hm-blog__grid">
-          {blogPosts.map((post, i) => (
+          {latestBlogs.map((post, i) => (
             <div key={i} className="hm-blog__pair">
               <div className="hm-blog__img">
-                <img src={post.img} alt={post.title} loading="lazy" />
+                <img src={post.image} alt={post.title} loading="lazy" />
               </div>
               <div className="hm-blog__text">
-                <span className="hm-blog__cat">{post.cat}</span>
+                <span className="hm-blog__cat">{post.category}</span>
                 <h3 className="hm-blog__title">{post.title}</h3>
-                <p className="hm-blog__excerpt">{post.excerpt}</p>
+                <p className="hm-blog__excerpt">{post.summary}</p>
                 <a
                   href="#"
                   className="hm-blog__more"
-                  onClick={(e) => nav("blog", null, e)}
+                  onClick={(e) => nav("blogdetails", post.slug, e)}
                 >
                   Read more
                 </a>

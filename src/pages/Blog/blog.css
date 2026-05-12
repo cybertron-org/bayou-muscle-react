@@ -130,7 +130,7 @@
 
 /* Category badge — bg white, border #000, Instrument Sans SemiBold 14px */
 .blog-featured__cat {
-    position: absolute;
+    /* position: absolute; */
     bottom: 15px;
     left: 15px;
     background: #ffffff;
@@ -144,6 +144,7 @@
     color: #000000;
     z-index: 10;
     white-space: nowrap;
+    width:13%;
 }
 
 .blog-featured__content {
