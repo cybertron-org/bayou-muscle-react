@@ -642,6 +642,20 @@
   margin: 0 0 20px;
 }
 
+.pd-tab-p img {
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.pd-tab-description img {
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+}
+
 .pd-key-benefits {
   list-style: none;
   padding: 0;
@@ -692,6 +706,13 @@
 /* Additional Info table */
 .pd-tab-additional {
   padding-top: 10px;
+}
+
+.pd-tab-additional img {
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
 }
 
 .pd-review-form {

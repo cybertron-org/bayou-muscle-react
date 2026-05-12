@@ -82,7 +82,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                   return (
                 <div className="cd-item" key={item.id}>
                   <div className="cd-item__img-wrap">
-                    <img src={item.image || '/images/cartp.png'} alt={item.productName} className="" />
+                    <img src={item.main_image || '/images/cartp.png'} alt={item.productName} className="" />
                   </div>
                   <div className="cd-item__info">
                     <p className="cd-item__name">{item.productName}</p>
@@ -122,7 +122,7 @@ export default function CartDrawer({ isOpen, onClose }) {
           {cartItems.length ? (
             <button className="cd-clear-btn" onClick={handleClearCart}>Clear Cart</button>
           ) : null}
-          <button className="cd-btn cd-btn--view" onClick={() => { onClose(); navigate('/my-cart'); }}>View Cart</button>
+          <button className="cd-btn cd-btn--view" onClick={() => { onClose(); navigate('/cart'); }}>View Cart</button>
           <button className="cd-btn cd-btn--checkout" onClick={() => { onClose(); navigate('/checkout'); }}>Checkout</button>
         </div>
       </div>

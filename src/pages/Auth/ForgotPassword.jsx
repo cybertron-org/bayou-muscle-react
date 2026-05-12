@@ -73,7 +73,7 @@ export default function ForgotPassword() {
 					<div className="auth-register-form-shell auth-login-form-shell">
 						<div className="auth-register-head">
 							<h2 className="feedback-title">
-								RESET <span className="feedback"> PASSWORD </span>
+								FORGOT <span className="feedback"> PASSWORD </span>
 							</h2>
 							<p className="hm-blog__excerpt">
 								Enter your account email and we will send you reset instructions.

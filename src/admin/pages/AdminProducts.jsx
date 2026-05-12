@@ -7,33 +7,53 @@ import AdminLayout from '../layouts/AdminLayout';
 
 const pageSize = 10;
 
-const normalizeProduct = (item) => ({
-	id: String(item?.id || ''),
-	name: item?.name || 'Untitled',
-	slug: item?.slug || '',
-	price: item?.price ?? '0',
-	discountedPrice: item?.discounted_price ?? item?.discountedPrice ?? item?.price ?? '0',
-	quantity: Number(item?.quantity ?? 0),
-	sku: item?.sku || '--',
-	summary: item?.summary || '--',
-	description: item?.description || '--',
-	additionalInfo: item?.additional_info ?? item?.additionalInfo ?? '--',
-	bestSeller: Number(item?.best_seller ?? item?.bestSeller ?? 0),
-	isFeatured: Number(item?.is_featured ?? item?.isFeatured ?? 0),
-	clearance: Number(item?.clearance ?? 0),
-	gender: item?.gender || '--',
-	isActive: Number(item?.is_active ?? item?.isActive ?? 0),
-	createdAt: item?.created_at ?? item?.createdAt ?? null,
-	updatedAt: item?.updated_at ?? item?.updatedAt ?? null,
-	categoryTitle: item?.category?.title ?? item?.categoryTitle ?? '--',
-	images: Array.isArray(item?.images)
-		? item.images.map((image) => ({
+const normalizeProduct = (item) => {
+	const mainImageUrl = item?.main_image || item?.mainImage || item?.image || '';
+
+	let images = [];
+	if (Array.isArray(item?.images)) {
+		images = item.images.map((image) => ({
 			id: String(image?.id || ''),
 			image: image?.image || '',
-			isMain: Number(image?.is_main ?? image?.isMain ?? 0),
-		}))
-		: [],
-});
+			isMain: 0,
+		}));
+
+		if (mainImageUrl) {
+			const match = images.find((img) => img.image === mainImageUrl);
+			if (match) {
+				match.isMain = 1;
+			} else {
+				images.unshift({ id: 'main', image: mainImageUrl, isMain: 1 });
+			}
+		} else {
+			images = images.map((img, idx) => ({ ...img, isMain: Number(item.images[idx]?.is_main ?? item.images[idx]?.isMain ?? 0) }));
+		}
+	} else if (mainImageUrl) {
+		images = [{ id: String(item?.id || ''), image: mainImageUrl, isMain: 1 }];
+	}
+
+	return {
+		id: String(item?.id || ''),
+		name: item?.name || 'Untitled',
+		slug: item?.slug || '',
+		price: item?.price ?? '0',
+		discountedPrice: item?.discounted_price ?? item?.discountedPrice ?? item?.price ?? '0',
+		quantity: Number(item?.quantity ?? 0),
+		sku: item?.sku || '--',
+		summary: item?.summary || '--',
+		description: item?.description || '--',
+		additionalInfo: item?.additional_info ?? item?.additionalInfo ?? '--',
+		bestSeller: Number(item?.best_seller ?? item?.bestSeller ?? 0),
+		isFeatured: Number(item?.is_featured ?? item?.isFeatured ?? 0),
+		clearance: Number(item?.clearance ?? 0),
+		gender: item?.gender || '--',
+		isActive: Number(item?.is_active ?? item?.isActive ?? 0),
+		createdAt: item?.created_at ?? item?.createdAt ?? null,
+		updatedAt: item?.updated_at ?? item?.updatedAt ?? null,
+		categoryTitle: item?.category?.title ?? item?.categoryTitle ?? '--',
+		images,
+	};
+};
 
 const formatDate = (value) => {
 	if (!value) {
@@ -112,15 +132,15 @@ const getFlagTokens = (product) => {
 		});
 	}
 
+	return flags;
+};
+
+const getVisibilityMeta = (product) => {
 	if (Number(product?.isActive) === 1) {
-		flags.push({
-			key: 'isActive',
-			label: 'Active',
-			variant: 'admin-product-flag--active',
-		});
+		return { label: 'Active', className: 'admin-status--success' };
 	}
 
-	return flags;
+	return { label: 'Inactive', className: 'admin-status--neutral' };
 };
 
 export default function AdminProducts() {
@@ -131,6 +151,7 @@ export default function AdminProducts() {
 	const [selectedProductId, setSelectedProductId] = useState('');
 	const [openActionMenu, setOpenActionMenu] = useState(null);
 	const [deletingProductId, setDeletingProductId] = useState('');
+	const [confirmDeleteProduct, setConfirmDeleteProduct] = useState(null);
 
 	const products = useMemo(
 		() => (rawProducts || []).map(normalizeProduct).filter((item) => item.id),
@@ -158,6 +179,7 @@ export default function AdminProducts() {
 	const selectedProduct = products.find((product) => product.id === selectedProductId) || null;
 	const visibleImage = selectedProduct?.images?.find((image) => image.isMain === 1) || selectedProduct?.images?.[0] || null;
 	const selectedStatus = getStatusMeta(selectedProduct || {});
+	const selectedVisibility = getVisibilityMeta(selectedProduct || {});
 	const isPreviewOpen = !!selectedProduct;
 	const safeDescriptionHtml = useMemo(
 		() => DOMPurify.sanitize(String(selectedProduct?.description || ''), { USE_PROFILES: { html: true } }),
@@ -187,6 +209,23 @@ export default function AdminProducts() {
 			setOpenActionMenu(null);
 		}
 	}, [selectedProductId]);
+
+	useEffect(() => {
+		if (!confirmDeleteProduct) {
+			return;
+		}
+
+		const closeOnEscape = (event) => {
+			if (event.key === 'Escape') {
+				setConfirmDeleteProduct(null);
+			}
+		};
+
+		window.addEventListener('keydown', closeOnEscape);
+		return () => {
+			window.removeEventListener('keydown', closeOnEscape);
+		};
+	}, [confirmDeleteProduct]);
 
 	useEffect(() => {
 		if (!products.length) {
@@ -251,6 +290,27 @@ export default function AdminProducts() {
 		}
 	};
 
+	const openDeleteConfirm = (event, productId) => {
+		event.stopPropagation();
+		const targetProduct = products.find((product) => product.id === productId) || null;
+		setConfirmDeleteProduct(targetProduct);
+		setOpenActionMenu(null);
+	};
+
+	const closeDeleteConfirm = () => {
+		setConfirmDeleteProduct(null);
+	};
+
+	const confirmDeleteSelectedProduct = async () => {
+		if (!confirmDeleteProduct) {
+			return;
+		}
+
+		const productId = confirmDeleteProduct.id;
+		setConfirmDeleteProduct(null);
+		await handleDeleteProduct(productId);
+	};
+
 	const toggleActionMenu = (event, productId) => {
 		event.stopPropagation();
 		setOpenActionMenu((previous) => (previous === productId ? null : productId));
@@ -271,7 +331,7 @@ export default function AdminProducts() {
 
 	const deleteFromMenu = async (event, productId) => {
 		event.stopPropagation();
-		await handleDeleteProduct(productId);
+		openDeleteConfirm(event, productId);
 	};
 
 	if (isLoading) {
@@ -327,6 +387,7 @@ export default function AdminProducts() {
 										<th><strong>Qty</strong></th>
 										<th><strong>SKU</strong></th>
 										<th><strong>Flags</strong></th>
+										<th><strong>Status</strong></th>
 										<th><strong>Created At</strong></th>
 										<th><strong>Actions</strong></th>
 									</tr>
@@ -338,7 +399,7 @@ export default function AdminProducts() {
 											const isSelected = selectedProduct?.id === product.id;
 
 											return (
-												<tr key={product.id} onClick={() => handlePreviewProduct(product.id)} className={isSelected ? 'is-active' : ''}>
+												<tr key={product.id} className={isSelected ? 'is-active' : ''}>
 													<td data-label="Name">
 														<strong>{product.name}</strong>
 														<div className="admin-preview-copy">{stripHtml(product.summary)}</div>
@@ -364,6 +425,11 @@ export default function AdminProducts() {
 															)}
 														</div>
 													</td>
+													<td data-label="Status">
+														<span className={`admin-status ${product.isActive === 1 ? 'admin-status--success' : 'admin-status--neutral'}`}>
+															{product.isActive === 1 ? 'Active' : 'Inactive'}
+														</span>
+													</td>
 													<td data-label="Created At">{formatDate(product.createdAt)}</td>
 													<td data-label="Actions">
 														<div className="admin-action-menu-wrap">
@@ -382,13 +448,11 @@ export default function AdminProducts() {
 															</button>
 															{isMenuOpen(product.id) ? (
 																<div className="admin-action-menu">
-																	<button className="admin-action-menu-item" type="button" onClick={(event) => openPreviewFromMenu(event, product.id)}>
-																		Preview
-																	</button>
+				
 																	<button className="admin-action-menu-item" type="button" onClick={(event) => openEditFromMenu(event, product.id)}>
 																		Edit
 																	</button>
-																	<button className="admin-action-menu-item admin-action-menu-item--danger" type="button" onClick={(event) => deleteFromMenu(event, product.id)} disabled={deletingProductId === product.id}>
+																	<button className="admin-action-menu-item admin-action-menu-item--danger" type="button" onClick={(event) => openDeleteConfirm(event, product.id)} disabled={deletingProductId === product.id}>
 																		Delete
 																	</button>
 																</div>
@@ -437,46 +501,46 @@ export default function AdminProducts() {
 						</div>
 					</div>
 
-					{isPreviewOpen ? (
-						<div className="admin-card admin-products-preview-panel" style={{ padding: '18px' }}>
-							<div className="admin-card-kicker">Product preview</div>
-							<div className="admin-card-title">{selectedProduct?.name}</div>
-							<div className="admin-card-subtitle">Secondary details are shown here for the selected product.</div>
 
-							<div className="admin-placeholder admin-placeholder--compact" style={{ marginTop: '16px' }}>
-								<div>
-									{visibleImage?.image ? (
-										<img
-											src={visibleImage.image}
-											alt={selectedProduct?.name}
-											style={{ width: '100%', borderRadius: '16px', marginBottom: '14px', objectFit: 'cover', aspectRatio: '16 / 10' }}
-										/>
-									) : null}
-									<strong>{selectedProduct?.name}</strong>
-									<div>Category: {selectedProduct?.categoryTitle}</div>
-									<div>Price: {formatCurrency(selectedProduct?.price)}</div>
-									<div>Discounted Price: {formatCurrency(selectedProduct?.discountedPrice)}</div>
-									<div>Quantity: {selectedProduct?.quantity}</div>
-									<div>SKU: {selectedProduct?.sku}</div>
-									<div>Status: {selectedStatus.label}</div>
-									<div>Gender: {selectedProduct?.gender}</div>
-													<div style={{ marginTop: '10px' }}>{stripHtml(selectedProduct?.summary)}</div>
-													<div className="admin-rich-content" style={{ marginTop: '12px' }} dangerouslySetInnerHTML={{ __html: safeDescriptionHtml }} />
-													<div className="admin-rich-content" style={{ marginTop: '12px' }} dangerouslySetInnerHTML={{ __html: safeAdditionalInfoHtml }} />
-								</div>
-							</div>
-
-							<div className="admin-tags-wrap admin-tags-wrap--space">
-								<span className="admin-tag">Best seller: {selectedProduct?.bestSeller}</span>
-								<span className="admin-tag">Featured: {selectedProduct?.isFeatured}</span>
-								<span className="admin-tag">Clearance: {selectedProduct?.clearance}</span>
-								<span className="admin-tag">Active: {selectedProduct?.isActive}</span>
-								<span className="admin-tag">Images: {selectedProduct?.images?.length || 0}</span>
-							</div>
-						</div>
-					) : null}
 				</div>
 			</section>
+
+			{confirmDeleteProduct ? (
+				<div className="admin-modal-backdrop" onClick={closeDeleteConfirm} role="presentation">
+					<div
+						className="admin-modal"
+						onClick={(event) => event.stopPropagation()}
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="delete-product-modal-title"
+					>
+						<div className="admin-modal-head">
+							<div>
+								<div className="admin-card-kicker">Delete product</div>
+								<div className="admin-card-title" id="delete-product-modal-title">Confirm deletion</div>
+
+							</div>
+							<button className="admin-icon-btn admin-modal-close" onClick={closeDeleteConfirm} type="button" aria-label="Close modal">
+								×
+							</button>
+						</div>
+
+						<div className="admin-modal-body">
+							<p className="admin-preview-copy">
+								Are you sure you want to delete <strong>{confirmDeleteProduct.name || 'this product'}</strong>? This action cannot be undone.
+							</p>
+							<div className="admin-modal-actions">
+								<button className="admin-action-btn admin-action-btn--ghost" type="button" onClick={closeDeleteConfirm} disabled={deletingProductId === confirmDeleteProduct.id}>
+									Cancel
+								</button>
+								<button className="admin-action-btn" type="button" onClick={confirmDeleteSelectedProduct} disabled={deletingProductId === confirmDeleteProduct.id}>
+									{deletingProductId === confirmDeleteProduct.id ? 'Deleting...' : 'Delete product'}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			) : null}
 		</AdminLayout>
 	);
 }

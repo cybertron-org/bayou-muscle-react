@@ -30,5 +30,10 @@ export const deleteCategory = async (categoryId) => {
   return response;
 };
 
-
+export const getSubCategoryByCategoryId = async (categoryId) => {
+  const response = await apiRequest(`/product-categories/${categoryId}/subcategories`, {
+    method: 'GET',
+  });
+  return response;
+};
 

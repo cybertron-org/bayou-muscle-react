@@ -632,8 +632,38 @@ button {
 .hdr__controls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
   margin-left: auto;
+  padding: 0 8px;
+}
+
+.hdr__auth-btn {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid #000;
+  background: #000;
+  color: #fff;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hdr__auth-btn:hover:not(:disabled) {
+  background: #ddca8a;
+  border-color: #ddca8a;
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hdr__auth-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 /* SEARCH — Figma: x=1327.67 y=28, w=266 h=40, rounded 5px */
@@ -689,41 +719,82 @@ button {
   /* transform: scaleY(-1); */
 }
 
-/* LANG — Figma: VerticalBorder x=1615.67, border-left #e9e9e9 1px, w=47 h=24 */
+/* LANG — Wishlist button with better spacing and styling */
 .hdr__lang {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 47px;
-  height: 24px;
-  border-left: 1px solid #e9e9e9;
-  padding-left: 4px;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #e9e9e9;
+  background: #f8f8f8;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hdr__lang:hover {
+  background: #f0f0f0;
+  border-color: #ddca8a;
+  color: #ddca8a;
 }
 
 .hdr__lang-flag {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
+  transition: color 0.3s ease;
+}
+
+/* Wishlist badge */
+.hdr__wishlist-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 19px;
+  height: 19px;
+  background: #ee440e;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* ACCOUNT ICON — Figma: Link x=1682.67, 30×30 */
 .hdr__icon-btn {
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #373a3c;
-  transition: color 0.2s;
+  background: #f8f8f8;
+  border: 1px solid #e9e9e9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .hdr__icon-btn:hover {
   color: #ddca8a;
+  background: #f0f0f0;
+  border-color: #ddca8a;
+  transform: translateY(-2px);
 }
 
 .hdr__icon-img {
-  width: 28px;
-  height: 29px;
+  width: 22px;
+  height: 22px;
   /* Figma: -scale-y-100 */
   /* transform: scaleY(-1); */
 }
@@ -731,23 +802,28 @@ button {
 /* CART BTN — Figma: bg #d0b77f, w=47.25 h=48, border-radius 23.81px */
 .hdr__cart-btn {
   position: relative;
-  width: 47px;
+  width: 48px;
   height: 48px;
   background: #d0b77f;
-  border-radius: 24px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
-  margin-left: 2px;
+  transition: all 0.3s ease;
+  margin-left: 4px;
+  cursor: pointer;
+  border: 1px solid #c9a86a;
 }
 
 .hdr__cart-btn:hover {
   background: #c8a84b;
+  border-color: #b89830;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(208, 183, 127, 0.3);
 }
 
 .hdr__cart-icon {
-  width: 19px;
+  width: 20px;
   height: 22px;
   /* Figma: -scale-y-100 */
   /* transform: scaleY(-1); */
@@ -757,16 +833,18 @@ button {
 /* Figma: right=133.08 → positioned relative to right side of cart btn */
 .hdr__cart-badge {
   position: absolute;
-  top: -1px;
-  right: -4px;
-  width: 17px;
-  height: 17px;
+  top: -6px;
+  right: -6px;
+  width: 19px;
+  height: 19px;
   background: #ee440e;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 50%;
   font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 10px;
-  line-height: 17px;
+  line-height: 1;
   color: #fff;
   text-align: center;
   display: flex;
@@ -3816,6 +3894,17 @@ button.hm-insta__label {
   color: #a8a8a8;
 }
 
+.contact-field .input-error {
+  border-color: #d0021b !important;
+}
+
+.checkout-field-error {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  color: #d0021b;
+  line-height: 1.4;
+}
+
 .contact-submit-btn {
   display: inline-flex;
   align-items: center;
@@ -4827,6 +4916,32 @@ button.hm-insta__label {
   gap: 16px;
 }
 
+.checkout-ship-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  color: #1f1f1f;
+  cursor: pointer;
+}
+
+.checkout-ship-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: #ddca8a;
+}
+
+.checkout-ship-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid #e9e9e9;
+  border-radius: 6px;
+  background: #fff;
+}
+
 .checkout-shipping-opts {
   display: flex;
   flex-direction: column;
@@ -4945,6 +5060,11 @@ button.hm-insta__label {
   color: #000;
 }
 
+.checkout-place-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .checkout-payment-icons {
   display: flex;
   gap: 8px;
@@ -5003,8 +5123,8 @@ button.hm-insta__label {
 
 .checkout-qty-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: 1px;
+  right: 5px;
   background: #ddca8a;
   color: #000;
   font-size: 10px;

@@ -15,9 +15,9 @@ const normalizeImagePath = (image) => {
 
 const normalizeBlog = (item) => ({
     id: String(item?.id || ""),
-    title: item?.title || "Untitled",
-    summary: item?.summary || "--",
-    description: item?.description || "--",
+    title: item?.title || "",
+    summary: item?.summary || "",
+    description: item?.description || "",
     image: normalizeImagePath(item?.image),
     category: item?.category || "",
     categorySlug: item?.category_slug || "",

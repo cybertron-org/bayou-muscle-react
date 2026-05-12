@@ -61,7 +61,7 @@ const normalizeCartItem = (item) => {
         productId: String(item?.product_id || product?.id || ''),
         productName: product?.name || item?.product_name || 'Unknown Product',
         productSlug: product?.slug || '',
-        image: product?.image || item?.image || '',
+        main_image: product?.main_image || item?.main_image || '',
         quantity: Number(item?.quantity ?? 0),
         unitPrice: Number(item?.unit_price ?? product?.price ?? 0),
         discountedPrice: Number(item?.discounted_price ?? product?.discounted_price ?? product?.price ?? item?.unit_price ?? 0),

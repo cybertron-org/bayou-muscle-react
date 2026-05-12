@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { loginUser, logoutUser, registerUser, forgotPassword as forgotPasswordRequest, resetPassword as resetPasswordRequest } from '../services/authService';
+import { loginUser, logoutUser, registerUser, forgotPassword as forgotPasswordRequest, resetPassword as resetPasswordRequest,updateProfile } from '../services/authService';
 
 const TOKEN_KEY = 'access_token';
 const USER_KEY = 'auth_user';
@@ -161,6 +161,30 @@ export default function useAuth() {
 		}
 	};
 
+	const updateProfileInfo = async ({ full_name, email, phone, address, password, password_confirmation }) => {
+		setIsLoading(true);
+		setError('');
+		try {
+			const response = await updateProfile({ full_name, email, phone, address, password, password_confirmation });
+			const updatedUser = response?.data || response || {};
+			if (updatedUser?.id) {
+				setUser(updatedUser);
+				const activeStorage = localStorage.getItem(TOKEN_KEY) ? localStorage : sessionStorage.getItem(TOKEN_KEY) ? sessionStorage : null;
+				if (activeStorage) {
+					activeStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+				}
+			}
+			return response;
+		} catch (err) {
+			const message = err?.message || 'Unable to update profile. Please try again.';
+			setError(message);
+			throw err;
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+
 	return {
 		user,
 		role,
@@ -174,5 +198,6 @@ export default function useAuth() {
 		register,
 		forgotPassword,
 		resetPassword,
+		updateProfileInfo,
 	};
 }

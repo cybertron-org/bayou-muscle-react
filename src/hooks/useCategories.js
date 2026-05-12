@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { createCategory, deleteCategory, fetchCategories, updateCategory } from '../services/CategoriesService';
+import { createCategory, deleteCategory, fetchCategories, updateCategory, getSubCategoryByCategoryId } from '../services/CategoriesService';
 
 const normalizeCategoryTree = (apiData = []) =>
 	apiData.map((parent) => ({
@@ -15,6 +15,7 @@ const normalizeCategoryTree = (apiData = []) =>
 			parentId: String(child.parent_id ?? parent.id),
 			title: child.title || 'Untitled',
 			status: child.status || 'inactive',
+			slug: child.slug || '',
 			createdAt: child.created_at || null,
 			updatedAt: child.updated_at || null,
 		})),
@@ -88,6 +89,7 @@ export default function useCategories() {
 								parentId: mappedCategory.parentId,
 								title: mappedCategory.title,
 								status: mappedCategory.status,
+								slug: mappedCategory.slug,
 								createdAt: mappedCategory.createdAt,
 								updatedAt: mappedCategory.updatedAt,
 							},
@@ -104,6 +106,7 @@ export default function useCategories() {
 				parentId: mappedCategory.parentId,
 				title: mappedCategory.title,
 				status: mappedCategory.status,
+				slug: mappedCategory.slug,
 				createdAt: mappedCategory.createdAt,
 				updatedAt: mappedCategory.updatedAt,
 			},
@@ -144,6 +147,42 @@ export default function useCategories() {
 		await loadCategories();
 	}, [loadCategories]);
 
+	const loadSubCategories = useCallback(async (categoryId) => {
+		try {
+			const response = await getSubCategoryByCategoryId(categoryId);
+			const normalizedSubCategories = Array.isArray(response?.data)
+				? response.data.map((child) => ({	
+					id: String(child.id),
+					parentId: String(child.parent_id),
+					title: child.title || 'Untitled',
+					status: child.status || 'inactive',
+					slug: child.slug || '',
+					createdAt: child.created_at || null,
+					updatedAt: child.updated_at || null,
+				}))
+				: [];
+			setCategories((previous) =>
+				previous.map((item) =>
+					item.id === String(categoryId)
+
+						? {
+							...item,
+							subcategories: normalizedSubCategories,	
+						}
+						: item,
+				),
+			);
+			return normalizedSubCategories;
+		}
+		
+		catch (err) {
+			const errorMsg = err?.message || 'Unable to fetch subcategories.';
+			setError(errorMsg);
+			return [];
+		}
+	}, []);
+
+
 
 	useEffect(() => {
 		loadCategories();
@@ -158,5 +197,6 @@ export default function useCategories() {
 		updateExistingCategory,
 		deleteExistingCategory,
 		refetch: loadCategories,
+		loadSubCategories,
 	};
 }

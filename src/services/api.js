@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API Base Configuration
-const API_BASE_URL = import.meta.env.VITE_APP_URL || 'https://bayou-api.findmycabby.com/public/api/v1';
+const API_BASE_URL = import.meta.env.VITE_APP_URL ;
 
 // Create axios instance
 const apiClient = axios.create({

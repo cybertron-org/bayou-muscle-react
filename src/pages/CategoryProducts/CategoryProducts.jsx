@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import '../Supplements/Supplements.css';
@@ -11,18 +11,12 @@ import useCategories from '../../hooks/useCategories';
 import useProducts from '../../hooks/useProducts';
 import useCart from '../../hooks/useCart';
 
+const ALL_FILTER = 'all';
+
 const imgStarFull = '/supplements/star.png';
 const imgStarHalf = '/supplements/star.png';
 const imgStarFull2 = '/supplements/star.png';
 const imgStarEmpty = '/supplements/star.png';
-
-const filterTabs = [
-  'New Arrivals',
-  'Best Sellers',
-  'Health & Vitamins',
-  'Featured',
-  'Clearance',
-];
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -61,7 +55,7 @@ function StarRating({ rating = 0 }) {
   );
 }
 
-function ProductCard({ product, onAddToCart }) {
+function ProductCard({ product, onAddToCart, onOpenProduct }) {
   const productRating = Number(product?.rating?.average ?? product?.rating?.stars ?? 0);
   const productRatingCount = Number(product?.rating?.count ?? 0);
   const productImage = product?.image || product?.images?.[0]?.image || '';
@@ -69,7 +63,18 @@ function ProductCard({ product, onAddToCart }) {
   const displayOldPrice = product?.originalPrice ? formatPrice(product.originalPrice) : '';
 
   return (
-    <div className="supp-card">
+    <div
+      className="supp-card"
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpenProduct(product)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onOpenProduct(product);
+        }
+      }}
+    >
       <div className="supp-card__inner">
         <div className="supp-card__header">
           <h3 className="supp-card__name">{product?.name || 'Untitled'}</h3>
@@ -108,7 +113,15 @@ function ProductCard({ product, onAddToCart }) {
           </div>
         </div>
 
-        <button className="supp-card__add-btn" aria-label="Add to cart" type="button" onClick={() => onAddToCart(product)}>
+        <button
+          className="supp-card__add-btn"
+          aria-label="Add to cart"
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onAddToCart(product);
+          }}
+        >
           Add to cart
         </button>
       </div>
@@ -117,13 +130,20 @@ function ProductCard({ product, onAddToCart }) {
 }
 
 export default function CategoryProducts() {
+  const navigate = useNavigate();
   const { categorySlug = '' } = useParams();
-  const { categories } = useCategories();
+  const { categories, loadSubCategories } = useCategories();
   const { products, isLoading, loadProductsByCategory } = useProducts({ autoLoad: false });
   const { addItemToCart } = useCart({ autoLoad: false });
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeFilter, setActiveFilter] = useState('New Arrivals');
+  const [activeFilter, setActiveFilter] = useState(ALL_FILTER);
+  const [subcategoryTabs, setSubcategoryTabs] = useState([]);
   const [viewMode, setViewMode] = useState('grid');
+
+  const currentCategory = useMemo(
+    () => categories.find((category) => category.slug === categorySlug) || null,
+    [categories, categorySlug],
+  );
 
   const handleAddToCart = async (product) => {
     try {
@@ -136,6 +156,13 @@ export default function CategoryProducts() {
     }
   };
 
+  const handleOpenProduct = (product) => {
+    const target = product?.slug || product?.id;
+    if (target) {
+      navigate(`/product/${target}`);
+    }
+  };
+
   useEffect(() => {
     if (categorySlug) {
       setCurrentPage(1);
@@ -143,15 +170,66 @@ export default function CategoryProducts() {
     }
   }, [categorySlug, loadProductsByCategory]);
 
-  const categoryTitle =
-    categories.find((category) => category.slug === categorySlug)?.title ||
-    formatTitleFromSlug(categorySlug);
+  useEffect(() => {
+    let isActive = true;
 
-  const totalProducts = products.length;
+    const syncSubcategories = async () => {
+      if (!currentCategory?.id) {
+        setSubcategoryTabs([]);
+        setActiveFilter(ALL_FILTER);
+        return;
+      }
+
+      let resolvedSubcategories = [];
+
+      // Only call API if subcategories haven't been loaded yet
+      if (Array.isArray(currentCategory.subcategories)) {
+        // Already have subcategories array (even if empty), use it
+        resolvedSubcategories = currentCategory.subcategories;
+      } else {
+        // Subcategories not fetched yet, load them
+        resolvedSubcategories = await loadSubCategories(currentCategory.id);
+      }
+
+      if (!isActive) {
+        return;
+      }
+
+      setSubcategoryTabs(
+        (resolvedSubcategories || []).map((subcategory) => ({
+          id: String(subcategory.id),
+          title: subcategory.title || 'Untitled',
+          slug: subcategory.slug || '',
+          status: subcategory.status || 'inactive',
+        })),
+      );
+      setActiveFilter(ALL_FILTER);
+      setCurrentPage(1);
+    };
+
+    syncSubcategories();
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentCategory]);
+
+  const categoryTitle =
+    currentCategory?.title || formatTitleFromSlug(categorySlug);
+
+  const visibleProducts = useMemo(() => {
+    if (activeFilter === ALL_FILTER) {
+      return products;
+    }
+
+    return products.filter((product) => String(product.categorySlug || '') === activeFilter);
+  }, [activeFilter, products]);
+
+  const totalProducts = visibleProducts.length;
   const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const endIndex = startIndex + PRODUCTS_PER_PAGE;
-  const currentProducts = products.slice(startIndex, endIndex);
+  const currentProducts = visibleProducts.slice(startIndex, endIndex);
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages && page !== currentPage) {
@@ -203,6 +281,14 @@ export default function CategoryProducts() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const filterTabs = [
+    { id: ALL_FILTER, label: 'All' },
+    ...subcategoryTabs.map((subcategory) => ({
+      id: subcategory.slug || subcategory.id,
+      label: subcategory.title,
+    })),
+  ];
+
   return (
     <>
       <Header />
@@ -234,11 +320,12 @@ export default function CategoryProducts() {
           <div className="supp-hero__filters">
             {filterTabs.map((tab) => (
               <button
-                key={tab}
-                className={`supp-filter-btn ${activeFilter === tab ? 'supp-filter-btn--active' : ''}`}
-                onClick={() => handleFilterChange(tab)}
+                key={tab.id}
+                className={`supp-filter-btn ${activeFilter === tab.id ? 'supp-filter-btn--active' : ''}`}
+                onClick={() => handleFilterChange(tab.id)}
+                type="button"
               >
-                {tab}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -295,7 +382,12 @@ export default function CategoryProducts() {
 
           <div className={`supp-grid ${viewMode === 'list' ? 'supp-grid--list' : ''}`}>
             {!isLoading && currentProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onOpenProduct={handleOpenProduct}
+              />
             ))}
           </div>
 

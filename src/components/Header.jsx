@@ -4,6 +4,7 @@ import CartDrawer from '../pages/CartDrawer/CartDrawer';
 import useAuth from '../hooks/useAuth';
 import useCategories from '../hooks/useCategories';
 import useCart from '../hooks/useCart';
+import { useWishlistContext } from '../context/WishlistContext';
 
 const imgLogoVector  = '/images/logo-Bayou.png';
 const imgSearchIcon  = '/blogs/search.png';
@@ -23,9 +24,10 @@ const marqueeItems = [...topbarItems, ...topbarItems, ...topbarItems];
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated, role, logout, isLoading: isAuthLoading } = useAuth();
   const { cartCount } = useCart();
-  const { categories, isLoading } = useCategories();
+  const { wishlistCount } = useWishlistContext();
+  const { categories, isLoading: isCategoriesLoading } = useCategories();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
@@ -76,7 +78,7 @@ export default function Header() {
 
   return (
     <header className="hdr">
-      {isLoading && (
+      {isCategoriesLoading && (
         <div className="hdr__loading-overlay" aria-busy="true" aria-live="polite">
           <div className="hdr__loading-card">
             <img src={imgLogoVector} alt="Bayou Muscle" className="hdr__loading-logo" />
@@ -134,8 +136,24 @@ export default function Header() {
           </a>
 
           <div className="hdr__controls">
+            <button
+              className="hdr__auth-btn"
+              type="button"
+              onClick={async () => {
+                if (!isAuthenticated) {
+                  navigate('/login');
+                  return;
+                }
 
-            <div className="hdr__search">
+                await logout();
+                navigate('/login');
+              }}
+              disabled={isAuthLoading}
+            >
+              {isAuthenticated ? 'Logout' : 'Login'}
+            </button>
+
+            {/* <div className="hdr__search">
               <input
                 type="text"
                 placeholder="Search our catalog"
@@ -145,11 +163,18 @@ export default function Header() {
               <button className="hdr__search-btn" aria-label="Search">
                 <img src={imgSearchIcon} alt="" className="hdr__search-icon" />
               </button>
-            </div>
+            </div> */}
 
-            <div className="hdr__lang">
+            <button className="hdr__lang"
+                          onClick={() => {
+                const target = !isAuthenticated ? '/login' : String(role || '').toLowerCase() === 'admin' ? '/admin/dashboard' : '/my-wishlist';
+                navigate(target);
+              }}
+              aria-label="Wishlist"
+            >
               <img src={imgAccountIcon} alt="" className="hdr__lang-flag" />
-            </div>
+              {wishlistCount > 0 && <span className="hdr__wishlist-badge">{wishlistCount}</span>}
+            </button>
 
             <button
               className="hdr__icon-btn"

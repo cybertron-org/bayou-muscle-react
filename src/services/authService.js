@@ -85,3 +85,20 @@ export const resetPassword = async ({ email, token, password, password_confirmat
 
 	return response;
 };
+
+export const updateProfile = async ({ full_name, email, phone, address, password, password_confirmation }) => {
+	const response = await apiRequest('/auth/profile/update', {
+		method: 'POST',
+		data: {
+			full_name,
+			email,
+			phone,
+			address,
+			password,
+			password_confirmation,
+		},
+
+	});
+	return response;
+};
+
