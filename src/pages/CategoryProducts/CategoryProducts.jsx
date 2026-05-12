@@ -9,6 +9,7 @@ import Posts from '../../components/Posts';
 import Marquee from '../../components/Marquee';
 import useCategories from '../../hooks/useCategories';
 import useProducts from '../../hooks/useProducts';
+import { getProductsByCategory } from '../../services/productsService';
 import useCart from '../../hooks/useCart';
 
 const ALL_FILTER = 'all';
@@ -133,7 +134,9 @@ export default function CategoryProducts() {
   const navigate = useNavigate();
   const { categorySlug = '' } = useParams();
   const { categories, loadSubCategories } = useCategories();
-  const { products, isLoading, loadProductsByCategory } = useProducts({ autoLoad: false });
+  const { /* products, */ isLoading: hookLoading, /* loadProductsByCategory */ } = useProducts({ autoLoad: false });
+  const [fetchedProducts, setFetchedProducts] = useState([]);
+  const [localLoading, setLocalLoading] = useState(false);
   const { addItemToCart } = useCart({ autoLoad: false });
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState(ALL_FILTER);
@@ -166,9 +169,77 @@ export default function CategoryProducts() {
   useEffect(() => {
     if (categorySlug) {
       setCurrentPage(1);
-      loadProductsByCategory(categorySlug);
+      // Fetch products using the updated API which may return grouped data
+      (async () => {
+        setLocalLoading(true);
+        try {
+          const resp = await getProductsByCategory(categorySlug);
+
+          const data = resp?.data;
+
+          // If API returns grouped payload (array of groups with `products`), handle it
+          if (Array.isArray(data) && data.length > 0 && data[0] && Array.isArray(data[0].products)) {
+            const groups = data;
+
+            // Build subcategory tabs: include groups whose slug differs from requested category
+            const tabs = groups
+              .filter((g) => String(g.category_slug || '') !== String(categorySlug))
+              .map((g) => ({
+                id: String(g.category_slug || g.category || ''),
+                title: g.category || 'Untitled',
+                slug: g.category_slug || '',
+                status: 'active',
+              }));
+
+            setSubcategoryTabs(tabs);
+
+            // Flatten products from all groups
+            const flattened = groups.flatMap((g) => (Array.isArray(g.products) ? g.products : []));
+            const mapped = flattened.map((p) => ({
+              id: String(p.id ?? ''),
+              name: p.name || 'Untitled',
+              slug: p.slug || '',
+              image: p.image || p.img || '',
+              price: p.price ?? p.discounted_price ?? '0',
+              originalPrice: p.original_price ?? null,
+              discountPercentage: p.discount_percentage ?? null,
+              rating: p.rating || { average: 0, count: 0, stars: 0 },
+              categoryTitle: p.category || p.category_title || '',
+              categorySlug: p.category_slug || '',
+            }));
+
+            setFetchedProducts(mapped);
+          } else if (Array.isArray(data)) {
+            // Legacy: data is flat array of products
+            const mapped = data.map((p) => ({
+              id: String(p.id ?? ''),
+              name: p.name || 'Untitled',
+              slug: p.slug || '',
+              image: p.image || p.img || '',
+              price: p.price ?? p.discounted_price ?? '0',
+              originalPrice: p.original_price ?? null,
+              discountPercentage: p.discount_percentage ?? null,
+              rating: p.rating || { average: 0, count: 0, stars: 0 },
+              categoryTitle: p.category || p.category_title || '',
+              categorySlug: p.category_slug || '',
+            }));
+
+            setSubcategoryTabs([]);
+            setFetchedProducts(mapped);
+          } else {
+            setSubcategoryTabs([]);
+            setFetchedProducts([]);
+          }
+        } catch (err) {
+          toast.error(err?.message || 'Unable to fetch products for this category.');
+          setSubcategoryTabs([]);
+          setFetchedProducts([]);
+        } finally {
+          setLocalLoading(false);
+        }
+      })();
     }
-  }, [categorySlug, loadProductsByCategory]);
+  }, [categorySlug, loadSubCategories]);
 
   useEffect(() => {
     let isActive = true;
@@ -217,13 +288,15 @@ export default function CategoryProducts() {
   const categoryTitle =
     currentCategory?.title || formatTitleFromSlug(categorySlug);
 
+  const loading = hookLoading || localLoading;
+
   const visibleProducts = useMemo(() => {
     if (activeFilter === ALL_FILTER) {
-      return products;
+      return fetchedProducts;
     }
 
-    return products.filter((product) => String(product.categorySlug || '') === activeFilter);
-  }, [activeFilter, products]);
+    return fetchedProducts.filter((product) => String(product.categorySlug || '') === activeFilter);
+  }, [activeFilter, fetchedProducts]);
 
   const totalProducts = visibleProducts.length;
   const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
@@ -381,7 +454,7 @@ export default function CategoryProducts() {
           </div>
 
           <div className={`supp-grid ${viewMode === 'list' ? 'supp-grid--list' : ''}`}>
-            {!isLoading && currentProducts.map((product) => (
+            {!loading && currentProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
