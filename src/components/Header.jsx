@@ -6,7 +6,7 @@ import useCategories from '../hooks/useCategories';
 import useCart from '../hooks/useCart';
 import { useWishlistContext } from '../context/WishlistContext';
 
-const imgLogoVector  = '/images/logo.png';
+const imgLogoVector  = '/images/logo-Bayou.png';
 const imgSearchIcon  = '/blogs/search.png';
 const imgLangFlag    = '/supplements/profile.png';
 const imgAccountIcon = '/supplements/heart.png';

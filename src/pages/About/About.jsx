@@ -14,7 +14,7 @@ const imgH5Img6 =
 const imgPlaySvg =
   "/supplements/play.png";
 const imgPlayRing =
-  "https://www.figma.com/api/mcp/asset/5e9cc37e-71a3-4217-ad76-cf94ff9ede1d";
+  "/images/border.png";
 const imgIconPricing =
   "/products/pricing.png";
 const imgIconQuality =
@@ -114,9 +114,9 @@ export default function About() {
             <div className="about-video__overlay" />
             <div className="about-video__center">
               <div className="about-video__ring-wrap">
-                <div className="about-video__ring-spin">
+                {/* <div className="about-video__ring-spin">
                   <img src={imgPlayRing} alt="" />
-                </div>
+                </div> */}
                 <button className="about-video__play" aria-label="Play video">
                   <img src={imgPlaySvg} alt="play" />
                 </button>
