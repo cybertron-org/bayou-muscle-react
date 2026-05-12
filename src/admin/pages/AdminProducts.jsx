@@ -402,7 +402,6 @@ export default function AdminProducts() {
 												<tr key={product.id} className={isSelected ? 'is-active' : ''}>
 													<td data-label="Name">
 														<strong>{product.name}</strong>
-														<div className="admin-preview-copy">{stripHtml(product.summary)}</div>
 													</td>
 													<td data-label="Price">{formatCurrency(product.price)}</td>
 													<td data-label="Qty">{product.quantity}</td>

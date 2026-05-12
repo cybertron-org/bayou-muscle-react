@@ -169,7 +169,6 @@ export default function AdminAddProduct() {
             setCategoryId(String(product.category_id || ''));
             setProductName(product.name || '');
             setPrice(product.price || '');
-            setQuantity(product.quantity || '');
             setSku(product.sku || '');
             setGender(product.gender || 'unisex');
             setSummary(product.summary || '');
@@ -403,9 +402,6 @@ export default function AdminAddProduct() {
     if (!price || Number(price) <= 0) {
       errors.push('Valid price is required');
     }
-    if (!quantity || Number(quantity) < 0) {
-      errors.push('Valid quantity is required');
-    }
     if (!sku.trim()) {
       errors.push('SKU is required');
     }
@@ -446,7 +442,6 @@ export default function AdminAddProduct() {
       formData.append('category_id', categoryId);
       formData.append('name', productName);
       formData.append('price', String(price));
-      formData.append('quantity', String(quantity));
       formData.append('summary', summary);
       formData.append('description', description);
       formData.append('additional_info', additionalInfo);
@@ -618,19 +613,7 @@ export default function AdminAddProduct() {
                   />
                 </div>
 
-                <div className="admin-field-group">
-                  <label className="admin-field-label" htmlFor="quantity">Quantity *</label>
-                  <input
-                    className="admin-field"
-                    id="quantity"
-                    placeholder="Ex: 99"
-                    type="number"
-                    value={quantity}
-                    onChange={(event) => setQuantity(event.target.value)}
-                    required
-                    disabled={isSubmitting}
-                  />
-                </div>
+
 
                 <div className="admin-field-group">
                   <label className="admin-field-label" htmlFor="gender">Gender *</label>
