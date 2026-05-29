@@ -58,6 +58,8 @@ export default function AdminAddProduct() {
   const [quantity, setQuantity] = useState('');
   const [sku, setSku] = useState('');
   const [gender, setGender] = useState('unisex');
+  const [apliiqProductId, setApliiqProductId] = useState('');
+  const [apliiqVariantId, setApliiqVariantId] = useState('');
 
   // Description Fields
   const [summary, setSummary] = useState('');
@@ -171,6 +173,8 @@ export default function AdminAddProduct() {
             setPrice(product.price || '');
             setSku(product.sku || '');
             setGender(product.gender || 'unisex');
+            setApliiqProductId(product.apliiq_product_id || '');
+            setApliiqVariantId(product.apliiq_variant_id || '');
             setSummary(product.summary || '');
             setDescription(product.description || '');
             setAdditionalInfo(product.additional_info || '');
@@ -451,6 +455,8 @@ export default function AdminAddProduct() {
       formData.append('best_seller', String(bestSeller));
       formData.append('is_featured', String(isFeatured));
       formData.append('clearance', String(clearance));
+      formData.append('apliiq_product_id', apliiqProductId);
+      formData.append('apliiq_variant_id', apliiqVariantId);
 
       // Files: send new main image as `main_image` and gallery images as `images[]`
       const maxSizeKB = 2048; // server limit in KB
@@ -580,6 +586,32 @@ export default function AdminAddProduct() {
                     value={sku}
                     onChange={(event) => setSku(event.target.value)}
                     required
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="admin-field-group">
+                  <label className="admin-field-label" htmlFor="apliiqProductId">Apliiq Product ID</label>
+                  <input
+                    className="admin-field"
+                    id="apliiqProductId"
+                    placeholder="Ex: 123456"
+                    type="text"
+                    value={apliiqProductId}
+                    onChange={(event) => setApliiqProductId(event.target.value)}
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="admin-field-group">
+                  <label className="admin-field-label" htmlFor="apliiqVariantId">Apliiq Variant ID</label>
+                  <input
+                    className="admin-field"
+                    id="apliiqVariantId"
+                    placeholder="Ex: 789012"
+                    type="text"
+                    value={apliiqVariantId}
+                    onChange={(event) => setApliiqVariantId(event.target.value)}
                     disabled={isSubmitting}
                   />
                 </div>

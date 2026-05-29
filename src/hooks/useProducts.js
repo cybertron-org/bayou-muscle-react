@@ -61,6 +61,8 @@ const normalizeProduct = (item) => {
         img: mainImageUrl,
         cat: item?.category?.title || item?.category || item?.category_title || '--',
         images,
+        apliiqProductId: item?.apliiq_product_id ?? null,
+        apliiqVariantId: item?.apliiq_variant_id ?? null,
     };
 };
 
