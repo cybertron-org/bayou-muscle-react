@@ -33,6 +33,40 @@ const initialCartItems = [
 ];
 
 const promoOptions = ['FIRST10', 'SAVE15', 'BAYOU20'];
+const zipCodeRegex = /^\d{5}(?:-\d{4})?$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const cardNumberRegex = /^\d{13,19}$/;
+const cardCvvRegex = /^\d{3,4}$/;
+
+const trimString = (value) => String(value ?? '').trim();
+const normalizeOptionalString = (value) => {
+  const normalized = trimString(value);
+  return normalized || null;
+};
+const digitsOnly = (value) => String(value ?? '').replace(/\D+/g, '');
+const formatCardNumberInput = (value) => digitsOnly(value).slice(0, 19).replace(/(.{4})/g, '$1 ').trim();
+const isNonEmptyString = (value) => trimString(value).length > 0;
+const isValidCardNumber = (value) => {
+  if (!cardNumberRegex.test(value)) {
+    return false;
+  }
+
+  let sum = 0;
+  let shouldDouble = false;
+  for (let index = value.length - 1; index >= 0; index -= 1) {
+    let digit = Number(value[index]);
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return sum % 10 === 0;
+};
 
 function CartPage({ onNavigate }) {
   const [items, setItems] = useState(initialCartItems);
@@ -248,6 +282,7 @@ function CheckoutPage({ onNavigate }) {
     ship_to_different_address: 0,
     shipping_first_name: '',
     shipping_last_name: '',
+    shipping_company_name: '',
     shipping_country: '',
     shipping_address_line1: '',
     shipping_address_line2: '',
@@ -285,12 +320,10 @@ function CheckoutPage({ onNavigate }) {
   const couponDiscount = Number(cartSummary?.couponDiscount ?? 0);
   const total = Number(cartSummary?.total ?? Math.max(0, subtotal - couponDiscount));
   const totalQty = checkoutItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
-  const zipCodeRegex = /^\d{5}(?:-\d{4})?$/;
-  const cardNumberRegex = /^\d{13,19}$/;
-  const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0;
+  const currentYear = new Date().getFullYear();
 
-  const updateField = (field) => (e) => {
-    const value = e.target.value;
+  const updateField = (field, transform = (value) => value) => (e) => {
+    const value = transform(e.target.value);
     setForm((prev) => ({ ...prev, [field]: value }));
     setValidationErrors((prev) => {
       if (!prev[field]) {
@@ -306,26 +339,94 @@ function CheckoutPage({ onNavigate }) {
     setForm((prev) => ({
       ...prev,
       ship_to_different_address: checked ? 1 : 0,
+      ...(!checked ? {
+        shipping_first_name: '',
+        shipping_last_name: '',
+        shipping_company_name: '',
+        shipping_country: '',
+        shipping_address_line1: '',
+        shipping_address_line2: '',
+        shipping_city: '',
+        shipping_state: '',
+        shipping_zip_code: '',
+        shipping_phone: '',
+      } : {}),
     }));
+    setValidationErrors((prev) => {
+      const next = { ...prev };
+      [
+        'shipping_first_name',
+        'shipping_last_name',
+        'shipping_country',
+        'shipping_address_line1',
+        'shipping_city',
+        'shipping_state',
+        'shipping_zip_code',
+        'shipping_phone',
+      ].forEach((field) => {
+        delete next[field];
+      });
+      return next;
+    });
+  };
+
+  const handlePaymentMethodChange = (paymentMethod) => {
+    setForm((prev) => ({
+      ...prev,
+      payment_method: paymentMethod,
+    }));
+    setValidationErrors((prev) => {
+      const next = { ...prev };
+      ['card_number', 'card_holder_name', 'card_expiry_month', 'card_expiry_year', 'card_cvv'].forEach((field) => {
+        delete next[field];
+      });
+      return next;
+    });
   };
 
   const handlePlace = async (e) => {
     e.preventDefault();
 
     const nextErrors = {};
-    const normalizedCardNumber = (form.card_number || '').replace(/\s+/g, '').trim();
-    const normalizedZipCode = (form.zip_code || '').trim();
-    const normalizedShippingZipCode = (form.shipping_zip_code || '').trim();
+    const normalizedPaymentMethod = form.payment_method === 'paypal' ? 'paypal' : 'card';
+    const normalizedZipCode = trimString(form.zip_code);
+    const normalizedShippingZipCode = trimString(form.shipping_zip_code);
+    const normalizedCardNumber = digitsOnly(form.card_number).slice(0, 19);
+    const normalizedCardCvv = digitsOnly(form.card_cvv).slice(0, 4);
+    const normalizedExpiryMonth = Number.parseInt(trimString(form.card_expiry_month), 10);
+    const normalizedExpiryYear = Number.parseInt(trimString(form.card_expiry_year), 10);
+    const hasDifferentShippingAddress = Number(form.ship_to_different_address) === 1;
+    const isCardPayment = normalizedPaymentMethod === 'card';
 
+    if (!isNonEmptyString(form.first_name)) {
+      nextErrors.first_name = 'First name is required.';
+    }
+    if (!isNonEmptyString(form.last_name)) {
+      nextErrors.last_name = 'Last name is required.';
+    }
+    if (!isNonEmptyString(form.country)) {
+      nextErrors.country = 'Country is required.';
+    }
+    if (!isNonEmptyString(form.address_line1)) {
+      nextErrors.address_line1 = 'Address line 1 is required.';
+    }
+    if (!isNonEmptyString(form.city)) {
+      nextErrors.city = 'City is required.';
+    }
+    if (!isNonEmptyString(form.state)) {
+      nextErrors.state = 'State is required.';
+    }
+    if (!isNonEmptyString(form.phone)) {
+      nextErrors.phone = 'Phone is required.';
+    }
+    if (!emailRegex.test(trimString(form.email))) {
+      nextErrors.email = 'Enter a valid email address.';
+    }
     if (!zipCodeRegex.test(normalizedZipCode)) {
       nextErrors.zip_code = 'Zip code format is invalid. Use 5 digits or 5+4 format.';
     }
 
-    if (!cardNumberRegex.test(normalizedCardNumber)) {
-      nextErrors.card_number = 'Card number format is invalid. Use 13-19 digits only.';
-    }
-
-    if (Boolean(form.ship_to_different_address)) {
+    if (hasDifferentShippingAddress) {
       if (!isNonEmptyString(form.shipping_first_name)) {
         nextErrors.shipping_first_name = 'Shipping first name must be a valid string.';
       }
@@ -349,6 +450,31 @@ function CheckoutPage({ onNavigate }) {
       }
     }
 
+    if (isCardPayment) {
+      if (!isValidCardNumber(normalizedCardNumber)) {
+        nextErrors.card_number = 'Card number is invalid. Enter 13-19 valid digits.';
+      }
+      if (!isNonEmptyString(form.card_holder_name)) {
+        nextErrors.card_holder_name = 'Card holder name is required.';
+      }
+      if (!Number.isInteger(normalizedExpiryMonth) || normalizedExpiryMonth < 1 || normalizedExpiryMonth > 12) {
+        nextErrors.card_expiry_month = 'Expiry month must be between 1 and 12.';
+      }
+      if (!Number.isInteger(normalizedExpiryYear) || normalizedExpiryYear < currentYear) {
+        nextErrors.card_expiry_year = `Expiry year must be ${currentYear} or later.`;
+      }
+      if (
+        !nextErrors.card_expiry_month &&
+        !nextErrors.card_expiry_year &&
+        (normalizedExpiryYear === currentYear && normalizedExpiryMonth < new Date().getMonth() + 1)
+      ) {
+        nextErrors.card_expiry_month = 'Card expiry date cannot be in the past.';
+      }
+      if (!cardCvvRegex.test(normalizedCardCvv)) {
+        nextErrors.card_cvv = 'CVV must be 3 or 4 digits.';
+      }
+    }
+
     if (Object.keys(nextErrors).length > 0) {
       setValidationErrors(nextErrors);
       toast.error('Please fix the validation errors before placing order.');
@@ -358,13 +484,39 @@ function CheckoutPage({ onNavigate }) {
     setValidationErrors({});
 
     const payload = {
-      ...form,
+      first_name: trimString(form.first_name),
+      last_name: trimString(form.last_name),
+      company_name: normalizeOptionalString(form.company_name),
+      country: trimString(form.country),
+      address_line1: trimString(form.address_line1),
+      address_line2: normalizeOptionalString(form.address_line2),
+      city: trimString(form.city),
+      state: trimString(form.state),
       zip_code: normalizedZipCode,
-      shipping_zip_code: normalizedShippingZipCode,
-      card_number: normalizedCardNumber,
-      card_expiry_month: Number(form.card_expiry_month),
-      card_expiry_year: Number(form.card_expiry_year),
-      ship_to_different_address: Number(form.ship_to_different_address),
+      phone: trimString(form.phone),
+      email: trimString(form.email),
+      order_notes: normalizeOptionalString(form.order_notes),
+      ship_to_different_address: hasDifferentShippingAddress ? 1 : 0,
+      payment_method: normalizedPaymentMethod,
+      ...(hasDifferentShippingAddress ? {
+        shipping_first_name: trimString(form.shipping_first_name),
+        shipping_last_name: trimString(form.shipping_last_name),
+        shipping_company_name: normalizeOptionalString(form.shipping_company_name),
+        shipping_country: trimString(form.shipping_country),
+        shipping_address_line1: trimString(form.shipping_address_line1),
+        shipping_address_line2: normalizeOptionalString(form.shipping_address_line2),
+        shipping_city: trimString(form.shipping_city),
+        shipping_state: trimString(form.shipping_state),
+        shipping_zip_code: normalizedShippingZipCode,
+        shipping_phone: normalizeOptionalString(form.shipping_phone),
+      } : {}),
+      ...(isCardPayment ? {
+        card_number: normalizedCardNumber,
+        card_holder_name: trimString(form.card_holder_name),
+        card_expiry_month: normalizedExpiryMonth,
+        card_expiry_year: normalizedExpiryYear,
+        card_cvv: normalizedCardCvv,
+      } : {}),
     };
 
     try {
@@ -598,67 +750,119 @@ function CheckoutPage({ onNavigate }) {
                 )}
 
                 <h2 className="checkout-step-title">Payment Information</h2>
+                <div className="checkout-grid-2" style={{ marginBottom: '18px' }}>
+                  <label className="checkout-ship-toggle" style={{ marginBottom: 0 }}>
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      checked={form.payment_method === 'card'}
+                      onChange={() => handlePaymentMethodChange('card')}
+                    />
+                    Pay with Card
+                  </label>
+                  <label className="checkout-ship-toggle" style={{ marginBottom: 0 }}>
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      checked={form.payment_method === 'paypal'}
+                      onChange={() => handlePaymentMethodChange('paypal')}
+                    />
+                    Pay with PayPal
+                  </label>
+                </div>
                 <div className="checkout-payment-icons">
                   {['VISA', 'MC', 'AMEX'].map(p => (
                     <span key={p} className="payment-badge">{p}</span>
                   ))}
                 </div>
-                <div className="contact-field">
-                  <label>Card Number *</label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={19}
-                    value={form.card_number}
-                    onChange={updateField('card_number')}
-                    className={validationErrors.card_number ? 'input-error' : ''}
-                  />
-                  {validationErrors.card_number ? <span className="checkout-field-error">{validationErrors.card_number}</span> : null}
-                </div>
-                <div className="contact-field">
-                  <label>Card Holder Name *</label>
-                  <input type="text" required value={form.card_holder_name} onChange={updateField('card_holder_name')} />
-                </div>
-                <div className="checkout-grid-3">
-                  <div className="contact-field">
-                    <label>Expiry Month *</label>
-                    <input
-                      type="number"
-                      required
-                      min="1"
-                      max="12"
-                      value={form.card_expiry_month}
-                      onChange={updateField('card_expiry_month')}
-                    />
+                {form.payment_method === 'card' ? (
+                  <>
+                    <div className="contact-field">
+                      <label>Card Number *</label>
+                      <input
+                        type="text"
+                        required
+                        inputMode="numeric"
+                        autoComplete="cc-number"
+                        maxLength={23}
+                        value={form.card_number}
+                        onChange={updateField('card_number', formatCardNumberInput)}
+                        className={validationErrors.card_number ? 'input-error' : ''}
+                      />
+                      {validationErrors.card_number ? <span className="checkout-field-error">{validationErrors.card_number}</span> : null}
+                    </div>
+                    <div className="contact-field">
+                      <label>Card Holder Name *</label>
+                      <input
+                        type="text"
+                        required
+                        autoComplete="cc-name"
+                        value={form.card_holder_name}
+                        onChange={updateField('card_holder_name')}
+                        className={validationErrors.card_holder_name ? 'input-error' : ''}
+                      />
+                      {validationErrors.card_holder_name ? <span className="checkout-field-error">{validationErrors.card_holder_name}</span> : null}
+                    </div>
+                    <div className="checkout-grid-3">
+                      <div className="contact-field">
+                        <label>Expiry Month *</label>
+                        <input
+                          type="number"
+                          required
+                          inputMode="numeric"
+                          autoComplete="cc-exp-month"
+                          min="1"
+                          max="12"
+                          value={form.card_expiry_month}
+                          onChange={updateField('card_expiry_month', (value) => digitsOnly(value).slice(0, 2))}
+                          className={validationErrors.card_expiry_month ? 'input-error' : ''}
+                        />
+                        {validationErrors.card_expiry_month ? <span className="checkout-field-error">{validationErrors.card_expiry_month}</span> : null}
+                      </div>
+                      <div className="contact-field">
+                        <label>Expiry Year *</label>
+                        <input
+                          type="number"
+                          required
+                          inputMode="numeric"
+                          autoComplete="cc-exp-year"
+                          min={String(currentYear)}
+                          max="2099"
+                          value={form.card_expiry_year}
+                          onChange={updateField('card_expiry_year', (value) => digitsOnly(value).slice(0, 4))}
+                          className={validationErrors.card_expiry_year ? 'input-error' : ''}
+                        />
+                        {validationErrors.card_expiry_year ? <span className="checkout-field-error">{validationErrors.card_expiry_year}</span> : null}
+                      </div>
+                      <div className="contact-field">
+                        <label>CVV *</label>
+                        <input
+                          type="text"
+                          required
+                          inputMode="numeric"
+                          autoComplete="cc-csc"
+                          maxLength={4}
+                          value={form.card_cvv}
+                          onChange={updateField('card_cvv', (value) => digitsOnly(value).slice(0, 4))}
+                          className={validationErrors.card_cvv ? 'input-error' : ''}
+                        />
+                        {validationErrors.card_cvv ? <span className="checkout-field-error">{validationErrors.card_cvv}</span> : null}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="checkout-secure-note">
+                    PayPal checkout is selected. We will initialize the PayPal payment after validating your billing and shipping details.
                   </div>
-                  <div className="contact-field">
-                    <label>Expiry Year *</label>
-                    <input
-                      type="number"
-                      required
-                      min="2024"
-                      max="2099"
-                      value={form.card_expiry_year}
-                      onChange={updateField('card_expiry_year')}
-                    />
-                  </div>
-                  <div className="contact-field">
-                    <label>CVV *</label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={3}
-                      value={form.card_cvv}
-                      onChange={updateField('card_cvv')}
-                    />
-                  </div>
-                </div>
+                )}
 
                 <div className="checkout-secure-note">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                   </svg>
-                  Card payments only. Your payment info is SSL-encrypted.
+                  {form.payment_method === 'card'
+                    ? 'Card payments only. Your payment info is SSL-encrypted.'
+                    : 'PayPal checkout is secured and will continue after order validation.'}
                 </div>
 
                 <button type="submit" className="checkout-place-btn" disabled={isCheckoutLoading || isCartLoading || checkoutItems.length === 0}>
