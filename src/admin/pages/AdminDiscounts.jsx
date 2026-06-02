@@ -654,7 +654,7 @@ export default function AdminDiscounts() {
                 <textarea
                   className="admin-field admin-field--textarea admin-field--small"
                   id="discountDetail"
-                  placeholder="Eid offer, EID MUBARAK"
+                  placeholder="Offer Details..."
                   value={discountForm.detail}
                   onChange={(event) =>
                     setDiscountForm((previous) => ({
