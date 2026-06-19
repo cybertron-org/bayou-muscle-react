@@ -310,7 +310,7 @@ function CheckoutPage({ onNavigate }) {
     name: item.productName,
     variant: item.productSlug ? `Product · ${item.productSlug}` : 'Product',
     qty: Number(item.quantity || 0),
-    img: item.image || '/supplements/p1.png',
+    img: item.main_image || '/supplements/p1.png',
     unitPrice: Number(item.unitPrice || 0),
     discountedPrice: Number(item.discountedPrice || item.unitPrice || 0),
     lineTotal: Number(item.total || 0),
