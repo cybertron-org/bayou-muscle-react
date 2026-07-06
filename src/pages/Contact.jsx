@@ -44,12 +44,12 @@ const trustItems = [
   {
     icon: "/supplements/store.png",
     title: "Store location",
-    sub: "7409 Mayfield Rd. Woodhaven, NY 11421",
+    sub: "2700 W Deborah Dr, Monroe, Louisiana 71201",
   },
   {
     icon: locationIconDataUrl,
     title: "Headquarter",
-    sub: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+    sub: "2700 W Deborah Dr, Monroe, Louisiana 71201",
   },
   {
     icon: clockIconDataUrl,
@@ -59,7 +59,7 @@ const trustItems = [
   {
     icon: emailIconDataUrl,
     title: "Contact info",
-    sub: "Telephone: (084) 123 - 456 88 Email: info@example.com",
+    sub: "Telephone: (318) 372-2430 Email: bayoumuscle23@gmail.com",
   },
 ];
 
