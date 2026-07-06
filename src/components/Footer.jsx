@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import useNewsletter from '../hooks/useNewsletter';
 
 /* Figma asset URLs — node 67:1983 */
-const imgLogo = '/images/logo.png';
+const imgLogo = '/images/logo-Bayou.png';
     const imgPhoneIcon = '/images/number.png';
     const imgEmailIcon = '/images/mail.png';
 const imgChatIcon = '/images/livechat.png';
@@ -29,6 +29,11 @@ export default function Footer() {
     setEmail('');
   };
 
+  const handleEmailClick = (e) => {
+    e.preventDefault();
+    window.location.href = 'mailto:bayoumuscle23@gmail.com';
+  };
+
   return (
     <footer className="ftr">
       {/* ── CAP ── Figma: Section y=0 h=30, bg white, border-radius 0 0 40px 40px */}
@@ -44,16 +49,20 @@ export default function Footer() {
 
           {/* Contact items — Figma: Section x=517.67, Instrument Sans SemiBold 18px #fff */}
           <div className="ftr__contact-items">
+            <a href="tel:+13183722430" className="ftr__contact-item ftr__contact-link">
+              <img src={imgPhoneIcon} alt="Phone" className="ftr__contact-icon" />
+              <span className="ftr__contact-text">(318) 372-2430</span>
+            </a>
+            <a
+              href="mailto:bayoumuscle23@gmail.com"
+              className="ftr__contact-item ftr__contact-link"
+              onClick={handleEmailClick}
+            >
+              <img src={imgEmailIcon} alt="Email" className="ftr__contact-icon" />
+              <span className="ftr__contact-text">bayoumuscle23@gmail.com</span>
+            </a>
             <div className="ftr__contact-item">
-              <img src={imgPhoneIcon} alt="" className="ftr__contact-icon" />
-              <span className="ftr__contact-text">(000) 123 - 456 78</span>
-            </div>
-            <div className="ftr__contact-item">
-              <img src={imgEmailIcon} alt="" className="ftr__contact-icon" />
-              <span className="ftr__contact-text">demo@demo.com</span>
-            </div>
-            <div className="ftr__contact-item">
-              <img src={imgChatIcon} alt="" className="ftr__contact-icon" />
+              <img src={imgChatIcon} alt="Live chat" className="ftr__contact-icon" />
               <span className="ftr__contact-text">live chat</span>
             </div>
           </div>
@@ -65,9 +74,16 @@ export default function Footer() {
               { href: '#', label: 'Facebook', char: '\uF09A' },
               { href: '#', label: 'Twitter', char: '\uF2B3' },
               { href: '#', label: 'YouTube', char: '\uF167' },
-              { href: '#', label: 'Instagram', char: '\uF16D' },
+              { href: 'https://www.instagram.com/bayoumuscles', label: 'Instagram', char: '\uF16D' },
             ].map(s => (
-              <a key={s.label} href={s.href} className="ftr__social-link" aria-label={s.label}>
+              <a
+                key={s.label}
+                href={s.href}
+                className="ftr__social-link"
+                aria-label={s.label}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   {s.label === 'Facebook' && <path d="M12 2H10C8.67 2 8 2.67 8 4V6H12L11.5 9H8V16H5V9H3V6H5V4C5 1.79 6.79 0 9 0H12V2Z"/>}
                   {s.label === 'Twitter' && <path d="M16 3.04a6.56 6.56 0 0 1-1.88.52A3.28 3.28 0 0 0 15.56 1.6a6.55 6.55 0 0 1-2.08.8 3.28 3.28 0 0 0-5.58 2.99A9.3 9.3 0 0 1 1.11 1.96a3.28 3.28 0 0 0 1.01 4.37 3.26 3.26 0 0 1-1.48-.41v.04a3.28 3.28 0 0 0 2.63 3.21 3.3 3.3 0 0 1-1.48.06 3.28 3.28 0 0 0 3.06 2.28 6.58 6.58 0 0 1-4.07 1.4A6.7 6.7 0 0 1 0 12.86 9.28 9.28 0 0 0 5.03 14.3c6.04 0 9.34-5 9.34-9.34 0-.14 0-.28-.01-.42A6.67 6.67 0 0 0 16 3.04Z"/>}
