@@ -59,7 +59,7 @@ const trustItems = [
   {
     icon: emailIconDataUrl,
     title: "Contact info",
-    sub: "Telephone: (084) 123 - 456 88 Email: info@example.com",
+    sub: "Telephone: (318) 372-2430 Email: bayoumuscle23@gmail.com",
   },
 ];
 
