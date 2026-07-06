@@ -76,7 +76,14 @@ export default function Footer() {
               { href: '#', label: 'YouTube', char: '\uF167' },
               { href: 'https://www.instagram.com/bayoumuscles', label: 'Instagram', char: '\uF16D' },
             ].map(s => (
-              <a key={s.label} href={s.href} className="ftr__social-link" aria-label={s.label}>
+              <a
+                key={s.label}
+                href={s.href}
+                className="ftr__social-link"
+                aria-label={s.label}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   {s.label === 'Facebook' && <path d="M12 2H10C8.67 2 8 2.67 8 4V6H12L11.5 9H8V16H5V9H3V6H5V4C5 1.79 6.79 0 9 0H12V2Z"/>}
                   {s.label === 'Twitter' && <path d="M16 3.04a6.56 6.56 0 0 1-1.88.52A3.28 3.28 0 0 0 15.56 1.6a6.55 6.55 0 0 1-2.08.8 3.28 3.28 0 0 0-5.58 2.99A9.3 9.3 0 0 1 1.11 1.96a3.28 3.28 0 0 0 1.01 4.37 3.26 3.26 0 0 1-1.48-.41v.04a3.28 3.28 0 0 0 2.63 3.21 3.3 3.3 0 0 1-1.48.06 3.28 3.28 0 0 0 3.06 2.28 6.58 6.58 0 0 1-4.07 1.4A6.7 6.7 0 0 1 0 12.86 9.28 9.28 0 0 0 5.03 14.3c6.04 0 9.34-5 9.34-9.34 0-.14 0-.28-.01-.42A6.67 6.67 0 0 0 16 3.04Z"/>}
