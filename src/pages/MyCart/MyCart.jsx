@@ -31,7 +31,7 @@ export default function MyCart() {
 				unitPrice: Number(item.unitPrice || 0),
 				discountedPrice: Number(item.discountedPrice || item.unitPrice || 0),
 				qty: Number(item.quantity || 0),
-				img: item.image || '/supplements/p1.png',
+				img: item.main_image || '/supplements/p1.png',
 				total: Number(item.total || 0),
 				hasDiscount: Number(item.discountedPrice || item.unitPrice || 0) < Number(item.unitPrice || 0),
 			})),

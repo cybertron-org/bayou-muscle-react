@@ -8,6 +8,15 @@ import useCategories from '../../hooks/useCategories';
 import { getProduct } from '../../services/productsService';
 import AdminLayout from '../layouts/AdminLayout';
 
+const MAX_IMAGE_SIZE_MB = 10;
+const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+
+const isImageWithinSizeLimit = (file) => file.size <= MAX_IMAGE_SIZE_BYTES;
+
+const showImageSizeError = (file) => {
+  toast.error(`${file.name || 'Image'} must be ${MAX_IMAGE_SIZE_MB} MB or smaller.`);
+};
+
 const editorModules = {
   toolbar: [
     [{ header: [1, 2, 3, false] }],
@@ -61,6 +70,8 @@ export default function AdminAddProduct() {
   const [weightOz, setWeightOz] = useState('');
   const [sku, setSku] = useState('');
   const [gender, setGender] = useState('unisex');
+  const [apliiqProductId, setApliiqProductId] = useState('');
+  const [apliiqVariantId, setApliiqVariantId] = useState('');
 
   // Description Fields
   const [summary, setSummary] = useState('');
@@ -193,6 +204,8 @@ export default function AdminAddProduct() {
             setWeightOz(product.weight_oz ?? '');
             setSku(product.sku || '');
             setGender(product.gender || 'unisex');
+            setApliiqProductId(product.apliiq_product_id || '');
+            setApliiqVariantId(product.apliiq_variant_id || '');
             setSummary(product.summary || '');
             setDescription(product.description || '');
             setAdditionalInfo(product.additional_info || '');
@@ -242,6 +255,13 @@ export default function AdminAddProduct() {
 
   const onMainImageChange = (event) => {
     const file = event.target.files?.[0] || null;
+
+    if (file && !isImageWithinSizeLimit(file)) {
+      showImageSizeError(file);
+      event.target.value = '';
+      return;
+    }
+
     setMainImage(file);
     if (file) {
       setMainImageIndex(0);
@@ -251,11 +271,24 @@ export default function AdminAddProduct() {
 
   const onGalleryImagesChange = (event) => {
     const files = Array.from(event.target.files || []);
+    event.target.value = '';
+
     if (!files.length) {
       return;
     }
-    setGalleryImages((prev) => [...prev, ...files]);
-    event.target.value = '';
+
+    const validFiles = files.filter((file) => {
+      if (isImageWithinSizeLimit(file)) {
+        return true;
+      }
+
+      showImageSizeError(file);
+      return false;
+    });
+
+    if (validFiles.length) {
+      setGalleryImages((prev) => [...prev, ...validFiles]);
+    }
   };
 
   const removeGalleryImage = (index) => {
@@ -329,6 +362,12 @@ export default function AdminAddProduct() {
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) {
+        return;
+      }
+
+      if (!isImageWithinSizeLimit(file)) {
+        showImageSizeError(file);
+        input.value = '';
         return;
       }
 
@@ -477,6 +516,8 @@ export default function AdminAddProduct() {
       formData.append('best_seller', String(bestSeller));
       formData.append('is_featured', String(isFeatured));
       formData.append('clearance', String(clearance));
+      formData.append('apliiq_product_id', apliiqProductId);
+      formData.append('apliiq_variant_id', apliiqVariantId);
 
       // Files: send new main image as `main_image` and gallery images as `images[]`
       const maxSizeKB = 10240; // 10 MB server limit in KB
@@ -606,6 +647,32 @@ export default function AdminAddProduct() {
                     value={sku}
                     onChange={(event) => setSku(event.target.value)}
                     required
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="admin-field-group">
+                  <label className="admin-field-label" htmlFor="apliiqProductId">Apliiq Product ID</label>
+                  <input
+                    className="admin-field"
+                    id="apliiqProductId"
+                    placeholder="Ex: 123456"
+                    type="text"
+                    value={apliiqProductId}
+                    onChange={(event) => setApliiqProductId(event.target.value)}
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="admin-field-group">
+                  <label className="admin-field-label" htmlFor="apliiqVariantId">Apliiq Variant ID</label>
+                  <input
+                    className="admin-field"
+                    id="apliiqVariantId"
+                    placeholder="Ex: 789012"
+                    type="text"
+                    value={apliiqVariantId}
+                    onChange={(event) => setApliiqVariantId(event.target.value)}
                     disabled={isSubmitting}
                   />
                 </div>
@@ -817,7 +884,7 @@ export default function AdminAddProduct() {
 
             <div className="admin-card admin-form-panel">
               <div className="admin-form-section-title">Images</div>
-              <div className="admin-inline-note">Manage main thumbnail and gallery images for this product.</div>
+              <div className="admin-inline-note">Manage main thumbnail and gallery images for this product. Maximum size: 10 MB per image.</div>
 
               <div className="admin-upload-block">
                 <label className="admin-field-label" htmlFor="mainImage">Main Image (Thumbnail) *</label>

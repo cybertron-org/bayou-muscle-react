@@ -71,19 +71,12 @@ export default function About() {
               <p className="about-ath-h2">since 1983</p>
             </div>
             <div className="about-ath-body">
-              <p className="about-ath-p1">
-                Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis
-                ullamco cillum dolor. Voluptate exercitation incididunt aliquip
-                deserunt reprehenderit elit laborum.
-              </p>
+
               <p className="about-ath-p2">
-                Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-                amet sint. Velit officia consequat duis enim velit mollit.
-                Exercitation veniam consequat sunt nostrud amet. Nulla Lorem
-                mollit cupidatat irure. Laborum magna nulla duis ullamco cillum
-                dolor. Voluptate exercitation incididunt aliquip deserunt
-                reprehenderit elit laborum. Amet minim mollit non deserunt
-                ullamco est sit aliqua dolor do amet sint.
+                My name is Davy Mize, and I am the owner and CEO of Bayou Muscle supplements and sportswear. Based in Monroe, LA, we draw upon our roots and heritage of our local culture and it reflects in our branding and products. This brand was born out of a passion for health and fitness that I discovered when I started my fitness journey on January 23, 2026, when I walked into the gym after a 25 year hiatus from working out. My passion was fueled by a desire to Be Better, in everything and all aspects of my life. I realized that I needed to be healthier, stronger, and more disciplined, in order to be present at all times and be the kind of Christian, Husband, Father, Employee, that I needed to be. After I began using different supplements and getting some really positive results from some of them, it sparked my interest to learn everything I could about the supplements and the ingredients that are in them. So I began relentlessly researching and studying all of the different products. And that led me to have concerns about the honesty and integrity of some of the products and brands out there. So I decided that if I am going to take supplements, then I want to make my own because then I will know exactly what is in them and how they are made. And that is what Bayou Muscle is based around, Honesty, Integrity, and Quality. Those are the key facets that drive us to be who we are, and what we seek to bring to you the consumer. Because we want our products to benefit you and help you achieve your goals, whatever they may be.
+              </p>
+              <p className="about-ath-p1">
+                From my family to yours, thank you so much for your business and let us know what you think of our products and how we can be better so that we can help you.
               </p>
             </div>
             <div className="about-stats">
