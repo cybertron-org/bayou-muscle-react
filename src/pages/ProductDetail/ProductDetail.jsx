@@ -18,43 +18,10 @@ import useWishlist from '../../hooks/useWishlist';
 const imgPayPng = "/products/pay.png";
 const fallbackProductImage = "/products/bp.png";
 
-const fallbackRelatedProducts = [
-  {
-    id: 1,
-    slug: null,
-    name: "HORSE POWER X",
-    cat: "Digestion",
-    price: "$144.99",
-    img: "/products/horse-power.png",
-    oldPrice: null,
-    badge: null,
-  },
-  {
-    id: 2,
-    slug: null,
-    name: "MuscleBlaze BCAA Gold",
-    cat: "Health Support",
-    price: "$310.39",
-    img: "/products/muscleblaze.png",
-    oldPrice: null,
-    badge: null,
-  },
-  {
-    id: 3,
-    slug: null,
-    name: "Nutrex HMB 1000",
-    cat: "Health Support",
-    price: "$293.84",
-    img: "/products/nutrex.png",
-    oldPrice: null,
-    badge: null,
-  },
-];
-
 export default function ProductDetail() {
   const { slug, id } = useParams();
   const navigate = useNavigate();
-  const { getProduct, addReview, fetchReviews } = useUserProducts();
+  const { getProduct, fetchSupplementProducts, addReview, fetchReviews } = useUserProducts();
   const { isAuthenticated } = useAuth();
   const { addItemToCart } = useCart({ autoLoad: false });
   const { toggleWishlist, isWishlisted, isProductPending } = useWishlist();
@@ -63,6 +30,7 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState("description");
   const [qty, setQty] = useState(1);
   const [product, setProduct] = useState(null);
+  const [supplementProducts, setSupplementProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [isReviewsLoading, setIsReviewsLoading] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
@@ -102,8 +70,15 @@ export default function ProductDetail() {
     if (Array.isArray(product?.relatedProducts) && product.relatedProducts.length > 0) {
       return product.relatedProducts;
     }
-    return fallbackRelatedProducts;
-  }, [product]);
+    return supplementProducts;
+  }, [product, supplementProducts]);
+
+  const popularProducts = useMemo(
+    () => supplementProducts
+      .filter((item) => String(item.id) !== String(product?.id) && item.slug !== product?.slug)
+      .slice(0, 3),
+    [product?.id, product?.slug, supplementProducts],
+  );
 
   const reviewsList = reviews;
 
@@ -173,9 +148,17 @@ export default function ProductDetail() {
       setErrorMessage("");
 
       try {
-        const details = await getProduct(productSlug);
+        const [details, supplements] = await Promise.all([
+          getProduct(productSlug),
+          fetchSupplementProducts(),
+        ]);
         if (isMounted) {
           setProduct(details);
+          setSupplementProducts(
+            supplements.filter(
+              (item) => String(item.id) !== String(details?.id) && item.slug !== details?.slug,
+            ),
+          );
           setActiveThumb(0);
           setActiveTab("description");
           await loadProductReviews(details?.id);
@@ -183,6 +166,7 @@ export default function ProductDetail() {
       } catch {
         if (isMounted) {
           setProduct(null);
+          setSupplementProducts([]);
           setErrorMessage("We could not load this product right now.");
           setReviews([]);
         }
@@ -198,7 +182,7 @@ export default function ProductDetail() {
     return () => {
       isMounted = false;
     };
-  }, [getProduct, productSlug]);
+  }, [fetchSupplementProducts, getProduct, productSlug]);
 
   const goToPage = (path) => {
     navigate(path);
@@ -423,7 +407,7 @@ export default function ProductDetail() {
                 <div className="pd-meta-footer">
                   <p className="pd-meta-line">
                     <span className="pd-muted-label">SKU: </span>
-                    <strong>PRD-{product?.id || "NA"}</strong>
+                    <strong>{product?.sku || "NA"}</strong>
                   </p>
                   <p className="pd-meta-line">
                     <span className="pd-muted-label">Category: </span>
@@ -634,7 +618,7 @@ export default function ProductDetail() {
                   </h3>
                 </div>
                 <div className="pd-popular__list">
-                  {relatedProducts.slice(0, 3).map((p) => (
+                  {popularProducts.map((p) => (
                     <div
                       key={`${p.id}-${p.slug || "fallback"}`}
                       className="pd-popular-item"

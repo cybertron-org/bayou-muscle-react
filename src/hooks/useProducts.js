@@ -39,8 +39,8 @@ const normalizeProduct = (item) => {
         name: item?.name || 'Untitled',
         slug: item?.slug || '',
         price: item?.price ?? item?.original_price ?? item?.discounted_price ?? '0',
+        weightOz: item?.weight_oz ?? null,
         discountedPrice: item?.discounted_price ?? item?.price ?? item?.original_price ?? '0',
-        quantity: Number(item?.quantity ?? 0),
         sku: item?.sku || '--',
         summary: item?.summary || '--',
         description: item?.description || '--',
@@ -152,7 +152,6 @@ export default function useProducts(options = {}) {
                 normalizeProduct({
                     ...(item?.product || {}),
                     wishlistId: item?.id,
-                    quantity: item?.product?.quantity ?? 1,
                 })
             );
             setProducts(mappedProducts);

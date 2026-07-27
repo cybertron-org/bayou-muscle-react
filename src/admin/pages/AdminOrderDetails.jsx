@@ -193,6 +193,9 @@ export default function AdminOrderDetails() {
 							<div style={{ marginTop: '10px', fontSize: '0.95rem', color: '#a8a8a8' }}>
 								<div>Subtotal: <strong>{formatPrice(order.subtotal)}</strong></div>
 								<div>Coupon Discount: <strong>{formatPrice(order.couponDiscount)}</strong></div>
+								<div>Shipping: <strong>{formatPrice(order.shippingAmount)}</strong></div>
+								<div>Carrier: <strong>{order.shippingCarrier || 'N/A'}{order.shippingService ? ` · ${order.shippingService}` : ''}</strong></div>
+								<div>Shipping Weight: <strong>{Number(order.shippingWeightOz || 0).toFixed(2)} oz</strong></div>
 								<div>Total Price: <strong>{formatPrice(order.totalPrice)}</strong></div>
 								<div>Coupon Code: <strong>{order.couponCode || 'None'}</strong></div>
 								<div>Items: <strong>{order.items.length}</strong></div>

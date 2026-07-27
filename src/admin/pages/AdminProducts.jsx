@@ -37,8 +37,8 @@ const normalizeProduct = (item) => {
 		name: item?.name || 'Untitled',
 		slug: item?.slug || '',
 		price: item?.price ?? '0',
+		weightOz: item?.weight_oz ?? null,
 		discountedPrice: item?.discounted_price ?? item?.discountedPrice ?? item?.price ?? '0',
-		quantity: Number(item?.quantity ?? 0),
 		sku: item?.sku || '--',
 		summary: item?.summary || '--',
 		description: item?.description || '--',
@@ -91,10 +91,6 @@ const getStatusMeta = (product) => {
 
 	if (product.clearance === 1) {
 		return { label: 'Clearance', className: 'admin-status--warning' };
-	}
-
-	if (product.quantity <= 24) {
-		return { label: 'Low stock', className: 'admin-status--warning' };
 	}
 
 	if (product.bestSeller === 1 || product.isFeatured === 1) {
@@ -384,7 +380,7 @@ export default function AdminProducts() {
 									<tr>
 										<th><strong>Name</strong></th>
 										<th><strong>Price</strong></th>
-										<th><strong>Qty</strong></th>
+										<th><strong>Weight</strong></th>
 										<th><strong>SKU</strong></th>
 										<th><strong>Flags</strong></th>
 										<th><strong>Status</strong></th>
@@ -405,7 +401,7 @@ export default function AdminProducts() {
 														<div className="admin-preview-copy">{stripHtml(product.summary)}</div>
 													</td>
 													<td data-label="Price">{formatCurrency(product.price)}</td>
-													<td data-label="Qty">{product.quantity}</td>
+													<td data-label="Weight">{product.weightOz ? `${Number(product.weightOz).toFixed(2)} oz` : 'Not set'}</td>
 													<td data-label="SKU">{product.sku}</td>
 													<td data-label="Flags">
 														<div className="admin-product-flag-cluster">
@@ -464,7 +460,7 @@ export default function AdminProducts() {
 										})
 									) : (
 										<tr>
-											<td colSpan={7}>
+											<td colSpan={8}>
 												<div className="admin-preview-copy">No products matched your search.</div>
 											</td>
 										</tr>

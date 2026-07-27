@@ -89,6 +89,11 @@ export default function MyCart() {
 
 	const actualAmount = Number(cartSummary?.subtotal ?? 0);
 	const couponDiscount = Number(cartSummary?.couponDiscount ?? 0);
+	const shippingAmount = Number(cartSummary?.shippingAmount ?? 0);
+	const shippingCarrier = cartSummary?.shippingCarrier || '';
+	const shippingService = cartSummary?.shippingService || '';
+	const shippingWeightOz = Number(cartSummary?.shippingWeightOz ?? 0);
+	const shippingRateSource = cartSummary?.shippingRateSource || '';
 	const totalAfterDiscount = Number(cartSummary?.total ?? actualAmount - couponDiscount);
 	const hasCouponDiscount = couponDiscount > 0;
 	const hasAppliedCoupon = Boolean(cartSummary?.appliedCoupon);
@@ -266,10 +271,22 @@ export default function MyCart() {
 										<span>−{formatMoney(couponDiscount)}</span>
 									</div>
 								) : null}
+								<div className="summary-line">
+									<span>
+										Shipping{shippingCarrier ? ` (${shippingCarrier})` : ''}
+										{shippingWeightOz > 0 ? ` · ${shippingWeightOz.toFixed(2)} oz` : ''}
+									</span>
+									<span>{formatMoney(shippingAmount)}</span>
+								</div>
+								{shippingService ? (
+									<div className="cart-item-variant">
+										{shippingService}{shippingRateSource === 'dummy' ? ' · Estimated rate' : ''}
+									</div>
+								) : null}
 							</div>
 
 							<div className="cart-summary-total">
-								<span>Total After Discount</span>
+								<span>Order Total</span>
 								<span>{formatMoney(totalAfterDiscount)}</span>
 							</div>
 

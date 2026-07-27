@@ -40,6 +40,9 @@ const getTextFromHtml = (html) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+const isSupplementName = (value) =>
+  ['supplement', 'supplements'].includes(String(value || '').trim().toLowerCase());
+
 export default function AdminAddProduct() {
   const navigate = useNavigate();
   const { productId } = useParams();
@@ -55,7 +58,7 @@ export default function AdminAddProduct() {
   const [categoryId, setCategoryId] = useState('');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
-  const [quantity, setQuantity] = useState('');
+  const [weightOz, setWeightOz] = useState('');
   const [sku, setSku] = useState('');
   const [gender, setGender] = useState('unisex');
 
@@ -146,17 +149,35 @@ export default function AdminAddProduct() {
         const parentOption = {
           id: parent.id,
           label: parent.title,
+          isSupplement: isSupplementName(parent.title) || isSupplementName(parent.slug),
         };
 
         const subcategoryOptions = (parent.subcategories || []).map((child) => ({
           id: child.id,
           label: `${child.title}`,
+          isSupplement:
+            isSupplementName(child.title)
+            || isSupplementName(child.slug)
+            || isSupplementName(parent.title)
+            || isSupplementName(parent.slug),
         }));
 
         return [parentOption, ...subcategoryOptions];
       }),
     [categories],
   );
+  const isSupplementCategory = useMemo(
+    () => categoryOptions.some(
+      (category) => String(category.id) === String(categoryId) && category.isSupplement,
+    ),
+    [categoryId, categoryOptions],
+  );
+
+  useEffect(() => {
+    if (isSupplementCategory && gender !== 'unisex') {
+      setGender('unisex');
+    }
+  }, [gender, isSupplementCategory]);
 
   // Fetch product data when in edit mode
   useEffect(() => {
@@ -169,7 +190,7 @@ export default function AdminAddProduct() {
             setCategoryId(String(product.category_id || ''));
             setProductName(product.name || '');
             setPrice(product.price || '');
-            setQuantity(product.quantity || '');
+            setWeightOz(product.weight_oz ?? '');
             setSku(product.sku || '');
             setGender(product.gender || 'unisex');
             setSummary(product.summary || '');
@@ -403,8 +424,8 @@ export default function AdminAddProduct() {
     if (!price || Number(price) <= 0) {
       errors.push('Valid price is required');
     }
-    if (!quantity || Number(quantity) < 0) {
-      errors.push('Valid quantity is required');
+    if (weightOz !== '' && Number(weightOz) <= 0) {
+      errors.push('Weight must be greater than 0 ounces');
     }
     if (!sku.trim()) {
       errors.push('SKU is required');
@@ -446,11 +467,11 @@ export default function AdminAddProduct() {
       formData.append('category_id', categoryId);
       formData.append('name', productName);
       formData.append('price', String(price));
-      formData.append('quantity', String(quantity));
+      formData.append('weight_oz', weightOz === '' ? '' : String(weightOz));
       formData.append('summary', summary);
       formData.append('description', description);
       formData.append('additional_info', additionalInfo);
-      formData.append('gender', gender);
+      formData.append('gender', isSupplementCategory ? 'unisex' : gender);
       formData.append('is_active', String(isActive));
       formData.append('sku', sku);
       formData.append('best_seller', String(bestSeller));
@@ -458,7 +479,7 @@ export default function AdminAddProduct() {
       formData.append('clearance', String(clearance));
 
       // Files: send new main image as `main_image` and gallery images as `images[]`
-      const maxSizeKB = 2048; // server limit in KB
+      const maxSizeKB = 10240; // 10 MB server limit in KB
 
       // Validate sizes before appending
       const filesToCheck = [];
@@ -468,7 +489,7 @@ export default function AdminAddProduct() {
       for (const item of filesToCheck) {
         const sizeKB = Math.ceil(item.file.size / 1024);
         if (sizeKB > maxSizeKB) {
-          throw { message: `${item.name} must not be greater than ${maxSizeKB} kilobytes.` };
+          throw { message: `${item.name} must not be greater than 10 MB.` };
         }
       }
 
@@ -619,34 +640,39 @@ export default function AdminAddProduct() {
                 </div>
 
                 <div className="admin-field-group">
-                  <label className="admin-field-label" htmlFor="quantity">Quantity *</label>
+                  <label className="admin-field-label" htmlFor="weightOz">Shipping Weight (oz)</label>
                   <input
                     className="admin-field"
-                    id="quantity"
-                    placeholder="Ex: 99"
+                    id="weightOz"
+                    placeholder="Ex: 12.5"
                     type="number"
-                    value={quantity}
-                    onChange={(event) => setQuantity(event.target.value)}
-                    required
+                    min="0.01"
+                    max="2400"
+                    step="0.01"
+                    value={weightOz}
+                    onChange={(event) => setWeightOz(event.target.value)}
                     disabled={isSubmitting}
                   />
+                  <div className="admin-inline-note">Use the packaged weight for one unit. Blank products use the configured 16 oz fallback.</div>
                 </div>
 
-                <div className="admin-field-group">
-                  <label className="admin-field-label" htmlFor="gender">Gender *</label>
-                  <select
-                    className="admin-field"
-                    id="gender"
-                    value={gender}
-                    onChange={(event) => setGender(event.target.value)}
-                    required
-                    disabled={isSubmitting}
-                  >
-                    <option value="unisex">Unisex</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
+                {!isSupplementCategory ? (
+                  <div className="admin-field-group">
+                    <label className="admin-field-label" htmlFor="gender">Gender *</label>
+                    <select
+                      className="admin-field"
+                      id="gender"
+                      value={gender}
+                      onChange={(event) => setGender(event.target.value)}
+                      required
+                      disabled={isSubmitting}
+                    >
+                      <option value="unisex">Unisex</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                ) : null}
 
                 <div className="admin-field-group admin-field-group--full">
                   <label className="admin-field-label" htmlFor="summary">Summary *</label>

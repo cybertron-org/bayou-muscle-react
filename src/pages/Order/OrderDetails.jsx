@@ -140,7 +140,7 @@ export default function OrderDetails() {
 											</div>
 										</div>
 										<div className="profile-orders">
-											<div className="profile-order-row" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+											<div className="profile-order-row" style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))' }}>
 												<div>
 													<p className="profile-order-id">Subtotal</p>
 													<p className="profile-order-product">{formatPrice(order.subtotal)}</p>
@@ -152,6 +152,11 @@ export default function OrderDetails() {
 												<div>
 													<p className="profile-order-id">Discount</p>
 													<p className="profile-order-product">{formatPrice(order.couponDiscount)}</p>
+												</div>
+												<div>
+													<p className="profile-order-id">Shipping</p>
+													<p className="profile-order-product">{formatPrice(order.shippingAmount)}</p>
+													<p className="profile-setting-label">{order.shippingCarrier || 'N/A'}{order.shippingService ? ` · ${order.shippingService}` : ''}</p>
 												</div>
 												<div>
 													<p className="profile-order-id">Total</p>

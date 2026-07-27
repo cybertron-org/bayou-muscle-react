@@ -283,6 +283,11 @@ function CheckoutPage({ onNavigate }) {
 
   const subtotal = Number(cartSummary?.subtotal ?? 0);
   const couponDiscount = Number(cartSummary?.couponDiscount ?? 0);
+  const shippingAmount = Number(cartSummary?.shippingAmount ?? 0);
+  const shippingCarrier = cartSummary?.shippingCarrier || '';
+  const shippingService = cartSummary?.shippingService || '';
+  const shippingWeightOz = Number(cartSummary?.shippingWeightOz ?? 0);
+  const shippingRateSource = cartSummary?.shippingRateSource || '';
   const total = Number(cartSummary?.total ?? Math.max(0, subtotal - couponDiscount));
   const totalQty = checkoutItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
   const zipCodeRegex = /^\d{5}(?:-\d{4})?$/;
@@ -690,6 +695,16 @@ function CheckoutPage({ onNavigate }) {
               <div className="checkout-sum-divider" />
               <div className="checkout-sum-row"><span>Subtotal ({totalQty} items)</span><span>${subtotal.toFixed(2)}</span></div>
               <div className="checkout-sum-row"><span>Coupon Discount</span><span>{couponDiscount > 0 ? `-$${couponDiscount.toFixed(2)}` : '$0.00'}</span></div>
+              <div className="checkout-sum-row">
+                <span>Shipping{shippingCarrier ? ` (${shippingCarrier})` : ''}</span>
+                <span>${shippingAmount.toFixed(2)}</span>
+              </div>
+              {shippingService ? (
+                <p className="checkout-sum-variant">
+                  {shippingService}{shippingWeightOz > 0 ? ` · ${shippingWeightOz.toFixed(2)} oz` : ''}
+                  {shippingRateSource === 'dummy' ? ' · Estimated rate' : ''}
+                </p>
+              ) : null}
               <div className="checkout-sum-total"><span>Total</span><span>${total.toFixed(2)}</span></div>
             </div>
           </div>

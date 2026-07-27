@@ -66,6 +66,7 @@ const normalizeCartItem = (item) => {
         unitPrice: Number(item?.unit_price ?? product?.price ?? 0),
         discountedPrice: Number(item?.discounted_price ?? product?.discounted_price ?? product?.price ?? item?.unit_price ?? 0),
         total: Number(item?.total_price ?? item?.total ?? 0),
+        weightOz: item?.product?.weight_oz == null ? null : Number(item.product.weight_oz),
         createdAt: item?.created_at || null,
         updatedAt: item?.updated_at || null,
     };
@@ -74,6 +75,13 @@ const normalizeCartItem = (item) => {
 const EMPTY_SUMMARY = {
     subtotal: 0,
     couponDiscount: 0,
+    shippingAmount: 0,
+    shippingCarrier: null,
+    shippingService: null,
+    shippingWeightOz: 0,
+    shippingRateSource: null,
+    shippingIsLive: false,
+    shippingUsesDefaultWeight: false,
     total: 0,
     appliedCoupon: null,
 };
@@ -138,6 +146,13 @@ export function CartProvider({ children }) {
                 setCartSummary({
                     subtotal: Number(payload?.subtotal ?? 0),
                     couponDiscount: Number(payload?.coupon_discount ?? 0),
+                    shippingAmount: Number(payload?.shipping?.amount ?? 0),
+                    shippingCarrier: payload?.shipping?.carrier || null,
+                    shippingService: payload?.shipping?.service || null,
+                    shippingWeightOz: Number(payload?.shipping?.total_weight_oz ?? 0),
+                    shippingRateSource: payload?.shipping?.rate_source || null,
+                    shippingIsLive: Boolean(payload?.shipping?.is_live),
+                    shippingUsesDefaultWeight: Boolean(payload?.shipping?.uses_default_weight),
                     total: Number(payload?.total ?? 0),
                     appliedCoupon: payload?.applied_coupon || null,
                 });

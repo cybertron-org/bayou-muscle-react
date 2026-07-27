@@ -3,6 +3,7 @@ import {
     getFeaturedProducts,
     getLatestProducts,
     getProductDetails,
+    getProductsByCategory,
     addProductReview,
     fetchProductReviews,
     addProductToWishlist
@@ -45,6 +46,7 @@ const normalizeProductDetail = (item) => {
 
     return {
         ...base,
+        sku: item?.sku || null,
         categorySlug: item?.category_slug || null,
         url: item?.url || null,
         summary: item?.summary || "",
@@ -78,6 +80,20 @@ const useUserProducts = () => {
         } catch (error) {
             console.error('Error fetching latest products:', error);
             throw error;
+        }
+    }, []);
+
+    const fetchSupplementProducts = useCallback(async () => {
+        try {
+            const response = await getProductsByCategory('supplements');
+            const data = Array.isArray(response?.data) ? response.data : [];
+            const items = response?.grouped
+                ? data.flatMap((group) => (Array.isArray(group?.products) ? group.products : []))
+                : data;
+            return items.map(normalizeProductCard);
+        } catch (error) {
+            console.error('Error fetching supplement products:', error);
+            return [];
         }
     }, []);
 
@@ -125,7 +141,15 @@ const useUserProducts = () => {
 
 
 
-    return { fetchUserProducts, fetchLatestProducts, getProduct, addReview, fetchReviews, addToWishlist };
+    return {
+        fetchUserProducts,
+        fetchLatestProducts,
+        fetchSupplementProducts,
+        getProduct,
+        addReview,
+        fetchReviews,
+        addToWishlist,
+    };
 };
 
 export default useUserProducts;
