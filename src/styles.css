@@ -1686,7 +1686,8 @@ button {
   border: 1px solid #e9e9e9;
   border-radius: 4px;
   padding: 24px 24px 28px;
-  /* height: 560px; */
+  min-height: 560px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -1702,19 +1703,21 @@ button {
 }
 
 .hm-latest-card__img {
-  height: 310px;
+  width: calc(100% + 48px);
+  aspect-ratio: 4 / 5;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin: 4px -24px 20px;
   flex-shrink: 0;
 }
 
 .hm-latest-card__img img {
-  max-height: 296px;
-  width: auto;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.35s;
 }
 
@@ -1723,7 +1726,7 @@ button {
 }
 
 .hm-latest-card__body {
-  /* flex: 1; */
+  flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -5953,6 +5956,17 @@ button.hm-insta__label {
   /* Header */
   .hdr__topbar {
     height: 40px;
+  }
+
+  .hm-latest-card {
+    min-height: 0;
+    padding: 20px 20px 24px;
+  }
+
+  .hm-latest-card__img {
+    width: calc(100% + 40px);
+    margin-right: -20px;
+    margin-left: -20px;
   }
 
   .hm-feat-card__name {
