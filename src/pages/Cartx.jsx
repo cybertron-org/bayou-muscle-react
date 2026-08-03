@@ -305,6 +305,12 @@ function CheckoutPage({ onNavigate }) {
     loadCartItems().catch(() => {});
   }, [loadCartItems]);
 
+  useEffect(() => {
+    if (placed) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, [placed]);
+
   const checkoutItems = useMemo(() => cartItems.map((item) => ({
     id: item.id,
     name: item.productName,
@@ -583,6 +589,12 @@ function CheckoutPage({ onNavigate }) {
           <div className="checkout-layout">
             <form className="checkout-form" onSubmit={handlePlace}>
               <div className="checkout-step-content">
+                <div className="contact-field">
+                  <label>Email *</label>
+                  <input type="email" required value={form.email} onChange={updateField('email')} />
+                  <div className="checkout-secure-note">Checkout without an account. After a successful order, we will email instructions to set your password.</div>
+                  {validationErrors.email ? <span className="checkout-field-error">{validationErrors.email}</span> : null}
+                </div>
                 <h2 className="checkout-step-title">Delivery Information</h2>
                 <div className="checkout-grid-2">
                   <div className="contact-field">
@@ -638,10 +650,6 @@ function CheckoutPage({ onNavigate }) {
                   <div className="contact-field">
                     <label>Phone *</label>
                     <input type="text" required value={form.phone} onChange={updateField('phone')} />
-                  </div>
-                  <div className="contact-field">
-                    <label>Email *</label>
-                    <input type="email" required value={form.email} onChange={updateField('email')} />
                   </div>
                 </div>
 

@@ -74,11 +74,11 @@ export default function AppRouter() {
 			<Route path="/contact"     element={<Contact />} />
 			<Route path="/register"    element={<Register />} />
 			{/* <Route path="/cart"        element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><Cart onNavigate={navigate} initialView="cart" /></ProtectedRoute>} /> */}
-			<Route path="/checkout"    element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><Cart onNavigate={navigate} initialView="checkout" /></ProtectedRoute>} />
+			<Route path="/checkout"    element={<Cart onNavigate={navigate} initialView="checkout" />} />
 			<Route path="/blog"        element={<Blog onNavigate={navigate} />} />
 			<Route path="/blogdetails" element={<BlogDetails />} />
 			<Route path="/blogdetails/:slug" element={<BlogDetails />} />
-			<Route path="/cart"     element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyCart /></ProtectedRoute>} />
+			<Route path="/cart"     element={<MyCart />} />
 			<Route path="/my-wishlist" element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><MyWishlist /></ProtectedRoute>} />
 			<Route path="/orders"   element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><Order /></ProtectedRoute>} />
 			<Route path="/orders/:orderId" element={<ProtectedRoute allowedRoles={['user']} unauthenticatedRedirect="/login" unauthorizedRedirect="/admin/dashboard"><OrderDetails /></ProtectedRoute>} />

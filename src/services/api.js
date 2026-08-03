@@ -2,6 +2,16 @@ import axios from 'axios';
 
 // API Base Configuration
 const API_BASE_URL = import.meta.env.VITE_APP_URL ;
+const GUEST_CART_TOKEN_KEY = 'guest_cart_token';
+
+const getGuestCartToken = () => {
+  let token = localStorage.getItem(GUEST_CART_TOKEN_KEY);
+  if (!token) {
+    token = crypto.randomUUID();
+    localStorage.setItem(GUEST_CART_TOKEN_KEY, token);
+  }
+  return token;
+};
 
 // Create axios instance
 const apiClient = axios.create({
@@ -18,6 +28,8 @@ apiClient.interceptors.request.use(
     const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      config.headers['X-Guest-Cart-Token'] = getGuestCartToken();
     }
     
     // If data is FormData, remove Content-Type header to let axios set it with boundary

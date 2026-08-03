@@ -191,11 +191,6 @@ export default function Header() {
               className="hdr__cart-btn"
               aria-label="Cart"
               onClick={() => {
-                if (!isAuthenticated) {
-                  navigate('/login');
-                  return;
-                }
-
                 setCartOpen(true);
               }}
             >

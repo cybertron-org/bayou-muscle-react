@@ -13,7 +13,7 @@ const imgMC = 'https://www.figma.com/api/mcp/asset/7b5774aa-4a17-43da-947b-c4b84
 const imgAmex = 'https://www.figma.com/api/mcp/asset/6b7a0ee2-5475-4d37-a112-e364ba0b7d8e';
 
 export default function Footer() {
-  const { subscribe } = useNewsletter();
+  const { subscribe, isLoading } = useNewsletter();
   const [email, setEmail] = useState('');
 
   const handleSubscribe = async (e) => {
@@ -21,12 +21,17 @@ export default function Footer() {
 
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
+      toast.error('Please enter your email address.');
       return;
     }
 
-    await subscribe(trimmedEmail);
-    toast.success('Subscribed successfully.');
-    setEmail('');
+    try {
+      await subscribe(trimmedEmail);
+      toast.success('You have subscribed successfully.');
+      setEmail('');
+    } catch (error) {
+      toast.error(error?.message || 'Unable to subscribe. Please try again.');
+    }
   };
 
   const handleEmailClick = (e) => {
@@ -155,8 +160,12 @@ export default function Footer() {
                 className="ftr__nl-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
               />
-              <button className="ftr__nl-btn" type="submit">Subscribe</button>
+              <button className="ftr__nl-btn" type="submit" disabled={isLoading}>
+                {isLoading ? 'Subscribing...' : 'Subscribe'}
+              </button>
             </form>
           </div>
         </div>

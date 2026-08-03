@@ -99,8 +99,6 @@ export function CartProvider({ children }) {
     const inFlightRef = useRef(null);
     const lastLoadedAtRef = useRef(0);
 
-    const isAuthenticated = Boolean(authToken);
-
     const syncToken = useCallback(() => {
         setAuthToken(getStoredToken());
     }, []);
@@ -114,11 +112,6 @@ export function CartProvider({ children }) {
 
     const loadCartItems = useCallback(async (options = {}) => {
         const { force = false } = options;
-
-        if (!isAuthenticated) {
-            resetCartState();
-            return [];
-        }
 
         if (inFlightRef.current && !force) {
             return inFlightRef.current;
@@ -174,22 +167,9 @@ export function CartProvider({ children }) {
             }
             setIsLoading(false);
         }
-    }, [isAuthenticated, resetCartState]);
-
-    const requireAuth = useCallback(() => {
-        const nextToken = getStoredToken();
-        if (!nextToken) {
-            navigate('/login');
-            return false;
-        }
-        return true;
-    }, [navigate]);
+    }, []);
 
     const addItemToCart = useCallback(async (productId, quantity = 1) => {
-        if (!requireAuth()) {
-            return null;
-        }
-
         setIsLoading(true);
         setError('');
 
@@ -209,13 +189,9 @@ export function CartProvider({ children }) {
         } finally {
             setIsLoading(false);
         }
-    }, [loadCartItems, requireAuth]);
+    }, [loadCartItems]);
 
     const updateItemQuantity = useCallback(async (cartItemId, quantity) => {
-        if (!requireAuth()) {
-            return null;
-        }
-
         setIsLoading(true);
         setError('');
 
@@ -235,13 +211,9 @@ export function CartProvider({ children }) {
         } finally {
             setIsLoading(false);
         }
-    }, [loadCartItems, requireAuth]);
+    }, [loadCartItems]);
 
     const removeItemFromCart = useCallback(async (cartItemId) => {
-        if (!requireAuth()) {
-            return;
-        }
-
         setIsLoading(true);
         setError('');
 
@@ -254,13 +226,9 @@ export function CartProvider({ children }) {
         } finally {
             setIsLoading(false);
         }
-    }, [loadCartItems, requireAuth]);
+    }, [loadCartItems]);
 
     const clearCart = useCallback(async () => {
-        if (!requireAuth()) {
-            return;
-        }
-
         setIsLoading(true);
         setError('');
 
@@ -273,13 +241,9 @@ export function CartProvider({ children }) {
         } finally {
             setIsLoading(false);
         }
-    }, [requireAuth, resetCartState]);
+    }, [resetCartState]);
 
     const applyCoupon = useCallback(async (couponCode) => {
-        if (!requireAuth()) {
-            return null;
-        }
-
         setIsLoading(true);
         setError('');
 
@@ -300,7 +264,7 @@ export function CartProvider({ children }) {
         } finally {
             setIsLoading(false);
         }
-    }, [loadCartItems, requireAuth]);
+    }, [loadCartItems]);
 
     const cartCount = useMemo(
         () => cartItems.reduce((sum, item) => sum + Number(item?.quantity || 0), 0),
@@ -323,20 +287,11 @@ export function CartProvider({ children }) {
     }, [syncToken]);
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            resetCartState();
-            return;
-        }
-
         loadCartItems({ force: true }).catch(() => {});
-    }, [isAuthenticated, loadCartItems, resetCartState]);
+    }, [loadCartItems]);
 
     useEffect(() => {
         const refreshIfStale = () => {
-            if (!isAuthenticated) {
-                return;
-            }
-
             const isStale = Date.now() - lastLoadedAtRef.current > 60000;
             if (isStale) {
                 loadCartItems().catch(() => {});
@@ -356,7 +311,7 @@ export function CartProvider({ children }) {
             window.removeEventListener('focus', refreshIfStale);
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [isAuthenticated, loadCartItems]);
+    }, [loadCartItems]);
 
     const value = useMemo(() => ({
         cartItems,
