@@ -414,14 +414,14 @@ export default function Home() {
             <Swiper
               modules={[Navigation]}
               spaceBetween={20}
-              slidesPerView={4}
+              slidesPerView={3}
               navigation={false}
               className="hm-swiper"
               breakpoints={{
                 0: { slidesPerView: 1.2, spaceBetween: 12 },
                 576: { slidesPerView: 2.1, spaceBetween: 14 },
-                768: { slidesPerView: 3.1, spaceBetween: 16 },
-                1200: { slidesPerView: 4, spaceBetween: 20 },
+                768: { slidesPerView: 2.2, spaceBetween: 16 },
+                1200: { slidesPerView: 3, spaceBetween: 32 },
               }}
             >
               {latestProducts.map((p) => (
