@@ -32,6 +32,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [supplementProducts, setSupplementProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isReviewsLoading, setIsReviewsLoading] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
@@ -196,6 +197,7 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
+    setIsAddingToCart(true);
     try {
       const result = await addItemToCart(product?.id, qty);
       if (result) {
@@ -203,12 +205,21 @@ export default function ProductDetail() {
       }
     } catch (err) {
       toast.error(err?.message || 'Unable to add item to cart.');
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
-  const handleBuyNow = () => {
-    addItemToCart(product?.id, qty).catch(() => { });
-    navigate('/cart');
+  const handleBuyNow = async () => {
+    setIsAddingToCart(true);
+    try {
+      await addItemToCart(product?.id, qty);
+      navigate('/cart');
+    } catch (err) {
+      toast.error(err?.message || 'Unable to process purchase.');
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleToggleWishlist = async () => {
@@ -286,8 +297,9 @@ export default function ProductDetail() {
         </div>
 
         {isLoading ? (
-          <div className="pd-main">
-            <p className="pd-tab-p">Loading product details...</p>
+          <div className="pd-main pd-loading-state">
+            <div className="pd-loading-spinner" />
+            <p className="pd-loading-text">Loading product details...</p>
           </div>
         ) : errorMessage ? (
           <div className="pd-main">
@@ -353,16 +365,24 @@ export default function ProductDetail() {
                     <button
                       className="pd-qty__btn"
                       onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      type="button"
                     >
                       -
                     </button>
                     <span className="pd-qty__val">{qty}</span>
-                    <button className="pd-qty__btn" onClick={() => setQty((q) => q + 1)}>
+                    <button className="pd-qty__btn" type="button" onClick={() => setQty((q) => q + 1)}>
                       +
                     </button>
                   </div>
 
-                  <button className="pd-add-btn" type="button" onClick={handleAddToCart}>Add to cart</button>
+                  <button
+                    className="pd-add-btn"
+                    type="button"
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart || !product?.id}
+                  >
+                    {isAddingToCart ? <span className="pd-btn-spinner" /> : 'Add to cart'}
+                  </button>
                   <button
                     className="pd-icon-btn"
                     aria-label={isCurrentProductWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -390,7 +410,13 @@ export default function ProductDetail() {
                   </button>
                 </div>
 
-                <button className="pd-buy-btn" onClick={handleBuyNow}>Buy It Now</button>
+                <button
+                  className="pd-buy-btn"
+                  onClick={handleBuyNow}
+                  disabled={isAddingToCart || !product?.id}
+                >
+                  {isAddingToCart ? <span className="pd-btn-spinner" /> : 'Buy It Now'}
+                </button>
 
                 <div className="pd-guarantee">
                   <p className="pd-guarantee__label">Guarantee Safe &amp; Secure Checkout</p>

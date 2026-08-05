@@ -12,6 +12,14 @@ const imgVisa = '/images/cards.png';
 const imgMC = 'https://www.figma.com/api/mcp/asset/7b5774aa-4a17-43da-947b-c4b84879e4cc';
 const imgAmex = 'https://www.figma.com/api/mcp/asset/6b7a0ee2-5475-4d37-a112-e364ba0b7d8e';
 
+const quickLinks = [
+  { href: '/home', label: 'Home' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/merchandise', label: 'Merchandise' },
+  { href: '/about', label: 'About Us' },
+  { href: '/contact', label: 'Contact Us' },
+];
+
 export default function Footer() {
   const { subscribe, isLoading } = useNewsletter();
   const [email, setEmail] = useState('');
@@ -131,8 +139,10 @@ export default function Footer() {
             <div className="ftr__col">
               <p className="ftr__col-title">Quick Links</p>
               <ul className="ftr__col-list">
-                {['About Us', 'Contact Us', 'Terms of Service'].map(l => (
-                  <li key={l}><a href="#" className="ftr__col-link">{l}</a></li>
+                {quickLinks.map(link => (
+                  <li key={link.href}>
+                    <a href={link.href} className="ftr__col-link">{link.label}</a>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -164,7 +174,7 @@ export default function Footer() {
                 disabled={isLoading}
               />
               <button className="ftr__nl-btn" type="submit" disabled={isLoading}>
-                {isLoading ? 'Subscribing...' : 'Subscribe'}
+                {isLoading ? <span className="ftr__btn-spinner" aria-hidden="true" /> : 'Subscribe'}
               </button>
             </form>
           </div>
@@ -182,7 +192,7 @@ export default function Footer() {
           {/* Figma: Instrument Sans Regular 16px, #a8a8a8 with white brand name, left=135 */}
           <p className="ftr__copyright">
             <span className="ftr__copyright--muted">Copyright © 2026 </span>
-            <span className="ftr__copyright--white">BaYou Muscle</span>
+            <span className="ftr__copyright--white">Bayou Muscle</span>
             <span className="ftr__copyright--muted">. All rights reserved</span>
           </p>
           {/* Figma: payment card images, right=145, 5 cards w=43 h=28 gap=5 */}

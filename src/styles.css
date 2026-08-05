@@ -988,9 +988,10 @@ button {
 /* CONTACT BAR — Figma: Section y=30 h=144, bg #202020 */
 .ftr__contact-bar {
   background: #202020;
-  height: 144px;
+  min-height: 144px;
   display: flex;
   align-items: center;
+  padding: 26px 0;
 }
 
 .ftr__contact-inner {
@@ -998,11 +999,11 @@ button {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  /* Figma: logo at x=145 */
   padding: 0 145px;
   max-width: 1920px;
   margin: 0 auto;
-  gap: 32px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 /* LOGO — Figma: Clip path group x=145 y=30, w=130 h=79 */
@@ -1022,9 +1023,10 @@ button {
 .ftr__contact-items {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 32px;
   flex: 1;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .ftr__contact-item {
@@ -1064,7 +1066,7 @@ button {
 .ftr__social {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -1073,7 +1075,7 @@ button {
   align-items: center;
   justify-content: center;
   width: 47px;
-  height: 16px;
+  height: 47px;
   border-right: 1px solid #636363;
   color: #636363;
   transition: color 0.2s;
@@ -1124,7 +1126,7 @@ button {
 .ftr__cols {
   display: flex;
   align-items: flex-start;
-  gap: 0;
+  gap: 32px;
   border-right: 1px solid #363636;
   padding-right: 48px;
   flex: 1;
@@ -1134,6 +1136,12 @@ button {
   flex: 1;
   padding: 10px 20px;
   min-width: 0;
+}
+
+.ftr__col-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* Figma: Sofia Sans Condensed Black 22px (size=line-height/20), uppercase, white */
@@ -1170,7 +1178,7 @@ button {
 /* NEWSLETTER — Figma: right of VerticalBorder */
 .ftr__newsletter {
   flex-shrink: 0;
-  width: 411px;
+  width: min(420px, 100%);
   padding-left: 0;
 }
 
@@ -1199,18 +1207,23 @@ button {
 
 .ftr__nl-form {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: row;
+  gap: 12px;
   padding: 0 15px;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Figma: Input bg #2b2b2b, h=54, rounded 30px, Instrument Sans Regular 14px, white placeholder */
 .ftr__nl-input {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
   background: #2b2b2b;
   border: none;
   border-radius: 30px;
   height: 54px;
-  padding: 0 20px;
+  padding: 0 24px;
   font-family: 'Instrument Sans', sans-serif;
   font-weight: 400;
   font-size: 14px;
@@ -1235,6 +1248,8 @@ button {
   border: 1px solid #000;
   border-radius: 30px;
   height: 50px;
+  min-width: 150px;
+  padding: 0 32px;
   font-family: 'Sofia Sans Condensed', sans-serif;
   font-weight: 700;
   font-size: 18px;
@@ -1242,12 +1257,27 @@ button {
   color: #000;
   text-transform: capitalize;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+  white-space: nowrap;
 }
 
-.ftr__nl-btn:hover {
+.ftr__nl-btn:hover:not(:disabled) {
   background: #ddca8a;
   border-color: #ddca8a;
+}
+
+.ftr__nl-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.ftr__btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: pd-spin 0.8s linear infinite;
 }
 
 /* BOTTOM BORDER — Figma: Section y=576 h=9, border-top 5px #363636, x=135 right=135 */
