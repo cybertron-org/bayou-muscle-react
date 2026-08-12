@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import useNewsletter from '../hooks/useNewsletter';
 
 /* Figma asset URLs — node 67:1983 */
-const imgLogo = '/images/logo-Bayou.png';
+const imgLogo = '/images/logo-Bayou-4.svg';
     const imgPhoneIcon = '/images/number.png';
     const imgEmailIcon = '/images/mail.png';
 const imgChatIcon = '/images/livechat.png';

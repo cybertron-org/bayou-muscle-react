@@ -463,7 +463,8 @@ button {
 }
 
 .hdr__main-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   height: 100%;
   /* Figma: nav starts x=145 from left edge, padded to 1920 canvas */
@@ -477,7 +478,9 @@ button {
 .hdr__nav {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0;
+  width: 100%;
 }
 
 /* Figma: each Item→Link 157×36px, padding 21px 4px, rounded 30px */
@@ -584,39 +587,41 @@ button {
 
 /* LOGO — Figma: centered x=908 y=19, w=104 h=63 */
 .hdr__logo {
-    position: absolute;
-    left: 35%;
-    transform: translateX(0%);
-    width: 100%;
-    /* height: 63px; */
-    /* display: flex; */
-    align-items: center;
-    justify-content: center;
-        top: 1.1rem;
-
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(180px, 14vw, 300px);
+  height: auto;
+  margin: 0 auto;
+  z-index: 2;
+  flex-shrink: 0;
 }
 
 .hdr__logo-img {
-    position: relative;
-    /* width: 104px;
-    height: 63px; */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
 }
 
 .hdr__logo-vec {
-  position: absolute;
+  position: static;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* Figma: inset 15.06% 6.9% 10.36% 7.34% */
 .hdr__logo-vec--main {
-    top: 15.06%;
-    right: 6.9%;
-    bottom: 10.36%;
-    left: 7.34%;
-    width: 18%;
-    height: auto;
-    /* max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; */
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  object-fit: contain;
 }
 
 /* Figma: inset 23.66% 50.17% 69.25% 44.35% */
@@ -636,8 +641,9 @@ button {
 .hdr__controls {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
-  margin-left: auto;
+  width: 100%;
   padding: 0 8px;
 }
 
@@ -1016,7 +1022,7 @@ button {
   /* height: 79px; */
   object-fit: contain;
   /* Figma: mask group renders the vectorized logo */
-  filter: brightness(0) invert(1);
+  /* filter: brightness(0) invert(1); */
 }
 
 /* CONTACT ITEMS — Figma: Section x=517.67, Instrument Sans SemiBold 18px #fff */
@@ -5668,27 +5674,25 @@ button.hm-insta__label {
 
 @media (max-width: 1367px) {
   .hdr__logo {
-    position: absolute;
-    left: 42%;
-    transform: translateX(0%);
-    width: 16%;
-    /* height: 63px; */
-    /* display: flex; */
-    align-items: center;
-    justify-content: center;
-    top: 28%;
-}
+    position: relative;
+    left: auto;
+    transform: none;
+    width: clamp(170px, 12vw, 240px);
+    top: auto;
+    margin: 0 auto;
+  }
 
-.hdr__main-inner {
-    display: flex;
+  .hdr__main-inner {
+    display: grid;
     align-items: center;
     height: 100%;
     padding: 0 95px;
     position: relative;
     max-width: 1920px;
     margin: 0 auto;
-}
-.hm-blog__title {
+  }
+
+  .hm-blog__title {
     font-weight: 900;
     font-size: 27px;
     text-transform: uppercase;
@@ -5718,11 +5722,13 @@ button.hm-insta__label {
     display: none;
   }
 
-     .hdr__logo {
-        position: static;
-        transform: none;
-        margin-top: -2rem;
-    }
+  .hdr__logo {
+    position: relative;
+    transform: none;
+    width: clamp(150px, 30vw, 210px);
+    margin: 0 auto;
+    top: auto;
+  }
 
   .hdr__search {
     display: none;
@@ -6065,6 +6071,10 @@ button.hm-insta__label {
 
   .hdr__main-inner {
     padding: 0 16px;
+  }
+
+  .hdr__logo {
+    width: clamp(120px, 34vw, 180px);
   }
 
   /* Hero */
