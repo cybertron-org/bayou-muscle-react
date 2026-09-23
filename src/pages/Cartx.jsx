@@ -39,6 +39,27 @@ const cardNumberRegex = /^\d{13,19}$/;
 const cardCvvRegex = /^\d{3,4}$/;
 
 const trimString = (value) => String(value ?? '').trim();
+const firstErrorMessage = (messages) => {
+  if (Array.isArray(messages)) {
+    return messages.find((message) => typeof message === 'string' && message.trim()) || '';
+  }
+
+  return typeof messages === 'string' ? messages : '';
+};
+
+const mapApiValidationErrors = (errors) => {
+  if (!errors || typeof errors !== 'object' || Array.isArray(errors)) {
+    return {};
+  }
+
+  return Object.entries(errors).reduce((mapped, [field, messages]) => {
+    const message = firstErrorMessage(messages);
+    if (message) {
+      mapped[field] = message;
+    }
+    return mapped;
+  }, {});
+};
 const normalizeOptionalString = (value) => {
   const normalized = trimString(value);
   return normalized || null;
@@ -536,18 +557,13 @@ function CheckoutPage({ onNavigate }) {
       setPlaced(true);
       toast.success('Order placed successfully.');
     } catch (err) {
-      if (err?.errors && typeof err.errors === 'object') {
-        const mappedServerErrors = Object.entries(err.errors).reduce((acc, [field, messages]) => {
-          if (Array.isArray(messages) && messages.length > 0) {
-            acc[field] = messages[0];
-          } else if (typeof messages === 'string') {
-            acc[field] = messages;
-          }
-          return acc;
-        }, {});
+      const mappedServerErrors = mapApiValidationErrors(err?.errors);
+      if (Object.keys(mappedServerErrors).length > 0) {
         setValidationErrors(mappedServerErrors);
+        toast.error(Object.values(mappedServerErrors)[0]);
+      } else {
+        toast.error(err?.message || 'Unable to place order.');
       }
-      toast.error(err?.message || 'Unable to place order.');
     }
   };
 
@@ -562,7 +578,7 @@ function CheckoutPage({ onNavigate }) {
             <p className="order-success-sub">
               {placedMessage || <>Thank you for your order. A confirmation has been sent to <strong>{form.email || 'your email'}</strong>.</>}
             </p>
-            <p className="order-success-num">Order #BM-{Math.floor(Math.random() * 90000) + 10000}</p>
+            {/* <p className="order-success-num">Order #BM-{Math.floor(Math.random() * 90000) + 10000}</p> */}
             <div className="order-success-actions">
               <button className="hero-btn" onClick={() => onNavigate('home')}>Continue Shopping</button>
             </div>
@@ -599,39 +615,47 @@ function CheckoutPage({ onNavigate }) {
                 <div className="checkout-grid-2">
                   <div className="contact-field">
                     <label>First Name *</label>
-                    <input type="text" required value={form.first_name} onChange={updateField('first_name')} />
+                    <input type="text" required value={form.first_name} onChange={updateField('first_name')} className={validationErrors.first_name ? 'input-error' : ''} />
+                    {validationErrors.first_name ? <span className="checkout-field-error">{validationErrors.first_name}</span> : null}
                   </div>
                   <div className="contact-field">
                     <label>Last Name *</label>
-                    <input type="text" required value={form.last_name} onChange={updateField('last_name')} />
+                    <input type="text" required value={form.last_name} onChange={updateField('last_name')} className={validationErrors.last_name ? 'input-error' : ''} />
+                    {validationErrors.last_name ? <span className="checkout-field-error">{validationErrors.last_name}</span> : null}
                   </div>
                   <div className="contact-field">
                     <label>Company Name</label>
-                    <input type="text" value={form.company_name} onChange={updateField('company_name')} />
+                    <input type="text" value={form.company_name} onChange={updateField('company_name')} className={validationErrors.company_name ? 'input-error' : ''} />
+                    {validationErrors.company_name ? <span className="checkout-field-error">{validationErrors.company_name}</span> : null}
                   </div>
                   <div className="contact-field">
                     <label>Country *</label>
-                    <input type="text" required value={form.country} onChange={updateField('country')} />
+                    <input type="text" required value={form.country} onChange={updateField('country')} className={validationErrors.country ? 'input-error' : ''} />
+                    {validationErrors.country ? <span className="checkout-field-error">{validationErrors.country}</span> : null}
                   </div>
                 </div>
 
                 <div className="contact-field">
                   <label>Address Line 1 *</label>
-                  <input type="text" required value={form.address_line1} onChange={updateField('address_line1')} />
+                  <input type="text" required value={form.address_line1} onChange={updateField('address_line1')} className={validationErrors.address_line1 ? 'input-error' : ''} />
+                  {validationErrors.address_line1 ? <span className="checkout-field-error">{validationErrors.address_line1}</span> : null}
                 </div>
                 <div className="contact-field">
                   <label>Address Line 2</label>
-                  <input type="text" value={form.address_line2} onChange={updateField('address_line2')} />
+                  <input type="text" value={form.address_line2} onChange={updateField('address_line2')} className={validationErrors.address_line2 ? 'input-error' : ''} />
+                  {validationErrors.address_line2 ? <span className="checkout-field-error">{validationErrors.address_line2}</span> : null}
                 </div>
 
                 <div className="checkout-grid-3">
                   <div className="contact-field">
                     <label>City *</label>
-                    <input type="text" required value={form.city} onChange={updateField('city')} />
+                    <input type="text" required value={form.city} onChange={updateField('city')} className={validationErrors.city ? 'input-error' : ''} />
+                    {validationErrors.city ? <span className="checkout-field-error">{validationErrors.city}</span> : null}
                   </div>
                   <div className="contact-field">
                     <label>State *</label>
-                    <input type="text" required value={form.state} onChange={updateField('state')} />
+                    <input type="text" required value={form.state} onChange={updateField('state')} className={validationErrors.state ? 'input-error' : ''} />
+                    {validationErrors.state ? <span className="checkout-field-error">{validationErrors.state}</span> : null}
                   </div>
                   <div className="contact-field">
                     <label>Zip Code *</label>
@@ -649,13 +673,15 @@ function CheckoutPage({ onNavigate }) {
                 <div className="checkout-grid-2">
                   <div className="contact-field">
                     <label>Phone *</label>
-                    <input type="text" required value={form.phone} onChange={updateField('phone')} />
+                    <input type="text" required value={form.phone} onChange={updateField('phone')} className={validationErrors.phone ? 'input-error' : ''} />
+                    {validationErrors.phone ? <span className="checkout-field-error">{validationErrors.phone}</span> : null}
                   </div>
                 </div>
 
                 <div className="contact-field">
                   <label>Order Notes</label>
-                  <textarea rows="3" value={form.order_notes} onChange={updateField('order_notes')} />
+                  <textarea rows="3" value={form.order_notes} onChange={updateField('order_notes')} className={validationErrors.order_notes ? 'input-error' : ''} />
+                  {validationErrors.order_notes ? <span className="checkout-field-error">{validationErrors.order_notes}</span> : null}
                 </div>
 
                 <label className="checkout-ship-toggle">
@@ -706,7 +732,8 @@ function CheckoutPage({ onNavigate }) {
                       </div>
                       <div className="contact-field">
                         <label>Shipping Phone *</label>
-                        <input type="text" required value={form.shipping_phone} onChange={updateField('shipping_phone')} />
+                        <input type="text" required value={form.shipping_phone} onChange={updateField('shipping_phone')} className={validationErrors.shipping_phone ? 'input-error' : ''} />
+                        {validationErrors.shipping_phone ? <span className="checkout-field-error">{validationErrors.shipping_phone}</span> : null}
                       </div>
                     </div>
                     <div className="contact-field">
