@@ -420,14 +420,14 @@ export default function ProductDetail() {
 
                 <div className="pd-guarantee">
                   <p className="pd-guarantee__label">Guarantee Safe &amp; Secure Checkout</p>
-                  <div className="pd-pay-img">
+                  {/* <div className="pd-pay-img">
                     <img
                       src={imgPayPng}
                       alt="Accepted payment methods"
                       width="350"
                       height="35"
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="pd-meta-footer">
